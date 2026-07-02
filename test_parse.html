@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test</title></head>
+<body>
+<div id="out"></div>
+<script>
+// Safe LESSONS definition using regular strings
+const LESSONS = [
+  { id: 1, title: "Test", code: "const x = 5;" },
+  { id: 2, title: "Test 2", code: "const y = `template`;"}
+];
+document.getElementById('out').innerHTML = LESSONS.length + ' lessons loaded';
+</script>
+</body>
+</html>

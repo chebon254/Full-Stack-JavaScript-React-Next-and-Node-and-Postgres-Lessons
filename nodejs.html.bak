@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Node.js — Dev Journey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    body { background: #f8fafc; }
+    .sidebar { position: fixed; left: 0; top: 64px; width: 256px; height: calc(100vh - 64px); overflow-y: auto; background: #0f172a; }
+    .main { margin-left: 256px; padding-top: 64px; }
+    .code-block { background: #1e293b; border-radius: 12px; padding: 16px; margin: 16px 0; position: relative; }
+    .copy-btn { position: absolute; top: 8px; right: 8px; background: #16a34a; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .copy-btn:hover { background: #15803d; }
+    .copy-btn.copied { background: #22c55e; }
+    pre { margin: 0; overflow-x: auto; }
+    code { color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 14px; }
+    .lesson { padding: 32px; max-width: 900px; margin: 0 auto; border-bottom: 1px solid #e2e8f0; }
+    .difficulty { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px; }
+    .difficulty.beginner { background: #dbeafe; color: #1e40af; }
+    .difficulty.intermediate { background: #fed7aa; color: #92400e; }
+    .difficulty.advanced { background: #fecaca; color: #7f1d1d; }
+    .analogy { background: #dcfce7; border-left: 4px solid #22c55e; padding: 16px; margin: 16px 0; border-radius: 8px; }
+    .key-points { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px; margin: 16px 0; }
+    .key-points li { margin: 8px 0; }
+    .mark-btn { background: #16a34a; color: #fff; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; border: none; font-size: 14px; }
+    .mark-btn.completed { background: #22c55e; }
+    .sidebar-item { padding: 12px 16px; cursor: pointer; border-left: 3px solid transparent; color: #cbd5e1; transition: all 0.2s; }
+    .sidebar-item:hover { background: #1e293b; color: #86efac; }
+    .sidebar-item.active { background: #1e293b; border-left-color: #16a34a; color: #86efac; }
+    .sidebar-item.completed { color: #22c55e; }
+    .sidebar-item.completed::before { content: '✓ '; }
+    .progress-bar { height: 8px; background: #1e293b; border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #22c55e; transition: width 0.3s ease; }
+    .nav-bar { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 16px; z-index: 40; }
+    .nav-bar a { color: #16a34a; text-decoration: none; font-weight: bold; }
+    .nav-title { color: #1e293b; font-weight: bold; margin-left: 16px; flex: 1; }
+    .nav-progress { color: #64748b; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <div class="nav-bar">
+    <a href="index.html">← Home</a>
+    <div class="nav-title">🟢 Node.js</div>
+    <div class="nav-progress"><span id="progress-counter">0</span> / 13 complete</div>
+  </div>
+
+  <div class="sidebar">
+    <div style="padding: 16px;">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+      </div>
+      <div style="color: #cbd5e1; font-size: 12px; margin-bottom: 16px;">
+        <span id="progress-text">0 / 13 lessons complete</span>
+      </div>
+    </div>
+    <div id="lesson-list"></div>
+    <div style="padding: 16px; border-top: 1px solid #334155;">
+      <button onclick="resetProgress()" style="width: 100%; background: #334155; color: #cbd5e1; padding: 8px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px;">Reset Progress</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div style="background: linear-gradient(135deg, #22c55e 0%, #86efac 100%); padding: 40px; text-align: center; color: #1e293b;">
+      <h1 style="font-size: 2.5rem; font-weight: 900; margin: 0;">Node.js</h1>
+      <p style="margin: 8px 0 0 0; font-size: 1rem;">Run JavaScript on servers and build REST APIs with Express.js</p>
+    </div>
+
+    <div id="lessons-container"></div>
+  </div>
+
+  <script>
+    const LESSONS = [
+      { id: 1, title: "What is Node.js? — JS Outside Browser 🌍", difficulty: "Beginner", analogy: "Normally JavaScript works on stage (browser). Node.js lets the same performer work backstage (server), in greenroom, doing admin tasks.", code: `// Check Node.js installation\n// node --version   → v20.x.x\n// npm --version    → 10.x.x\n\n// hello.js\nconsole.log("Hello from Node.js!");\nconsole.log("We're running JS outside the browser!");\n\nconst os = require('os');\nconsole.log('Your OS:', os.platform());\nconsole.log('Your CPU:', os.cpus()[0].model);\nconsole.log('RAM:', Math.round(os.totalmem() / 1024 / 1024) + ' MB');\n\n// Run: node hello.js\n\n// What Node.js can do:\n// ✓ Read/write files\n// ✓ Start web servers\n// ✓ Connect to databases\n// ✓ Process environment variables\n// ✓ Run system commands` , points: ["Node.js: run JS outside browser", "npm: package manager", "Built-in modules: fs, os, http, crypto", "npm install: add dependencies", "package.json: project config"] },
+      { id: 2, title: "Modules — Sharing Tools 🧰", difficulty: "Beginner", analogy: "Different toolboxes for different jobs. require() grabs tools from other boxes.", code: `// math.js\nfunction add(a, b) { return a + b; }\nfunction subtract(a, b) { return a - b; }\nfunction multiply(a, b) { return a * b; }\n\nmodule.exports = { add, subtract, multiply };\n\n// app.js\nconst math = require('./math');\nconsole.log(math.add(5, 3));       // 8\nconsole.log(math.subtract(10, 4)); // 6\nconsole.log(math.multiply(3, 7));  // 21\n\n// Built-in modules (no install needed)\nconst path = require('path');\nconst os = require('os');\nconst fs = require('fs');\n\nconsole.log(path.join('/home', 'user', 'file.txt'));\nconsole.log(path.extname('image.png')); // .png\n\n// package.json: add \"type\": \"module\" for ES6 imports\n// import { add } from './math.js';\n// export const add = (a, b) => a + b;` , points: ["require(): load modules", "module.exports: share code", "Built-in modules: fs, os, path", "node_modules: installed packages", "package.json: project metadata"] },
+      { id: 3, title: "File System — Reading & Writing 📓", difficulty: "Beginner", analogy: "Node.js can read and write files like reading/writing in a notebook. Sync (blocking), Async (non-blocking).", code: `const fs = require('fs');\nconst fsPromises = require('fs').promises;\n\n// Sync (blocks everything—avoid in production)\nconst content = fs.readFileSync('notes.txt', 'utf-8');\nconsole.log(content);\n\n// Async with callback (old way)\nfs.readFile('notes.txt', 'utf-8', (err, data) => {\n  if (err) { console.error(err); return; }\n  console.log(data);\n});\n\n// Async with Promises (recommended)\nasync function readNote() {\n  try {\n    const data = await fsPromises.readFile('notes.txt', 'utf-8');\n    console.log(data);\n  } catch (err) {\n    console.error('Error:', err.message);\n  }\n}\n\n// Write file\nawait fsPromises.writeFile('notes.txt', 'New content', 'utf-8');\n\n// Append\nawait fsPromises.appendFile('log.txt', '\\n[' + new Date() + '] Event');\n\n// Check if exists\nconst exists = fs.existsSync('notes.txt'); // true/false\n\n// List directory\nconst files = await fsPromises.readdir('./');\nconsole.log(files); // ['package.json', 'server.js', ...]` , points: ["Sync: readFileSync (blocks all code)", "Async callback: readFile (old way)", "Async promises: recommended (await)", "Try/catch: error handling", "writeFile, appendFile, readdir"] },
+      { id: 4, title: "HTTP Server — Post Office 📮", difficulty: "Beginner", analogy: "Post office receives letters (requests) and sends replies (responses). http module is your post office.", code: `const http = require('http');\n\nconst server = http.createServer((request, response) => {\n  const url = request.url;\n  const method = request.method;\n  \n  console.log(\\`\\${method} \\${url}\\`);\n  \n  response.setHeader('Content-Type', 'application/json');\n  \n  if (url === '/' && method === 'GET') {\n    response.writeHead(200);\n    response.end(JSON.stringify({ message: 'Welcome!' }));\n  } else if (url === '/about') {\n    response.writeHead(200);\n    response.end(JSON.stringify({ info: 'About page' }));\n  } else {\n    response.writeHead(404);\n    response.end(JSON.stringify({ error: 'Not Found' }));\n  }\n});\n\nconst PORT = 3000;\nserver.listen(PORT, () => {\n  console.log(\\`Server running at http://localhost:\\${PORT}\\`);\n});\n\n// Run: node server.js\n// Visit: http://localhost:3000` , points: ["createServer: start listening", "request.url, request.method", "response.writeHead: status code", "response.end: send response", "Listen on port", "Raw http: rarely used (use Express)"] },
+      { id: 5, title: "Express.js — Smarter Post Office ⚡", difficulty: "Beginner", analogy: "Raw http module is building from bricks. Express.js is a pre-built kit—same result, much faster.", code: `// npm install express\nconst express = require('express');\nconst app = express();\n\n// Middleware\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\n\n// Routes\napp.get('/', (req, res) => {\n  res.json({ message: 'Hello from Express!' });\n});\n\napp.get('/hello/:name', (req, res) => {\n  const { name } = req.params;\n  res.json({ greeting: \\`Hello, \\${name}!\\` });\n});\n\napp.post('/data', (req, res) => {\n  console.log('Received:', req.body);\n  res.status(201).json({ received: req.body });\n});\n\napp.get('/user/:id', (req, res) => {\n  const id = req.params.id;\n  // Fetch user from DB...\n  res.json({ id, name: 'Alice' });\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => {\n  console.log(\\`Server at http://localhost:\\${PORT}\\`);\n});\n\n// Run: npm start` , points: ["Express: minimal web framework", "app.get/post/put/delete: routes", "req.params: URL params", "req.query: query string", "req.body: JSON body", "res.json: send JSON", "res.status: HTTP status code"] },
+      { id: 6, title: "Routing — Post Office Departments 🗂️", difficulty: "Intermediate", analogy: "Big post office has departments. Each handles specific mail. Express Router organizes routes by department.", code: `// routes/users.js\nconst express = require('express');\nconst router = express.Router();\n\nconst users = [\n  { id: 1, name: 'Alice', email: 'alice@email.com' },\n  { id: 2, name: 'Bob', email: 'bob@email.com' }\n];\n\nrouter.get('/', (req, res) => {\n  res.json(users);\n});\n\nrouter.get('/:id', (req, res) => {\n  const user = users.find(u => u.id === parseInt(req.params.id));\n  if (!user) return res.status(404).json({ error: 'Not found' });\n  res.json(user);\n});\n\nrouter.post('/', (req, res) => {\n  const newUser = { id: users.length + 1, ...req.body };\n  users.push(newUser);\n  res.status(201).json(newUser);\n});\n\nrouter.put('/:id', (req, res) => {\n  const index = users.findIndex(u => u.id === parseInt(req.params.id));\n  if (index === -1) return res.status(404).json({ error: 'Not found' });\n  users[index] = { ...users[index], ...req.body };\n  res.json(users[index]);\n});\n\nrouter.delete('/:id', (req, res) => {\n  const index = users.findIndex(u => u.id === parseInt(req.params.id));\n  if (index === -1) return res.status(404).json({ error: 'Not found' });\n  users.splice(index, 1);\n  res.status(204).send();\n});\n\nmodule.exports = router;\n\n// server.js\nconst usersRouter = require('./routes/users');\napp.use('/users', usersRouter);` , points: ["Express.Router: organize routes", "GET: read data", "POST: create data", "PUT: update data", "DELETE: remove data", "Status codes: 200/201/204/404/500"] },
+      { id: 7, title: "Middleware — Assembly Line Workers 🏭", difficulty: "Intermediate", analogy: "Assembly line where each worker does one job. Each can stop the line if something's wrong. Middleware processes requests.", code: `// Custom middleware\nfunction logger(req, res, next) {\n  const time = new Date().toISOString();\n  console.log(\\`[\\${time}] \\${req.method} \\${req.url}\\`);\n  next(); // MUST call next()!\n}\n\nfunction authCheck(req, res, next) {\n  const token = req.headers.authorization;\n  if (!token) {\n    return res.status(401).json({ error: 'No token' });\n  }\n  req.userId = 'user123';\n  next();\n}\n\n// Apply middleware\napp.use(logger); // global\n\napp.get('/dashboard', authCheck, (req, res) => {\n  res.json({ message: \\`Hi user \\${req.userId}\\` });\n});\n\n// Popular middleware\nconst cors = require('cors');\nconst helmet = require('helmet');\nconst morgan = require('morgan');\n\napp.use(cors());        // Cross-origin\napp.use(helmet());      // Security headers\napp.use(morgan('dev')); // HTTP logging\n\n// Error handling (at the end)\napp.use((error, req, res, next) => {\n  console.error('Error:', error.message);\n  res.status(500).json({ error: error.message });\n});` , points: ["Middleware: process every request", "next(): continue to next handler", "Order matters: top to bottom", "Global: app.use(middleware)", "Route-specific: app.get('/path', middleware, handler)", "Error handler: 4 parameters (error, req, res, next)"] },
+      { id: 8, title: "REST API — Restaurant Menu 📋", difficulty: "Intermediate", analogy: "Restaurant menu defines what you can order. REST: GET read menu, POST order, PUT modify, DELETE cancel.", code: `// Complete REST API\napp.get('/products', (req, res) => {\n  // List all\n  res.json({ data: products });\n});\n\napp.get('/products/:id', (req, res) => {\n  // Get single\n  const product = products.find(p => p.id === parseInt(req.params.id));\n  if (!product) return res.status(404).json({ error: 'Not found' });\n  res.json(product);\n});\n\napp.post('/products', (req, res) => {\n  // Create\n  const { name, price } = req.body;\n  if (!name || !price) {\n    return res.status(400).json({ error: 'Name and price required' });\n  }\n  const product = { id: Date.now(), name, price };\n  products.push(product);\n  res.status(201).json(product);\n});\n\napp.put('/products/:id', (req, res) => {\n  // Update\n  const product = products.find(p => p.id === parseInt(req.params.id));\n  if (!product) return res.status(404).json({ error: 'Not found' });\n  Object.assign(product, req.body);\n  res.json(product);\n});\n\napp.delete('/products/:id', (req, res) => {\n  // Delete\n  const index = products.findIndex(p => p.id === parseInt(req.params.id));\n  if (index === -1) return res.status(404).json({ error: 'Not found' });\n  products.splice(index, 1);\n  res.status(204).send();\n});\n\n// Query params: /products?page=1&limit=10\napp.get('/items', (req, res) => {\n  const page = req.query.page || 1;\n  const limit = req.query.limit || 10;\n  res.json({ page, limit });\n});` , points: ["GET: retrieve data", "POST: create new", "PUT: update existing", "DELETE: remove", "400: bad request", "404: not found", "201: created", "Response format: { data: ... } or { error: ... }"] },
+      { id: 9, title: "JWT Authentication — VIP Wristband 🎟️", difficulty: "Advanced", analogy: "Show ID once, get wristband (JWT token). Show wristband to access VIP areas—no need to show ID again.", code: `// npm install jsonwebtoken bcryptjs\nconst jwt = require('jsonwebtoken');\nconst bcrypt = require('bcryptjs');\n\nconst JWT_SECRET = process.env.JWT_SECRET;\n\n// Register\napp.post('/auth/register', async (req, res) => {\n  const { email, password } = req.body;\n  const hashedPassword = await bcrypt.hash(password, 10);\n  // Save to DB...\n  res.status(201).json({ message: 'Registered!' });\n});\n\n// Login\napp.post('/auth/login', async (req, res) => {\n  const { email, password } = req.body;\n  // Fetch user from DB...\n  const user = { id: 1, email, password: hashedPassword };\n  \n  const isMatch = await bcrypt.compare(password, user.password);\n  if (!isMatch) return res.status(401).json({ error: 'Wrong password' });\n  \n  const token = jwt.sign(\n    { userId: user.id, email: user.email },\n    JWT_SECRET,\n    { expiresIn: '7d' }\n  );\n  \n  res.json({ token });\n});\n\n// Verify token middleware\nfunction authenticate(req, res, next) {\n  const auth = req.headers.authorization;\n  if (!auth?.startsWith('Bearer ')) {\n    return res.status(401).json({ error: 'No token' });\n  }\n  \n  try {\n    const token = auth.split(' ')[1];\n    const decoded = jwt.verify(token, JWT_SECRET);\n    req.user = decoded;\n    next();\n  } catch {\n    res.status(401).json({ error: 'Invalid token' });\n  }\n}\n\n// Protected route\napp.get('/profile', authenticate, (req, res) => {\n  res.json({ message: \\`Hello \\${req.user.email}\\` });\n});` , points: ["JWT: create token on login", "Token in Authorization header", "Bearer : token format", "Verify middleware: validate token", "Secrets: never expose JWT_SECRET", "Expiration: token_has_expiry_date"] },
+      { id: 10, title: "Environment Variables — Secret Diary 🔐", difficulty: "Beginner", analogy: "Secret diary only you can read. Write API keys, DB passwords, secrets. Never commit to git!", code: `// npm install dotenv\nrequire('dotenv').config();\n\nconst PORT = process.env.PORT || 3000;\nconst DB_URL = process.env.DATABASE_URL;\nconst JWT_SECRET = process.env.JWT_SECRET;\nconst NODE_ENV = process.env.NODE_ENV || 'development';\n\nconsole.log(\\`Running in \\${NODE_ENV} mode\\`);\n\n// .env (add to .gitignore!)\n// PORT=5000\n// DATABASE_URL=postgresql://user:pass@localhost:5432/mydb\n// JWT_SECRET=super-secret-key\n// NODE_ENV=development\n\n// .env.production (for production)\n// DATABASE_URL=postgresql://prod_user:prod_pass@prod_host/prod_db\n// JWT_SECRET=production-secret-key\n// NODE_ENV=production\n\n// .env.example (safe to commit—template)\n// PORT=\n// DATABASE_URL=\n// JWT_SECRET=\n// NODE_ENV=development` , points: ["dotenv: load .env file", "process.env: access variables", ".env: development secrets", ".env.production: production secrets", ".gitignore: don't commit .env", ".env.example: template (commit it)", "Railway/Vercel: set vars in dashboard"] },
+      { id: 11, title: "CORS — Visitor Passes 🪪", difficulty: "Intermediate", analogy: "Your API is a private building. CORS is the visitor policy—which websites can call your API?", code: `// npm install cors\nconst cors = require('cors');\n\n// Allow everyone (dangerous!)\napp.use(cors());\n\n// Allow specific origins (production-safe)\napp.use(cors({\n  origin: [\n    'https://myapp.vercel.app',\n    'https://myapp.railway.app',\n    process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : null\n  ].filter(Boolean),\n  methods: ['GET', 'POST', 'PUT', 'DELETE'],\n  allowedHeaders: ['Content-Type', 'Authorization'],\n  credentials: true // allow cookies\n}));\n\n// CORS for specific route\napp.get('/public-data', cors(), (req, res) => {\n  res.json({ data: 'public' });\n});\n\n// Without cors: browser blocks cross-origin requests\n// error in console: \"blocked by CORS\"\n// Solution: add cors middleware` , points: ["CORS: allow cross-origin requests", "Browsers enforce CORS", "Allow specific origins in production", "credentials: true for cookies", "Methods: GET, POST, PUT, DELETE", "Headers: Content-Type, Authorization"] },
+      { id: 12, title: "Error Handling — Safety Nets 🥅", difficulty: "Advanced", analogy: "Tightrope walkers have nets. try/catch is your safety net—catch errors before crash.", code: `// Route-level error handling\napp.get('/users/:id', async (req, res, next) => {\n  try {\n    const user = await User.findById(req.params.id);\n    if (!user) return res.status(404).json({ error: 'Not found' });\n    res.json(user);\n  } catch (error) {\n    next(error); // pass to global handler\n  }\n});\n\n// Global error handler (MUST be last, 4 params!)\napp.use((error, req, res, next) => {\n  console.error('Error:', error.message);\n  \n  if (error.name === 'ValidationError') {\n    return res.status(400).json({ error: error.message });\n  }\n  \n  if (error.name === 'UnauthorizedError') {\n    return res.status(401).json({ error: 'Invalid token' });\n  }\n  \n  res.status(500).json({\n    error: process.env.NODE_ENV === 'production'\n      ? 'Something went wrong'\n      : error.message\n  });\n});\n\n// Custom error class\nclass AppError extends Error {\n  constructor(message, statusCode) {\n    super(message);\n    this.statusCode = statusCode;\n  }\n}\n\n// Throw custom error\nthrow new AppError('User not found', 404);\n\n// Unhandled promise rejection catcher (IMPORTANT!)\nprocess.on('unhandledRejection', (reason, promise) => {\n  console.error('Unhandled Rejection:', reason);\n  // Log to service, then shutdown\n  process.exit(1);\n});` , points: ["try/catch: catch errors", "Global error handler: 4 params", "Error handler: must be last", "Custom error classes", "Log errors for debugging", "Handle unhandled rejections"] },
+      { id: 13, title: "Deploy on Railway — Opening Restaurant 🚀", difficulty: "Intermediate", analogy: "Built kitchen at home. Now rent commercial space (Railway). Move in, plug in, open doors to world!", code: `// package.json\n{\n  \"name\": \"my-api\",\n  \"version\": \"1.0.0\",\n  \"scripts\": {\n    \"start\": \"node server.js\",\n    \"dev\": \"nodemon server.js\"\n  },\n  \"engines\": {\n    \"node\": \"20.x\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.0\",\n    \"dotenv\": \"^16.0.0\"\n  }\n}\n\n// .gitignore\nnode_modules/\n.env\n*.log\n\n// Step-by-step deployment:\n// 1. Push to GitHub\ngit add .\ngit commit -m \"Ready to deploy\"\ngit push origin main\n\n// 2. On railway.com:\n// - New Project → Deploy from GitHub Repo\n// - Select your repository\n// - Railway auto-detects Node.js\n\n// 3. Environment variables (Railway dashboard):\n// Variables tab → add:\nDATABASE_URL=postgresql://...\nJWT_SECRET=prod-secret-key\nNODE_ENV=production\n\n// 4. Railway gives you a URL:\n// https://my-api-production.up.railway.app\n\n// 5. Your PORT comes from Railway:\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => {\n  console.log(\\`Server at port \\${PORT}\\`);\n});\n\n// 6. Custom domain (optional):\n// Railway → Settings → Custom Domain → add yours` , points: ["package.json: start script required", ".gitignore: don't commit node_modules", "GitHub: push your code", "Railway: connects to GitHub, auto-deploys", "Environment vars: set in dashboard", "Logs: Deployments tab for debugging", "Auto-rebuild: push to main = auto-deploy"] }
+    ];
+
+    const STORAGE_KEY = "node-done";
+
+    function initSidebar() {
+      const list = document.getElementById("lesson-list");
+      LESSONS.forEach(lesson => {
+        const item = document.createElement("div");
+        item.id = `sidebar-lesson-${lesson.id}`;
+        item.className = "sidebar-item";
+        item.onclick = () => {
+          document.getElementById(`lesson-${lesson.id}`).scrollIntoView({ behavior: "smooth" });
+        };
+        item.textContent = `${lesson.id}. ${lesson.title.split(" ")[0]}`;
+        list.appendChild(item);
+      });
+    }
+
+    function initLessons() {
+      const container = document.getElementById("lessons-container");
+      LESSONS.forEach(lesson => {
+        const section = document.createElement("section");
+        section.id = `lesson-${lesson.id}`;
+        section.className = "lesson";
+        section.innerHTML = `
+          <div style="display: flex; align-items: center; margin-bottom: 16px;">
+            <span style="background: #22c55e; color: white; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-center; font-weight: bold; font-size: 14px;">L${lesson.id}</span>
+            <h2 style="font-size: 1.75rem; font-weight: 900; margin: 0 0 0 16px; color: #0f172a;">${lesson.title}</h2>
+            <span class="difficulty ${lesson.difficulty.toLowerCase()}">${lesson.difficulty}</span>
+          </div>
+
+          <div class="analogy">
+            <strong style="color: #166534;">📚 Analogy:</strong> ${lesson.analogy}
+          </div>
+
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code class="language-javascript">${escapeHtml(lesson.code)}</code></pre>
+          </div>
+
+          <div class="key-points">
+            <strong style="color: #166534;">✓ Key Points:</strong>
+            <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+              ${lesson.points.map(p => `<li>${p}</li>`).join("")}
+            </ul>
+          </div>
+
+          <button class="mark-btn" onclick="toggleLesson(${lesson.id})">Mark Complete ✓</button>
+        `;
+        container.appendChild(section);
+      });
+      hljs.highlightAll();
+    }
+
+    function escapeHtml(text) {
+      const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
+      return text.replace(/[&<>"']/g, c => map[c]);
+    }
+
+    function toggleLesson(id) {
+      let done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      if (done.includes(id)) {
+        done = done.filter(x => x !== id);
+      } else {
+        done.push(id);
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const pct = Math.round((done.length / LESSONS.length) * 100);
+      document.getElementById("progress-bar").style.width = pct + "%";
+      document.getElementById("progress-text").textContent = `${done.length} / ${LESSONS.length} lessons complete`;
+      document.getElementById("progress-counter").textContent = done.length;
+
+      LESSONS.forEach(lesson => {
+        const btn = document.querySelector(`#lesson-${lesson.id} .mark-btn`);
+        const sidebar = document.getElementById(`sidebar-lesson-${lesson.id}`);
+        if (done.includes(lesson.id)) {
+          btn.textContent = "✅ Completed!";
+          btn.classList.add("completed");
+          sidebar.classList.add("completed");
+        } else {
+          btn.textContent = "Mark Complete ✓";
+          btn.classList.remove("completed");
+          sidebar.classList.remove("completed");
+        }
+      });
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            document.querySelectorAll(".sidebar-item").forEach(item => item.classList.remove("active"));
+            const lessonNum = entry.target.id.split("-")[1];
+            document.getElementById(`sidebar-lesson-${lessonNum}`)?.classList.add("active");
+          }
+        });
+      }, { threshold: 0.3 });
+
+      document.querySelectorAll(".lesson").forEach(el => observer.observe(el));
+    }
+
+    function copyCode(btn) {
+      const code = btn.parentElement.querySelector("code").textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = "Copied! ✓";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 2000);
+      });
+    }
+
+    function resetProgress() {
+      if (confirm("Reset all progress?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        updateProgress();
+      }
+    }
+
+    initSidebar();
+    initLessons();
+    updateProgress();
+  </script>
+</body>
+</html>

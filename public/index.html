@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dev Journey — Learn JS, React, Next.js, Node & PostgreSQL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    body { background: #f8fafc; }
+
+    .hero-bg {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    }
+    .card-hover {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.12);
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+    .float { animation: float 3.5s ease-in-out infinite; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.6s ease both; }
+    .d1 { animation-delay: 0.05s; }
+    .d2 { animation-delay: 0.15s; }
+    .d3 { animation-delay: 0.25s; }
+    .d4 { animation-delay: 0.35s; }
+    .d5 { animation-delay: 0.45s; }
+    .d6 { animation-delay: 0.55s; }
+    .progress-fill { transition: width 0.6s ease; }
+    .glow-yellow { box-shadow: 0 0 20px rgba(250,204,21,0.3); }
+    .glow-cyan { box-shadow: 0 0 20px rgba(34,211,238,0.3); }
+    .glow-green { box-shadow: 0 0 20px rgba(74,222,128,0.3); }
+    .glow-blue { box-shadow: 0 0 20px rgba(96,165,250,0.3); }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="hero-bg border-b border-white/10 sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🚀</span>
+      <span class="text-white font-extrabold text-xl tracking-tight">Dev Journey</span>
+    </div>
+    <div class="hidden md:flex items-center gap-2 text-sm text-slate-300">
+      <span>📚</span>
+      <span id="total-progress-nav">0 / 82 lessons complete</span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero-bg text-white pt-20 pb-28 px-6 text-center relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+      <div class="absolute -top-10 -left-10 w-72 h-72 bg-yellow-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-10 -right-10 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative z-10 max-w-3xl mx-auto">
+      <div class="float text-7xl mb-8">🚀</div>
+      <h1 class="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
+        Dev Journey
+      </h1>
+      <p class="text-xl text-indigo-200 font-semibold mb-3">From Zero to Full-Stack Hero</p>
+      <p class="text-slate-400 text-lg max-w-xl mx-auto mb-10 leading-relaxed">
+        Learn JavaScript, React, Next.js, Node.js, and PostgreSQL with
+        <strong class="text-white">child-friendly stories</strong>, real code examples,
+        and step-by-step lessons — crafted for visual thinkers.
+      </p>
+      <div class="flex flex-wrap justify-center gap-3 text-sm font-semibold">
+        <span class="bg-white/10 border border-white/20 px-5 py-2 rounded-full">📚 82+ Lessons</span>
+        <span class="bg-white/10 border border-white/20 px-5 py-2 rounded-full">💻 200+ Code Examples</span>
+        <span class="bg-white/10 border border-white/20 px-5 py-2 rounded-full">🎯 5 Technologies</span>
+        <span class="bg-white/10 border border-white/20 px-5 py-2 rounded-full">☁️ Railway Deployment</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- OVERALL PROGRESS -->
+  <div class="max-w-5xl mx-auto px-6 -mt-8 mb-4 relative z-10">
+    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-5 flex items-center gap-6">
+      <div class="text-4xl">📊</div>
+      <div class="flex-1">
+        <div class="flex justify-between text-sm font-bold text-slate-700 mb-2">
+          <span>Overall Progress</span>
+          <span id="total-progress-label">0 / 82 lessons</span>
+        </div>
+        <div class="bg-slate-100 rounded-full h-3">
+          <div id="total-progress-bar" class="h-3 rounded-full progress-fill bg-gradient-to-r from-indigo-500 to-purple-500" style="width:0%"></div>
+        </div>
+      </div>
+      <button onclick="resetAllProgress()" class="text-xs text-slate-400 hover:text-red-500 transition-colors font-semibold">Reset All</button>
+    </div>
+  </div>
+
+  <!-- TOPICS GRID -->
+  <section class="max-w-5xl mx-auto px-6 py-12">
+    <h2 class="text-3xl font-extrabold text-slate-800 text-center mb-2">Choose Your Topic</h2>
+    <p class="text-slate-500 text-center mb-10">Follow the recommended path or jump to what you need most</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- JS -->
+      <a href="javascript.html" class="card-hover bg-white rounded-2xl p-6 border border-slate-100 shadow-sm block fade-up d1">
+        <div class="flex items-start justify-between mb-5">
+          <div class="w-14 h-14 bg-yellow-400 rounded-2xl flex items-center justify-center text-2xl font-black text-yellow-900 shadow-sm">JS</div>
+          <span class="text-xs bg-yellow-50 text-yellow-700 px-3 py-1 rounded-full font-bold">25 Lessons</span>
+        </div>
+        <h3 class="text-xl font-extrabold text-slate-800 mb-1">JavaScript</h3>
+        <p class="text-slate-500 text-sm mb-4 leading-relaxed">Variables, loops, functions, promises, classes, closures & async patterns.</p>
+        <div class="mb-4">
+          <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+            <span>Progress</span><span id="js-pct">0%</span>
+          </div>
+          <div class="bg-slate-100 rounded-full h-2">
+            <div id="js-bar" class="bg-yellow-400 h-2 rounded-full progress-fill" style="width:0%"></div>
+          </div>
+          <div class="text-xs text-slate-400 mt-1" id="js-count">0 / 25 complete</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+          <span class="text-yellow-600 font-extrabold text-sm">Start Learning →</span>
+        </div>
+      </a>
+
+      <!-- React -->
+      <a href="react.html" class="card-hover bg-white rounded-2xl p-6 border border-slate-100 shadow-sm block fade-up d2">
+        <div class="flex items-start justify-between mb-5">
+          <div class="w-14 h-14 bg-cyan-400 rounded-2xl flex items-center justify-center text-2xl shadow-sm">⚛️</div>
+          <span class="text-xs bg-cyan-50 text-cyan-700 px-3 py-1 rounded-full font-bold">16 Lessons</span>
+        </div>
+        <h3 class="text-xl font-extrabold text-slate-800 mb-1">React JS</h3>
+        <p class="text-slate-500 text-sm mb-4 leading-relaxed">Components, props, state, hooks, routing, context & performance.</p>
+        <div class="mb-4">
+          <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+            <span>Progress</span><span id="react-pct">0%</span>
+          </div>
+          <div class="bg-slate-100 rounded-full h-2">
+            <div id="react-bar" class="bg-cyan-400 h-2 rounded-full progress-fill" style="width:0%"></div>
+          </div>
+          <div class="text-xs text-slate-400 mt-1" id="react-count">0 / 16 complete</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+          <span class="text-cyan-600 font-extrabold text-sm">Start Learning →</span>
+        </div>
+      </a>
+
+      <!-- Next.js -->
+      <a href="nextjs.html" class="card-hover bg-white rounded-2xl p-6 border border-slate-100 shadow-sm block fade-up d3">
+        <div class="flex items-start justify-between mb-5">
+          <div class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-2xl font-black text-white shadow-sm">▲</div>
+          <span class="text-xs bg-slate-100 text-slate-700 px-3 py-1 rounded-full font-bold">12 Lessons</span>
+        </div>
+        <h3 class="text-xl font-extrabold text-slate-800 mb-1">Next.js</h3>
+        <p class="text-slate-500 text-sm mb-4 leading-relaxed">File routing, SSR, SSG, API routes, middleware & Railway deployment.</p>
+        <div class="mb-4">
+          <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+            <span>Progress</span><span id="next-pct">0%</span>
+          </div>
+          <div class="bg-slate-100 rounded-full h-2">
+            <div id="next-bar" class="bg-slate-800 h-2 rounded-full progress-fill" style="width:0%"></div>
+          </div>
+          <div class="text-xs text-slate-400 mt-1" id="next-count">0 / 12 complete</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+          <span class="text-slate-800 font-extrabold text-sm">Start Learning →</span>
+        </div>
+      </a>
+
+      <!-- Node.js -->
+      <a href="nodejs.html" class="card-hover bg-white rounded-2xl p-6 border border-slate-100 shadow-sm block fade-up d4">
+        <div class="flex items-start justify-between mb-5">
+          <div class="w-14 h-14 bg-green-500 rounded-2xl flex items-center justify-center text-2xl shadow-sm">🟢</div>
+          <span class="text-xs bg-green-50 text-green-700 px-3 py-1 rounded-full font-bold">13 Lessons</span>
+        </div>
+        <h3 class="text-xl font-extrabold text-slate-800 mb-1">Node.js</h3>
+        <p class="text-slate-500 text-sm mb-4 leading-relaxed">Modules, Express, REST APIs, JWT auth, CORS & Railway backend deploy.</p>
+        <div class="mb-4">
+          <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+            <span>Progress</span><span id="node-pct">0%</span>
+          </div>
+          <div class="bg-slate-100 rounded-full h-2">
+            <div id="node-bar" class="bg-green-500 h-2 rounded-full progress-fill" style="width:0%"></div>
+          </div>
+          <div class="text-xs text-slate-400 mt-1" id="node-count">0 / 13 complete</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+          <span class="text-green-600 font-extrabold text-sm">Start Learning →</span>
+        </div>
+      </a>
+
+      <!-- PostgreSQL -->
+      <a href="postgres.html" class="card-hover bg-white rounded-2xl p-6 border border-slate-100 shadow-sm block fade-up d5">
+        <div class="flex items-start justify-between mb-5">
+          <div class="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center text-2xl shadow-sm">🐘</div>
+          <span class="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-bold">16 Lessons</span>
+        </div>
+        <h3 class="text-xl font-extrabold text-slate-800 mb-1">PostgreSQL</h3>
+        <p class="text-slate-500 text-sm mb-4 leading-relaxed">SQL basics, JOINs, indexes, transactions, Prisma ORM & Railway DB setup.</p>
+        <div class="mb-4">
+          <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+            <span>Progress</span><span id="pg-pct">0%</span>
+          </div>
+          <div class="bg-slate-100 rounded-full h-2">
+            <div id="pg-bar" class="bg-blue-500 h-2 rounded-full progress-fill" style="width:0%"></div>
+          </div>
+          <div class="text-xs text-slate-400 mt-1" id="pg-count">0 / 16 complete</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+          <span class="text-blue-600 font-extrabold text-sm">Start Learning →</span>
+        </div>
+      </a>
+
+      <!-- Recommended Path -->
+      <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl p-6 text-white fade-up d6">
+        <div class="text-4xl mb-4">🗺️</div>
+        <h3 class="text-xl font-extrabold mb-2">Recommended Path</h3>
+        <p class="text-indigo-100 text-sm mb-5">Follow this order for maximum understanding:</p>
+        <ol class="space-y-3">
+          <li class="flex items-center gap-3 text-sm font-bold">
+            <span class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-xs">1</span>
+            <span>🟨 JavaScript</span>
+          </li>
+          <li class="flex items-center gap-3 text-sm font-bold">
+            <span class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-xs">2</span>
+            <span>⚛️ React JS</span>
+          </li>
+          <li class="flex items-center gap-3 text-sm font-bold">
+            <span class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-xs">3</span>
+            <span>🟢 Node.js</span>
+          </li>
+          <li class="flex items-center gap-3 text-sm font-bold">
+            <span class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-xs">4</span>
+            <span>🐘 PostgreSQL</span>
+          </li>
+          <li class="flex items-center gap-3 text-sm font-bold">
+            <span class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-xs">5</span>
+            <span>▲ Next.js</span>
+          </li>
+        </ol>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HOW TO USE -->
+  <section class="bg-white border-y border-slate-100 py-16 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl font-extrabold text-slate-800 text-center mb-2">How to Use This Guide</h2>
+      <p class="text-slate-500 text-center mb-12">4 steps to learning each concept</p>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">📖</div>
+          <div class="text-xs font-black text-amber-500 mb-1 uppercase tracking-wider">Step 1</div>
+          <h4 class="font-extrabold text-slate-800 mb-2">Read the Story</h4>
+          <p class="text-slate-500 text-sm">Each lesson starts with a kid-friendly analogy to build a mental model</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-cyan-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">📝</div>
+          <div class="text-xs font-black text-cyan-500 mb-1 uppercase tracking-wider">Step 2</div>
+          <h4 class="font-extrabold text-slate-800 mb-2">Understand It</h4>
+          <p class="text-slate-500 text-sm">Read the clear explanation that connects the analogy to real code</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">💻</div>
+          <div class="text-xs font-black text-green-500 mb-1 uppercase tracking-wider">Step 3</div>
+          <h4 class="font-extrabold text-slate-800 mb-2">Run the Code</h4>
+          <p class="text-slate-500 text-sm">Copy the example, run it in your browser console or VS Code, and experiment</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">✅</div>
+          <div class="text-xs font-black text-purple-500 mb-1 uppercase tracking-wider">Step 4</div>
+          <h4 class="font-extrabold text-slate-800 mb-2">Mark Complete</h4>
+          <p class="text-slate-500 text-sm">Check it off to track your progress and build momentum</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOOLS -->
+  <section class="max-w-5xl mx-auto px-6 py-16">
+    <h2 class="text-3xl font-extrabold text-slate-800 text-center mb-2">Tools You'll Need</h2>
+    <p class="text-slate-500 text-center mb-10">Set these up before diving in</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+        <div class="text-3xl mb-3">📝</div>
+        <h4 class="font-extrabold text-slate-800 mb-1">VS Code</h4>
+        <p class="text-slate-500 text-xs mb-3">The best free code editor with extensions for every language</p>
+        <span class="text-xs bg-slate-100 px-2 py-1 rounded-lg text-slate-600 font-mono">code.visualstudio.com</span>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+        <div class="text-3xl mb-3">⬇️</div>
+        <h4 class="font-extrabold text-slate-800 mb-1">Node.js</h4>
+        <p class="text-slate-500 text-xs mb-3">Run JavaScript outside the browser. Required for React, Next.js & Node</p>
+        <span class="text-xs bg-slate-100 px-2 py-1 rounded-lg text-slate-600 font-mono">nodejs.org/en/download</span>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+        <div class="text-3xl mb-3">🚂</div>
+        <h4 class="font-extrabold text-slate-800 mb-1">Railway</h4>
+        <p class="text-slate-500 text-xs mb-3">Deploy your Node.js apps and PostgreSQL databases to the cloud easily</p>
+        <span class="text-xs bg-slate-100 px-2 py-1 rounded-lg text-slate-600 font-mono">railway.com</span>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+        <div class="text-3xl mb-3">🐙</div>
+        <h4 class="font-extrabold text-slate-800 mb-1">GitHub</h4>
+        <p class="text-slate-500 text-xs mb-3">Store your code online. Railway connects directly to your GitHub repos</p>
+        <span class="text-xs bg-slate-100 px-2 py-1 rounded-lg text-slate-600 font-mono">github.com</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-center py-10 px-6">
+    <div class="text-4xl mb-3">🚀</div>
+    <p class="text-white font-extrabold text-lg">Dev Journey</p>
+    <p class="text-slate-400 text-sm mt-1">Your personal guide to modern full-stack development</p>
+    <p class="text-slate-600 text-xs mt-4">Built with ❤️ for visual learners · Open in browser · No internet required for lessons</p>
+  </footer>
+
+  <script>
+    const TOPICS = [
+      { key: 'js',    total: 25, barId: 'js-bar',    pctId: 'js-pct',    cntId: 'js-count'    },
+      { key: 'react', total: 16, barId: 'react-bar', pctId: 'react-pct', cntId: 'react-count' },
+      { key: 'next',  total: 12, barId: 'next-bar',  pctId: 'next-pct',  cntId: 'next-count'  },
+      { key: 'node',  total: 13, barId: 'node-bar',  pctId: 'node-pct',  cntId: 'node-count'  },
+      { key: 'pg',    total: 16, barId: 'pg-bar',    pctId: 'pg-pct',    cntId: 'pg-count'    },
+    ];
+    const GRAND_TOTAL = 82;
+
+    function loadProgress() {
+      let grandDone = 0;
+      TOPICS.forEach(t => {
+        const done = JSON.parse(localStorage.getItem(t.key + '-done') || '[]').length;
+        grandDone += done;
+        const pct = t.total > 0 ? Math.round((done / t.total) * 100) : 0;
+        document.getElementById(t.barId).style.width = pct + '%';
+        document.getElementById(t.pctId).textContent = pct + '%';
+        document.getElementById(t.cntId).textContent = done + ' / ' + t.total + ' complete';
+      });
+      const gPct = Math.round((grandDone / GRAND_TOTAL) * 100);
+      document.getElementById('total-progress-bar').style.width = gPct + '%';
+      document.getElementById('total-progress-label').textContent = grandDone + ' / ' + GRAND_TOTAL + ' lessons';
+      document.getElementById('total-progress-nav').textContent = grandDone + ' / ' + GRAND_TOTAL + ' lessons complete';
+    }
+
+    function resetAllProgress() {
+      if (!confirm('Reset ALL progress across all topics?')) return;
+      TOPICS.forEach(t => localStorage.removeItem(t.key + '-done'));
+      loadProgress();
+    }
+
+    loadProgress();
+  </script>
+</body>
+</html>

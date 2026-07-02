@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PostgreSQL — Dev Journey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    body { background: #f8fafc; }
+    .sidebar { position: fixed; left: 0; top: 64px; width: 256px; height: calc(100vh - 64px); overflow-y: auto; background: #0f172a; }
+    .main { margin-left: 256px; padding-top: 64px; }
+    .code-block { background: #1e293b; border-radius: 12px; padding: 16px; margin: 16px 0; position: relative; }
+    .copy-btn { position: absolute; top: 8px; right: 8px; background: #3b82f6; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .copy-btn:hover { background: #2563eb; }
+    .copy-btn.copied { background: #22c55e; }
+    pre { margin: 0; overflow-x: auto; }
+    code { color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 14px; }
+    .lesson { padding: 32px; max-width: 900px; margin: 0 auto; border-bottom: 1px solid #e2e8f0; }
+    .difficulty { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px; }
+    .difficulty.beginner { background: #dbeafe; color: #1e40af; }
+    .difficulty.intermediate { background: #fed7aa; color: #92400e; }
+    .difficulty.advanced { background: #fecaca; color: #7f1d1d; }
+    .analogy { background: #dbeafe; border-left: 4px solid #3b82f6; padding: 16px; margin: 16px 0; border-radius: 8px; }
+    .key-points { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px; margin: 16px 0; }
+    .key-points li { margin: 8px 0; }
+    .mark-btn { background: #3b82f6; color: #fff; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; border: none; font-size: 14px; }
+    .mark-btn.completed { background: #22c55e; }
+    .sidebar-item { padding: 12px 16px; cursor: pointer; border-left: 3px solid transparent; color: #cbd5e1; transition: all 0.2s; }
+    .sidebar-item:hover { background: #1e293b; color: #60a5fa; }
+    .sidebar-item.active { background: #1e293b; border-left-color: #3b82f6; color: #60a5fa; }
+    .sidebar-item.completed { color: #22c55e; }
+    .sidebar-item.completed::before { content: '✓ '; }
+    .progress-bar { height: 8px; background: #1e293b; border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #3b82f6; transition: width 0.3s ease; }
+    .nav-bar { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 16px; z-index: 40; }
+    .nav-bar a { color: #3b82f6; text-decoration: none; font-weight: bold; }
+    .nav-title { color: #1e293b; font-weight: bold; margin-left: 16px; flex: 1; }
+    .nav-progress { color: #64748b; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <div class="nav-bar">
+    <a href="index.html">← Home</a>
+    <div class="nav-title">🐘 PostgreSQL</div>
+    <div class="nav-progress"><span id="progress-counter">0</span> / 16 complete</div>
+  </div>
+
+  <div class="sidebar">
+    <div style="padding: 16px;">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+      </div>
+      <div style="color: #cbd5e1; font-size: 12px; margin-bottom: 16px;">
+        <span id="progress-text">0 / 16 lessons complete</span>
+      </div>
+    </div>
+    <div id="lesson-list"></div>
+    <div style="padding: 16px; border-top: 1px solid #334155;">
+      <button onclick="resetProgress()" style="width: 100%; background: #334155; color: #cbd5e1; padding: 8px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px;">Reset Progress</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div style="background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); padding: 40px; text-align: center; color: white;">
+      <h1 style="font-size: 2.5rem; font-weight: 900; margin: 0;">PostgreSQL</h1>
+      <p style="margin: 8px 0 0 0; font-size: 1rem;">Master SQL, design databases, and deploy on Railway</p>
+    </div>
+
+    <div id="lessons-container"></div>
+  </div>
+
+  <script>
+    const LESSONS = [
+      { id: 1, title: "What is PostgreSQL? — Super Filing Cabinet 🗄️", difficulty: "Beginner", analogy: "A library with thousands of filing cabinets. Each cabinet (database) has drawers (tables). Each drawer has files (rows). Each file has sections (columns).", code: `-- PostgreSQL is a relational database (most feature-rich free DB)\n-- Database → Schema → Table → Row → Column hierarchy\n\n-- Check PostgreSQL version\nSELECT version();\n\n-- Create a database\nCREATE DATABASE myapp;\n\n-- Connect to database\n\\\\c myapp\n\n-- List all databases\n\\\\l\n\n-- List tables\n\\\\dt\n\n-- PostgreSQL shines with:\n-- ✓ Complex queries (JOINs, subqueries)\n-- ✓ ACID transactions (reliable)\n-- ✓ Full-text search\n-- ✓ JSON data type\n-- ✓ Extensibility\n-- ✓ Open source (free!)` , points: ["PostgreSQL: relational database", "Free and open-source", "Most feature-rich free option", "ACID guaranteed", "Great for production", "Railway hosts it for free tier"] },
+      { id: 2, title: "Railway PostgreSQL — Rent Space 🚂", difficulty: "Beginner", analogy: "Buy and maintain your own filing cabinet warehouse (local)? Or rent space from Railway (cloud)?", code: `-- Step 1: Create Railway project\n-- Go to railway.com → sign up with GitHub\n-- New Project → Add PostgreSQL\n\n-- Step 2: Railway gives connection details:\n-- Host: monorail.proxy.rlwy.net\n-- Port: 12345\n-- Database: railway\n-- User: postgres\n-- Password: <auto-generated>\n-- DATABASE_URL: postgresql://postgres:pass@host:port/railway\n\n-- Step 3: Connect with psql\npsql postgresql://postgres:password@monorail.proxy.rlwy.net:12345/railway\n\n-- Or use env variable\npsql \\$DATABASE_URL\n\n-- Step 4: Test connection\nSELECT now();\n\n-- Copy DATABASE_URL to .env for Node.js\n-- DATABASE_URL=postgresql://postgres:password@host:port/railway` , points: ["Railway free PostgreSQL database", "Copy connection string", "Works with any PostgreSQL client", "Same SQL everywhere (local or Railway)", "Back it up regularly"] },
+      { id: 3, title: "Tables & Columns — Folders & Labels 📁", difficulty: "Beginner", analogy: "A table is a drawer with same-type files. Each file has sections (columns). Define structure before storing data.", code: `-- Create users table\nCREATE TABLE users (\n  id         SERIAL PRIMARY KEY,\n  name       VARCHAR(100) NOT NULL,\n  email      VARCHAR(255) UNIQUE NOT NULL,\n  age        INTEGER,\n  is_active  BOOLEAN DEFAULT true,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\n-- Create products table\nCREATE TABLE products (\n  id          SERIAL PRIMARY KEY,\n  name        VARCHAR(200) NOT NULL,\n  description TEXT,\n  price       DECIMAL(10, 2) NOT NULL,\n  stock       INTEGER DEFAULT 0,\n  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\n-- View table structure\n\\\\d users\n\n-- Add column\nALTER TABLE users ADD COLUMN phone VARCHAR(20);\n\n-- Rename column\nALTER TABLE users RENAME COLUMN phone TO phone_number;\n\n-- Delete table\nDROP TABLE IF EXISTS old_table;` , points: ["CREATE TABLE: define structure", "Column constraints: NOT NULL, UNIQUE", "PRIMARY KEY: unique identifier", "DEFAULT: default value", "TIMESTAMP: auto-set current time", "ALTER TABLE: modify after creation"] },
+      { id: 4, title: "Data Types — Types of Information 📋", difficulty: "Beginner", analogy: "School form has different box types—name (text), age (number), birthdate (date), pass/fail (yes/no).", code: `-- Text types\nVARCHAR(n)     -- variable length, max n: 'Hello'\nTEXT           -- unlimited: 'Long story...'\nCHAR(n)        -- fixed length, padded with spaces\n\n-- Number types\nINTEGER        -- whole numbers: -2B to 2B\nBIGINT         -- huge whole: -9B to 9B\nDECIMAL(10,2)  -- exact: 99999999.99\nFLOAT          -- approximate (for science)\nSERIAL         -- auto-incrementing int (for IDs)\n\n-- Boolean\nBOOLEAN        -- true / false / NULL\n\n-- Date & Time\nDATE           -- '2024-01-15'\nTIME           -- '14:30:00'\nTIMESTAMP      -- '2024-01-15 14:30:00'\nTIMESTAMPTZ    -- with timezone (recommended!)\nINTERVAL       -- '3 hours', '2 days'\n\n-- Special types\nUUID           -- '550e8400-e29b-41d4-a716-446655440000'\nJSON / JSONB   -- JSON data (JSONB indexed, faster)\nARRAY          -- INTEGER[], TEXT[]\n\n-- Example table\nCREATE TABLE example (\n  id        SERIAL PRIMARY KEY,\n  name      VARCHAR(100),\n  salary    DECIMAL(10, 2),\n  is_active BOOLEAN,\n  hired_at  TIMESTAMPTZ,\n  tags      TEXT[]\n);` , points: ["VARCHAR(n): short text", "TEXT: long text", "INTEGER: whole numbers", "DECIMAL: money values", "TIMESTAMPTZ: timezone-aware", "SERIAL: auto ID", "TEXT[]: array of strings"] },
+      { id: 5, title: "INSERT — Adding Files 📥", difficulty: "Beginner", analogy: "Filing a new document. Specify which drawer (table) and what to write (values).", code: `-- Insert one row\nINSERT INTO users (name, email, age)\nVALUES ('Alice Smith', 'alice@email.com', 28);\n\n-- Insert multiple rows\nINSERT INTO users (name, email, age) VALUES\n  ('Bob Jones', 'bob@email.com', 35),\n  ('Carol White', 'carol@email.com', 22),\n  ('David Brown', 'david@email.com', 41);\n\n-- Insert and get back the row (RETURNING)\nINSERT INTO users (name, email, age)\nVALUES ('Eve Davis', 'eve@email.com', 30)\nRETURNING *;\n\n-- Insert or update if exists (upsert)\nINSERT INTO users (email, name, age)\nVALUES ('alice@email.com', 'Alice Updated', 29)\nON CONFLICT (email)\n  DO UPDATE SET name = EXCLUDED.name, age = EXCLUDED.age;\n\n-- Insert into products\nINSERT INTO products (name, description, price, stock) VALUES\n  ('Laptop', 'Fast laptop', 999.99, 50),\n  ('Mouse', 'Wireless', 29.99, 200),\n  ('Keyboard', 'Mechanical', 79.99, 100);` , points: ["INSERT INTO: add data", "VALUES: data values", "RETURNING: get inserted row", "ON CONFLICT: upsert (insert or update)", "Multiple rows at once", "Constraint errors if violate FK/UNIQUE"] },
+      { id: 6, title: "SELECT — Finding Files 🔍", difficulty: "Beginner", analogy: "Searching through filing cabinet. SELECT all (*), specific sections (columns), sorted/limited.", code: `-- Get all rows, all columns\nSELECT * FROM users;\n\n-- Specific columns\nSELECT name, email FROM users;\nSELECT id, name, price FROM products;\n\n-- Rename columns (aliases)\nSELECT \n  name AS \\\"Full Name\\\",\n  email AS \\\"Email Address\\\",\n  age AS \\\"Age (years)\\\"\nFROM users;\n\n-- Limit results\nSELECT * FROM users LIMIT 10;\nSELECT * FROM users LIMIT 10 OFFSET 20; -- skip 20, get next 10\n\n-- Sort results\nSELECT * FROM users ORDER BY name ASC;        -- A-Z\nSELECT * FROM products ORDER BY price DESC;   -- high to low\nSELECT * FROM users ORDER BY created_at DESC; -- newest first\n\n-- Combine columns\nSELECT \n  name,\n  email,\n  UPPER(name) AS name_upper,\n  LENGTH(email) AS email_length,\n  NOW() - created_at AS account_age\nFROM users;\n\n-- Count\nSELECT COUNT(*) FROM users;\nSELECT COUNT(*) FROM products WHERE stock > 0;` , points: ["SELECT *: all columns", "SELECT col1, col2: specific", "ORDER BY: sort results", "LIMIT: how many rows", "OFFSET: skip rows (pagination)", "COUNT: count rows"] },
+      { id: 7, title: "WHERE — Filtering Search 🔎", difficulty: "Beginner", analogy: "Librarian: 'Only show me files for people over 30, in engineering dept.' WHERE narrows search.", code: `-- Comparisons\nSELECT * FROM users WHERE age > 25;\nSELECT * FROM users WHERE age >= 18 AND age <= 65;\nSELECT * FROM products WHERE price < 50.00;\n\n-- Exact match\nSELECT * FROM users WHERE email = 'alice@email.com';\n\n-- NOT equal\nSELECT * FROM users WHERE age != 30;\n\n-- NULL checks (can't use = NULL!)\nSELECT * FROM users WHERE age IS NULL;\nSELECT * FROM users WHERE age IS NOT NULL;\n\n-- Multiple conditions\nSELECT * FROM users WHERE age > 25 AND is_active = true;\nSELECT * FROM users WHERE age < 18 OR age > 65;\n\n-- IN list (like multiple OR)\nSELECT * FROM users WHERE age IN (25, 30, 35);\nSELECT * FROM products WHERE name IN ('Laptop', 'Mouse', 'Keyboard');\n\n-- LIKE pattern matching\nSELECT * FROM users WHERE name LIKE 'A%';      -- starts with A\nSELECT * FROM users WHERE email LIKE '%@gmail.com'; -- gmail users\nSELECT * FROM users WHERE name ILIKE '%alice%'; -- case-insensitive\n\n-- BETWEEN\nSELECT * FROM products WHERE price BETWEEN 10.00 AND 100.00;\n\n-- Complex\nSELECT name, email, age \nFROM users \nWHERE is_active = true \n  AND age BETWEEN 20 AND 40\n  AND email LIKE '%@email.com'\nORDER BY age DESC\nLIMIT 5;` , points: ["WHERE: filter rows", "Comparison: >, <, >=, <=, =, !=", "IS NULL / IS NOT NULL", "AND / OR / NOT", "IN: list of values", "LIKE: pattern matching", "BETWEEN: range inclusive"] },
+      { id: 8, title: "UPDATE — Changing Info ✏️", difficulty: "Intermediate", analogy: "Found the right file, need to correct/update. BE CAREFUL: UPDATE without WHERE changes EVERY row!", code: `-- Update one field\nUPDATE users SET age = 29 WHERE id = 1;\n\n-- Update multiple fields\nUPDATE users \nSET \n  name = 'Alice Johnson',\n  email = 'alice.johnson@email.com',\n  age = 29\nWHERE id = 1;\n\n-- Update with calculation\nUPDATE products SET price = price * 1.10 WHERE price < 50.00; -- 10% raise\nUPDATE products SET stock = stock - 1 WHERE id = 3;\n\n-- Update based on condition\nUPDATE users SET is_active = false \nWHERE last_login < NOW() - INTERVAL '6 months';\n\n-- RETURNING: see what changed\nUPDATE products \nSET price = price * 0.9 \nWHERE stock > 100\nRETURNING id, name, price;\n\n-- ⚠️ DANGER! This updates EVERY row!\n-- UPDATE users SET is_active = false;  -- DON'T DO THIS BY ACCIDENT!\n\n-- Always test with SELECT first:\nSELECT * FROM users WHERE id = 1; -- check\nUPDATE users SET age = 29 WHERE id = 1; -- then update` , points: ["UPDATE table SET col = value", "WHERE: which rows to update", "RETURNING: see updated rows", "Test with SELECT first", "WITHOUT WHERE = updates all rows!!"] },
+      { id: 9, title: "DELETE — Throwing Files Away 🗑️", difficulty: "Intermediate", analogy: "Removing a file permanently. Like UPDATE, DELETE without WHERE removes EVERYTHING. Use extreme caution!", code: `-- Delete one row\nDELETE FROM users WHERE id = 5;\n\n-- Delete with condition\nDELETE FROM users WHERE is_active = false;\nDELETE FROM products WHERE stock = 0;\n\n-- Delete and see what was deleted\nDELETE FROM users WHERE age < 18 RETURNING *;\n\n-- Delete all rows from table (but keep structure)\nDELETE FROM users;      -- slower, can rollback\nTRUNCATE TABLE users;   -- faster, hard to rollback\n\n-- ⚠️ BE CAREFUL! Always test with SELECT:\nSELECT * FROM users WHERE id = 5;  -- check\nDELETE FROM users WHERE id = 5;    -- then delete\n\n-- Never do this:\n-- DELETE FROM users;  -- OOPS! Deleted everyone!` , points: ["DELETE: remove rows", "WHERE: which rows", "TRUNCATE: delete all (faster)", "Test with SELECT first", "DELETE without WHERE = deletes all!!"] },
+      { id: 10, title: "Primary & Foreign Keys — ID Numbers & Connections 🔑", difficulty: "Intermediate", analogy: "Every student has unique student ID (PK). Library records books borrowed with student ID (FK)—not full name.", code: `-- PRIMARY KEY: unique identifier for each row\nCREATE TABLE users (\n  id    SERIAL PRIMARY KEY,\n  email VARCHAR(255) UNIQUE NOT NULL,\n  name  VARCHAR(100) NOT NULL\n);\n\n-- FOREIGN KEY: reference another table's primary key\nCREATE TABLE posts (\n  id         SERIAL PRIMARY KEY,\n  user_id    INTEGER NOT NULL,\n  title      VARCHAR(255) NOT NULL,\n  content    TEXT,\n  created_at TIMESTAMP DEFAULT NOW(),\n  \n  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE\n);\n-- ON DELETE CASCADE: if user deleted, delete their posts too\n-- ON DELETE SET NULL: set user_id to NULL if user deleted\n-- ON DELETE RESTRICT: prevent deleting user who has posts\n\nCREATE TABLE comments (\n  id         SERIAL PRIMARY KEY,\n  post_id    INTEGER REFERENCES posts(id) ON DELETE CASCADE,\n  user_id    INTEGER REFERENCES users(id) ON DELETE SET NULL,\n  content    TEXT NOT NULL,\n  created_at TIMESTAMP DEFAULT NOW()\n);\n\n-- Insert related data (parent first!)\nINSERT INTO users (name, email) VALUES ('Alice', 'alice@email.com');\n-- Let's say id = 1\nINSERT INTO posts (user_id, title, content) VALUES (1, 'My First Post', 'Hello world!');\n-- Can't insert post with user_id = 999 if user 999 doesn't exist! (FK constraint error)` , points: ["PRIMARY KEY: unique ID per row", "FOREIGN KEY: reference another table", "Referential integrity: prevents orphaned data", "ON DELETE CASCADE: auto-clean", "ON DELETE SET NULL: keep row, null FK", "ON DELETE RESTRICT: prevent delete"] },
+      { id: 11, title: "JOINs — Connecting Cabinets 🔗", difficulty: "Intermediate", analogy: "Students + Books. To see 'which student borrowed which book', join both cabinets using student ID.", code: `-- Sample data:\n-- users: id=1 Alice, id=2 Bob, id=3 Carol\n-- posts: id=1 Alice's post, id=2 Alice's 2nd, id=3 Bob's post\n\n-- INNER JOIN: only rows with match in BOTH tables\nSELECT \n  users.name,\n  users.email,\n  posts.title,\n  posts.created_at\nFROM posts\nINNER JOIN users ON posts.user_id = users.id;\n-- Result: Alice 2 posts, Bob 1 post. Carol not shown (no posts)!\n\n-- LEFT JOIN: all rows from LEFT, matched from right (NULL if no match)\nSELECT \n  u.name,\n  COUNT(p.id) AS post_count\nFROM users u\nLEFT JOIN posts p ON p.user_id = u.id\nGROUP BY u.id, u.name;\n-- Result: Alice=2, Bob=1, Carol=0 (Carol shown even with no posts!)\n\n-- Multi-table JOIN\nSELECT \n  u.name AS author,\n  p.title AS post,\n  c.content AS comment,\n  cu.name AS commenter\nFROM posts p\nJOIN users u ON p.user_id = u.id\nLEFT JOIN comments c ON c.post_id = p.id\nLEFT JOIN users cu ON c.user_id = cu.id\nORDER BY p.id, c.id;\n\n-- Aliases make long queries readable\nSELECT u.name, p.title\nFROM users u\nJOIN posts p ON p.user_id = u.id\nWHERE u.is_active = true\nORDER BY p.created_at DESC;` , points: ["JOIN: combine tables", "INNER JOIN: both match", "LEFT JOIN: all left + matched right", "ON: join condition", "Aliases: u for users, p for posts", "Multiple JOINs: powerful!"] },
+      { id: 12, title: "GROUP BY & Aggregates — Counting 📊", difficulty: "Intermediate", analogy: "Counting books each student borrowed. Group by student, then count. Aggregates (SUM, AVG, COUNT, MIN, MAX).", code: `-- COUNT: how many rows\nSELECT COUNT(*) FROM users;\nSELECT COUNT(*) FROM products WHERE stock > 0;\n\n-- SUM, AVG, MIN, MAX\nSELECT \n  SUM(price) AS total_value,\n  AVG(price) AS average_price,\n  MIN(price) AS cheapest,\n  MAX(price) AS most_expensive\nFROM products;\n\n-- GROUP BY: group rows, apply aggregate per group\nSELECT \n  user_id,\n  COUNT(*) AS post_count\nFROM posts\nGROUP BY user_id\nORDER BY post_count DESC;\n\n-- JOIN + GROUP BY: user names with counts\nSELECT \n  u.name,\n  COUNT(p.id) AS posts,\n  COUNT(DISTINCT c.id) AS comments_received\nFROM users u\nLEFT JOIN posts p ON p.user_id = u.id\nLEFT JOIN comments c ON c.post_id = p.id\nGROUP BY u.id, u.name\nORDER BY posts DESC;\n\n-- HAVING: filter AFTER grouping (like WHERE but for groups)\nSELECT \n  user_id,\n  COUNT(*) AS post_count\nFROM posts\nGROUP BY user_id\nHAVING COUNT(*) > 5;  -- only users with more than 5 posts\n\n-- Useful: group by date\nSELECT \n  DATE_TRUNC('month', created_at) AS month,\n  COUNT(*) AS new_users\nFROM users\nGROUP BY month\nORDER BY month;` , points: ["COUNT(*): row count", "SUM/AVG/MIN/MAX: aggregate functions", "GROUP BY: group rows", "HAVING: filter groups (post-grouping)", "DISTINCT: unique values", "Date truncation: group by day/month/year"] },
+      { id: 13, title: "Indexes — Table of Contents 📑", difficulty: "Advanced", analogy: "Book without index—read every page to find 'chocolate'. With index, go straight to page 47. Indexes are shortcuts.", code: `-- Create index on frequently-searched column\nCREATE INDEX idx_users_email ON users(email);\nCREATE INDEX idx_posts_user_id ON posts(user_id);\nCREATE INDEX idx_products_price ON products(price);\n\n-- Unique index (also enforces uniqueness)\nCREATE UNIQUE INDEX idx_users_email_unique ON users(email);\n\n-- Composite index (multiple columns)\nCREATE INDEX idx_posts_user_date ON posts(user_id, created_at DESC);\n\n-- Partial index (only index rows matching condition)\nCREATE INDEX idx_active_users ON users(email) WHERE is_active = true;\n\n-- See existing indexes\nSELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'users';\n\n-- EXPLAIN ANALYZE: see if index is being used\nEXPLAIN ANALYZE SELECT * FROM users WHERE email = 'alice@email.com';\n-- Look for \\\"Index Scan\\\" (good!) vs \\\"Seq Scan\\\" (slow!)\n\n-- Drop index\nDROP INDEX IF EXISTS idx_users_email;\n\n-- When to index:\n-- ✅ Columns in WHERE clauses\n-- ✅ Columns in JOIN ON clauses\n-- ✅ Columns in ORDER BY\n-- ❌ Don't over-index (slows INSERT/UPDATE)\n-- ❌ Small tables (index not worth it)` , points: ["CREATE INDEX: make shortcut", "Speeds up WHERE, JOIN, ORDER BY", "EXPLAIN ANALYZE: check if used", "Index Scan = good", "Seq Scan = slow", "Don't over-index small tables"] },
+      { id: 14, title: "Transactions — Doing Safely 🔒", difficulty: "Advanced", analogy: "Transferring money: take OUT, PUT IN as one action. If PUT fails, OUT reverts. Transactions keep data safe.", code: `-- Basic transaction\nBEGIN;\n  UPDATE accounts SET balance = balance - 100 WHERE user_id = 1;\n  UPDATE accounts SET balance = balance + 100 WHERE user_id = 2;\nCOMMIT;  -- save only if BOTH succeed\n\n-- If something fails:\nBEGIN;\n  UPDATE accounts SET balance = balance - 100 WHERE user_id = 1;\n  -- Something fails here...\nROLLBACK;  -- undo everything! Balance restored.\n\n-- Savepoints (partial rollback)\nBEGIN;\n  INSERT INTO orders (user_id, total) VALUES (1, 99.99);\n  SAVEPOINT after_order;\n  \n  INSERT INTO order_items (order_id, product_id, qty) VALUES (1, 5, 2);\n  -- If this fails, rollback to savepoint (keep order but not items)\n  ROLLBACK TO SAVEPOINT after_order;\n  \nCOMMIT;\n\n-- In Node.js with pg client:\n-- client.query('BEGIN');\n// await client.query('UPDATE ...');\n// await client.query('UPDATE ...');\n// await client.query('COMMIT');\n// OR\n// await client.query('ROLLBACK'); (in catch block)` , points: ["BEGIN: start transaction", "COMMIT: save changes", "ROLLBACK: undo all changes", "SAVEPOINT: partial rollback", "ACID: Atomic (all or nothing)", "Perfect for: money transfers, multi-step operations"] },
+      { id: 15, title: "Node.js + pg — JS Talks to DB 💬", difficulty: "Advanced", analogy: "Translator between JavaScript and filing cabinet. pg library lets Node.js command PostgreSQL.", code: `// npm install pg\nconst { Pool } = require('pg');\n\nconst pool = new Pool({\n  connectionString: process.env.DATABASE_URL,\n  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,\n  max: 10,\n  idleTimeoutMillis: 30000\n});\n\n// GET all users\napp.get('/users', async (req, res) => {\n  try {\n    const result = await pool.query('SELECT * FROM users');\n    res.json(result.rows);\n  } catch (error) {\n    res.status(500).json({ error: error.message });\n  }\n});\n\n// GET user by ID (parameterized query—prevents SQL injection!)\napp.get('/users/:id', async (req, res) => {\n  try {\n    const result = await pool.query(\n      'SELECT * FROM users WHERE id = \\$1',\n      [req.params.id]\n    );\n    if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });\n    res.json(result.rows[0]);\n  } catch (error) {\n    res.status(500).json({ error: error.message });\n  }\n});\n\n// POST create user\napp.post('/users', async (req, res) => {\n  const { name, email, age } = req.body;\n  try {\n    const result = await pool.query(\n      'INSERT INTO users (name, email, age) VALUES (\\$1, \\$2, \\$3) RETURNING *',\n      [name, email, age]\n    );\n    res.status(201).json(result.rows[0]);\n  } catch (error) {\n    if (error.code === '23505') { // unique violation\n      return res.status(409).json({ error: 'Email already exists' });\n    }\n    res.status(500).json({ error: error.message });\n  }\n});\n\n// Transaction with pg\nasync function transferMoney(fromId, toId, amount) {\n  const client = await pool.connect();\n  try {\n    await client.query('BEGIN');\n    await client.query('UPDATE accounts SET balance = balance - \\$1 WHERE id = \\$2', [amount, fromId]);\n    await client.query('UPDATE accounts SET balance = balance + \\$1 WHERE id = \\$2', [amount, toId]);\n    await client.query('COMMIT');\n    return { success: true };\n  } catch (error) {\n    await client.query('ROLLBACK');\n    throw error;\n  } finally {\n    client.release(); // ALWAYS release back to pool!\n  }\n}` , points: ["Pool: connection pooling", "pool.query(): execute SQL", "\\$1, \\$2: parameterized (safe)", "RETURNING *: get inserted row", "try/catch: error handling", "client.release(): important!", "Transactions: BEGIN/COMMIT/ROLLBACK"] },
+      { id: 16, title: "Prisma ORM — Magic Translator 🌐", difficulty: "Advanced", analogy: "Instead of writing SQL (foreign language), write JavaScript. Prisma translates. Plus: type safety, auto-completion.", code: `// npm install prisma @prisma/client\n// npx prisma init\n\n// prisma/schema.prisma\ngenerator client {\n  provider = \\\"prisma-client-js\\\"\n}\n\ndatasource db {\n  provider = \\\"postgresql\\\"\n  url      = env(\\\"DATABASE_URL\\\")\n}\n\nmodel User {\n  id    Int     @id @default(autoincrement())\n  name  String\n  email String  @unique\n  age   Int?\n  posts Post[]  // relation: one user → many posts\n}\n\nmodel Post {\n  id        Int     @id @default(autoincrement())\n  title     String\n  content   String?\n  author    User    @relation(fields: [authorId], references: [id])\n  authorId  Int\n}\n\n// npx prisma migrate dev --name init\n// npx prisma generate\n// npx prisma studio  (browse data in browser)\n\n// Using Prisma in Node.js\nconst { PrismaClient } = require('@prisma/client');\nconst prisma = new PrismaClient();\n\n// Find all users\nconst users = await prisma.user.findMany();\n\n// Find one with posts\nconst user = await prisma.user.findUnique({\n  where: { id: 1 },\n  include: { posts: true }\n});\n\n// Create\nconst newUser = await prisma.user.create({\n  data: { name: 'Alice', email: 'alice@email.com' }\n});\n\n// Update\nawait prisma.user.update({\n  where: { id: 1 },\n  data: { name: 'Alice Smith' }\n});\n\n// Delete\nawait prisma.user.delete({ where: { id: 1 } });\n\n// Complex query (JOIN)\nconst postsWithAuthors = await prisma.post.findMany({\n  where: { published: true },\n  include: { author: { select: { name: true, email: true } } },\n  orderBy: { createdAt: 'desc' },\n  take: 20\n});\n\n// Count\nconst count = await prisma.user.count({ where: { is_active: true } });\n\nawait prisma.\\$disconnect();` , points: ["Prisma: ORM (Object-Relational Mapper)", "Write JavaScript, not SQL", "Type safety: autocomplete works", "Migrations: schema changes", "prisma studio: GUI data browser", "Relationships: define easily", "Better than raw SQL for CRUD"] }
+    ];
+
+    const STORAGE_KEY = "pg-done";
+
+    function initSidebar() {
+      const list = document.getElementById("lesson-list");
+      LESSONS.forEach(lesson => {
+        const item = document.createElement("div");
+        item.id = `sidebar-lesson-${lesson.id}`;
+        item.className = "sidebar-item";
+        item.onclick = () => {
+          document.getElementById(`lesson-${lesson.id}`).scrollIntoView({ behavior: "smooth" });
+        };
+        item.textContent = `${lesson.id}. ${lesson.title.split(" ")[0]}`;
+        list.appendChild(item);
+      });
+    }
+
+    function initLessons() {
+      const container = document.getElementById("lessons-container");
+      LESSONS.forEach(lesson => {
+        const section = document.createElement("section");
+        section.id = `lesson-${lesson.id}`;
+        section.className = "lesson";
+        section.innerHTML = `
+          <div style="display: flex; align-items: center; margin-bottom: 16px;">
+            <span style="background: #3b82f6; color: white; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-center; font-weight: bold; font-size: 14px;">L${lesson.id}</span>
+            <h2 style="font-size: 1.75rem; font-weight: 900; margin: 0 0 0 16px; color: #0f172a;">${lesson.title}</h2>
+            <span class="difficulty ${lesson.difficulty.toLowerCase()}">${lesson.difficulty}</span>
+          </div>
+
+          <div class="analogy">
+            <strong style="color: #1e40af;">📚 Analogy:</strong> ${lesson.analogy}
+          </div>
+
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code class="language-sql">${escapeHtml(lesson.code)}</code></pre>
+          </div>
+
+          <div class="key-points">
+            <strong style="color: #166534;">✓ Key Points:</strong>
+            <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+              ${lesson.points.map(p => `<li>${p}</li>`).join("")}
+            </ul>
+          </div>
+
+          <button class="mark-btn" onclick="toggleLesson(${lesson.id})">Mark Complete ✓</button>
+        `;
+        container.appendChild(section);
+      });
+      hljs.highlightAll();
+    }
+
+    function escapeHtml(text) {
+      const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
+      return text.replace(/[&<>"']/g, c => map[c]);
+    }
+
+    function toggleLesson(id) {
+      let done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      if (done.includes(id)) {
+        done = done.filter(x => x !== id);
+      } else {
+        done.push(id);
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const pct = Math.round((done.length / LESSONS.length) * 100);
+      document.getElementById("progress-bar").style.width = pct + "%";
+      document.getElementById("progress-text").textContent = `${done.length} / ${LESSONS.length} lessons complete`;
+      document.getElementById("progress-counter").textContent = done.length;
+
+      LESSONS.forEach(lesson => {
+        const btn = document.querySelector(`#lesson-${lesson.id} .mark-btn`);
+        const sidebar = document.getElementById(`sidebar-lesson-${lesson.id}`);
+        if (done.includes(lesson.id)) {
+          btn.textContent = "✅ Completed!";
+          btn.classList.add("completed");
+          sidebar.classList.add("completed");
+        } else {
+          btn.textContent = "Mark Complete ✓";
+          btn.classList.remove("completed");
+          sidebar.classList.remove("completed");
+        }
+      });
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            document.querySelectorAll(".sidebar-item").forEach(item => item.classList.remove("active"));
+            const lessonNum = entry.target.id.split("-")[1];
+            document.getElementById(`sidebar-lesson-${lessonNum}`)?.classList.add("active");
+          }
+        });
+      }, { threshold: 0.3 });
+
+      document.querySelectorAll(".lesson").forEach(el => observer.observe(el));
+    }
+
+    function copyCode(btn) {
+      const code = btn.parentElement.querySelector("code").textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = "Copied! ✓";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 2000);
+      });
+    }
+
+    function resetProgress() {
+      if (confirm("Reset all progress?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        updateProgress();
+      }
+    }
+
+    initSidebar();
+    initLessons();
+    updateProgress();
+  </script>
+</body>
+</html>

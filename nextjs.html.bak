@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Next.js — Dev Journey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    body { background: #f8fafc; }
+    .sidebar { position: fixed; left: 0; top: 64px; width: 256px; height: calc(100vh - 64px); overflow-y: auto; background: #0f172a; }
+    .main { margin-left: 256px; padding-top: 64px; }
+    .code-block { background: #1e293b; border-radius: 12px; padding: 16px; margin: 16px 0; position: relative; }
+    .copy-btn { position: absolute; top: 8px; right: 8px; background: #374151; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .copy-btn:hover { background: #4b5563; }
+    .copy-btn.copied { background: #22c55e; }
+    pre { margin: 0; overflow-x: auto; }
+    code { color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 14px; }
+    .lesson { padding: 32px; max-width: 900px; margin: 0 auto; border-bottom: 1px solid #e2e8f0; }
+    .difficulty { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px; }
+    .difficulty.beginner { background: #dbeafe; color: #1e40af; }
+    .difficulty.intermediate { background: #fed7aa; color: #92400e; }
+    .difficulty.advanced { background: #fecaca; color: #7f1d1d; }
+    .analogy { background: #f3f4f6; border-left: 4px solid #374151; padding: 16px; margin: 16px 0; border-radius: 8px; }
+    .key-points { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px; margin: 16px 0; }
+    .key-points li { margin: 8px 0; }
+    .mark-btn { background: #374151; color: #fff; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; border: none; font-size: 14px; }
+    .mark-btn.completed { background: #22c55e; }
+    .sidebar-item { padding: 12px 16px; cursor: pointer; border-left: 3px solid transparent; color: #cbd5e1; transition: all 0.2s; }
+    .sidebar-item:hover { background: #1e293b; color: #9ca3af; }
+    .sidebar-item.active { background: #1e293b; border-left-color: #374151; color: #9ca3af; }
+    .sidebar-item.completed { color: #22c55e; }
+    .sidebar-item.completed::before { content: '✓ '; }
+    .progress-bar { height: 8px; background: #1e293b; border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #374151; transition: width 0.3s ease; }
+    .nav-bar { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 16px; z-index: 40; }
+    .nav-bar a { color: #374151; text-decoration: none; font-weight: bold; }
+    .nav-title { color: #1e293b; font-weight: bold; margin-left: 16px; flex: 1; }
+    .nav-progress { color: #64748b; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <div class="nav-bar">
+    <a href="index.html">← Home</a>
+    <div class="nav-title">▲ Next.js</div>
+    <div class="nav-progress"><span id="progress-counter">0</span> / 12 complete</div>
+  </div>
+
+  <div class="sidebar">
+    <div style="padding: 16px;">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+      </div>
+      <div style="color: #cbd5e1; font-size: 12px; margin-bottom: 16px;">
+        <span id="progress-text">0 / 12 lessons complete</span>
+      </div>
+    </div>
+    <div id="lesson-list"></div>
+    <div style="padding: 16px; border-top: 1px solid #334155;">
+      <button onclick="resetProgress()" style="width: 100%; background: #334155; color: #cbd5e1; padding: 8px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px;">Reset Progress</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 40px; text-align: center; color: white;">
+      <h1 style="font-size: 2.5rem; font-weight: 900; margin: 0;">Next.js</h1>
+      <p style="margin: 8px 0 0 0; font-size: 1rem;">Full-stack React framework with SSR, SSG, API routes, and instant deployment</p>
+    </div>
+
+    <div id="lessons-container"></div>
+  </div>
+
+  <script>
+    const LESSONS = [
+      { id: 1, title: "What is Next.js? — Smart Restaurant 🍽️", difficulty: "Beginner", analogy: "Regular restaurant (React SPA) cooks after you order—you wait. Smart restaurant (Next.js) pre-cooks popular dishes (SSG) AND cooks fresh on-demand (SSR).", code: `// Create Next.js project:\n// npx create-next-app@latest my-app --typescript --tailwind\n// cd my-app\n// npm run dev\n\n// Next.js folder structure (App Router):\n// app/\n//   layout.tsx      - Root layout\n//   page.tsx        - / (home page)\n//   about/\n//     page.tsx      - /about page\n//   blog/\n//     page.tsx      - /blog page\n//     [slug]/\n//       page.tsx    - /blog/:slug (dynamic route)\n//   api/\n//     users/\n//       route.ts    - /api/users (API endpoint)\n\n// Run: npm run dev\n// Visit: http://localhost:3000` , points: ["Next.js: React framework with routing", "Built-in SSR, SSG, SSG-ISR", "File-based routing: no config needed", "App Router: modern approach", "API routes: backend in same repo"] },
+      { id: 2, title: "File-Based Routing — Folders Are Rooms 📁", difficulty: "Beginner", analogy: "Each folder in app/ is a room. app/about/page.tsx = /about route. No router config needed!", code: `// app/layout.tsx — Root layout\nexport default function RootLayout({ children }) {\n  return (\n    <html>\n      <body>\n        <nav>My App</nav>\n        {children}\n        <footer>© 2024</footer>\n      </body>\n    </html>\n  );\n}\n\n// app/page.tsx — / (home)\nexport default function Home() {\n  return <h1>Welcome home!</h1>;\n}\n\n// app/about/page.tsx — /about\nexport default function About() {\n  return <h1>About us</h1>;\n}\n\n// app/blog/[slug]/page.tsx — /blog/:slug (dynamic!)\nexport default function BlogPost({ params }) {\n  return <h1>Blog: {params.slug}</h1>;\n}\n\n// Folder structure → URL mapping:\n// app/page.tsx             → /\n// app/about/page.tsx       → /about\n// app/blog/page.tsx        → /blog\n// app/blog/[slug]/page.tsx → /blog/my-post (slug = \"my-post\")\n// app/api/users/route.ts   → /api/users` , points: ["page.tsx: creates a route", "Folders represent path segments", "[name]: dynamic segment", "[...name]: catch-all route", "Special files: layout, loading, error, not-found"] },
+      { id: 3, title: "Pages & Layouts — House with Shared Walls 🏠", difficulty: "Beginner", analogy: "A house has shared walls, roof, front door (layout). Every room benefits without duplicating it.", code: `// app/layout.tsx — Root layout (wraps all pages)\nexport default function RootLayout({ children }) {\n  return (\n    <html>\n      <body>\n        <nav style={{ padding: '1rem', borderBottom: '1px solid #ccc' }}>\n          <a href=\"/\">Home</a> | <a href=\"/about\">About</a>\n        </nav>\n        <main style={{ padding: '2rem' }}>\n          {children}\n        </main>\n        <footer>Footer content</footer>\n      </body>\n    </html>\n  );\n}\n\n// app/dashboard/layout.tsx — Nested layout\nexport default function DashboardLayout({ children }) {\n  return (\n    <div style={{ display: 'flex' }}>\n      <aside style={{ width: '200px', borderRight: '1px solid #ccc' }}>\n        Sidebar\n      </aside>\n      <section style={{ flex: 1 }}>\n        {children}\n      </section>\n    </div>\n  );\n}\n\n// app/dashboard/page.tsx — Uses both root + dashboard layouts\nexport default function Dashboard() {\n  return <h1>Dashboard Home</h1>;\n}\n\n// app/dashboard/settings/page.tsx — Also uses both layouts\nexport default function Settings() {\n  return <h1>Settings</h1>;\n}` , points: ["layout.tsx: shared UI for routes", "Nested layouts: multiple levels", "Only one root layout per app", "Layouts can fetch data, add styles", "Template.tsx: rerenders on each nav (vs layout keeps state)"] },
+      { id: 4, title: "Server vs Client Components — Chef vs Waiter 👨‍🍳", difficulty: "Intermediate", analogy: "Chef (server): prepares everything, you never see code. Waiter (client): interacts with customers, reacts to requests.", code: `// Server Component (default) — no 'use client'\n// Runs on server, never sends JS to browser\nasync function Users() {\n  // Can: fetch, access databases, use secrets\n  const users = await fetch('https://api.example.com/users').then(r => r.json());\n  \n  return (\n    <ul>\n      {users.map(u => <li key={u.id}>{u.name}</li>)}\n    </ul>\n  );\n}\n\nexport default Users;\n\n// Client Component — 'use client' at top\n'use client';\n\nimport { useState } from 'react';\n\nexport function LikeButton() {\n  // Can: useState, useEffect, browser APIs\n  // Cannot: fetch from auth'd API (secrets exposed!), access DB directly\n  const [liked, setLiked] = useState(false);\n  \n  return (\n    <button onClick={() => setLiked(!liked)}>\n      {liked ? '❤️' : '🤍'}\n    </button>\n  );\n}\n\n// Mixing: Server component with Client component child\nexport default function Post() {\n  const post = fetchPost(); // server\n  \n  return (\n    <article>\n      <h1>{post.title}</h1>\n      <LikeButton /> {/* client component, wrapped by server */}\n    </article>\n  );\n}\n\n// Decision guide:\n// Server: fetch data, auth, DB access\n// Client: useState, interactivity, browser APIs` , points: ["Server components: default, no JS sent", "Client components: use 'use client' at top", "Fetch once on server, reuse on client", "Never expose secrets in client components", "Mixing: server wraps client"] },
+      { id: 5, title: "Data Fetching (SSR) — Fresh Food 🥗", difficulty: "Intermediate", analogy: "Every customer gets fresh food cooked right now with today's ingredients. SSR fetches data fresh per request.", code: `// app/users/page.tsx\n// This runs on server on every request (fresh data each time!)\n\nexport default async function UsersPage() {\n  const res = await fetch('https://jsonplaceholder.typicode.com/users', {\n    cache: 'no-store', // Always fresh (true SSR)\n  });\n  const users = await res.json();\n  \n  return (\n    <div>\n      <h1>Users</h1>\n      <ul>\n        {users.map(user => (\n          <li key={user.id}>\n            {user.name} — {user.email}\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}\n\n// With error boundary\nimport { Suspense } from 'react';\n\nfunction UsersSkeleton() {\n  return <p>Loading users...</p>;\n}\n\nexport default function UsersPageWithSuspense() {\n  return (\n    <Suspense fallback={<UsersSkeleton />}>\n      <UsersData />\n    </Suspense>\n  );\n}\n\nasync function UsersData() {\n  const res = await fetch('...');\n  if (!res.ok) throw new Error('Failed to fetch');\n  const users = await res.json();\n  return <ul>{users.map(u => <li key={u.id}>{u.name}</li>)}</ul>;\n}` , points: ["Async Server Component: await fetch", "cache: 'no-store' = always fresh", "cache: default = aggressive cache", "Suspense: streaming with loading state", "Error automatically caught by error.tsx"] },
+      { id: 6, title: "Static Generation (SSG) — Pre-Made Food 📦", difficulty: "Intermediate", analogy: "Food prep company makes 1000 sandwiches Sunday, boxes them, hands out all week. Ultra fast!", code: `// app/blog/[slug]/page.tsx\n// Static by default when using fetch with cache\n\nexport default async function BlogPost({ params }) {\n  const res = await fetch(\n    \\`https://api.example.com/posts/\\${params.slug}\\`,\n    {\n      next: { revalidate: 3600 } // ISR: revalidate every hour\n    }\n  );\n  const post = await res.json();\n  \n  return (\n    <article>\n      <h1>{post.title}</h1>\n      <p>{post.content}</p>\n    </article>\n  );\n}\n\n// Tell Next.js which slugs to pre-build\nexport async function generateStaticParams() {\n  const posts = await fetch('https://api.example.com/posts').then(r => r.json());\n  return posts.map(post => ({ slug: post.slug }));\n}\n\n// Build time: ~0ms per page\n// Request time: ~5ms (pre-built, just serve)\n// ISR: auto-rebuild every hour\n\n// app/posts/page.tsx\n// Cache aggressively\nexport default async function Posts() {\n  const posts = await fetch('https://api.example.com/posts', {\n    next: { revalidate: 86400 } // cache 24 hours\n  });\n  return <div>{posts}</div>;\n}` , points: ["Static by default with fetch + cache", "generateStaticParams: pre-build routes", "revalidate: ISR (incremental static regen)", "Build time: fast, request time: instant", "Perfect for blogs, docs, products"] },
+      { id: 7, title: "API Routes — Kitchen's Back Door 🚪", difficulty: "Intermediate", analogy: "Kitchen has a back door for deliveries, trash, supplies. API routes are that back door: backend endpoints, no code exposure.", code: `// app/api/users/route.ts\nimport { NextResponse } from 'next/server';\n\n// GET /api/users\nexport async function GET() {\n  const users = [\n    { id: 1, name: 'Alice', email: 'alice@email.com' },\n    { id: 2, name: 'Bob', email: 'bob@email.com' }\n  ];\n  return NextResponse.json(users);\n}\n\n// POST /api/users\nexport async function POST(request) {\n  const body = await request.json();\n  // Validate, save to DB...\n  return NextResponse.json(\n    { created: body },\n    { status: 201 }\n  );\n}\n\n// app/api/users/[id]/route.ts\nexport async function GET(request, { params }) {\n  const user = { id: params.id, name: 'Alice' };\n  return NextResponse.json(user);\n}\n\nexport async function PUT(request, { params }) {\n  const body = await request.json();\n  // Update DB...\n  return NextResponse.json({ updated: body });\n}\n\nexport async function DELETE(request, { params }) {\n  // Delete from DB...\n  return new NextResponse(null, { status: 204 });\n}` , points: ["Route handlers: app/api/route.ts", "export GET/POST/PUT/DELETE", "request.json(): parse body", "NextResponse.json(): return data", "Status codes: 200/201/204/404/500", "Can access secrets from .env"] },
+      { id: 8, title: "Dynamic Routes & Params — Named Doors 🚪🔢", difficulty: "Intermediate", analogy: "Hotel with numbered rooms [101], [102], [103]. Same door design, different room. Dynamic routes work the same.", code: `// app/blog/[slug]/page.tsx\nexport default function BlogPost({ params }) {\n  return <h1>Post: {params.slug}</h1>;\n  // /blog/hello-world → params.slug = \"hello-world\"\n}\n\n// Catch-all: app/docs/[...path]/page.tsx\nexport default function Docs({ params }) {\n  return <p>Path: {params.path.join('/')}</p>;\n  // /docs/guide/intro → params.path = ['guide', 'intro']\n}\n\n// Optional catch-all: app/pages/[[...slug]]/page.tsx\nexport default function Pages({ params }) {\n  return <p>Slug: {params.slug?.join('/') || 'home'}</p>;\n  // /pages → params.slug = undefined\n  // /pages/a/b → params.slug = ['a', 'b']\n}\n\n// Dynamic metadata\nexport async function generateMetadata({ params }) {\n  const post = await fetchPost(params.slug);\n  return {\n    title: post.title,\n    description: post.excerpt\n  };\n}\n\n// Pre-generate static routes\nexport async function generateStaticParams() {\n  const posts = await fetchPosts();\n  return posts.map(p => ({ slug: p.slug }));\n}\n\n// Handle 404\nimport { notFound } from 'next/navigation';\n\nexport default async function BlogPost({ params }) {\n  const post = await fetchPost(params.slug);\n  if (!post) notFound(); // shows app/not-found.tsx\n  return <article>{post.content}</article>;\n}` , points: ["[id]: dynamic segment", "[...path]: catch-all", "[[...slug]]: optional catch-all", "params.id, params.slug", "generateStaticParams: SSG all routes", "generateMetadata: dynamic metadata", "notFound(): trigger 404 page"] },
+      { id: 9, title: "Image Optimization & Metadata 📸🏷️", difficulty: "Beginner", analogy: "Smart camera auto-resizes photos. Metadata: labels on lunchbox—title, description, sharing image.", code: `// Image optimization\nimport Image from 'next/image';\n\nexport default function Gallery() {\n  return (\n    <Image\n      src=\"/photo.jpg\"\n      alt=\"My photo\"\n      width={800}\n      height={600}\n      priority // load immediately (above fold)\n    />\n  );\n}\n\n// Automatic optimization:\n// ✓ Lazy loading (below fold)\n// ✓ Responsive sizing\n// ✓ WebP format (if supported)\n// ✓ Blur placeholder option\n\n// Metadata\nexport const metadata = {\n  title: 'My Amazing App',\n  description: 'The best app ever built',\n  openGraph: {\n    title: 'My Amazing App',\n    description: 'The best app ever',\n    images: ['/og-image.jpg']\n  },\n  twitter: {\n    card: 'summary_large_image',\n    title: 'My Amazing App',\n    description: 'The best app ever'\n  }\n};\n\n// Dynamic metadata\nexport async function generateMetadata({ params }) {\n  const product = await fetchProduct(params.id);\n  return {\n    title: product.name,\n    description: product.description,\n    openGraph: {\n      images: [product.image]\n    }\n  };\n}` , points: ["Image component: auto-optimize", "width/height: required", "priority: eager load", "Lazy loading: default for below fold", "WebP: automatic if supported", "Metadata: SEO tags", "Dynamic metadata: fetch data"] },
+      { id: 10, title: "Middleware — Security Guard 👮", difficulty: "Advanced", analogy: "Security guard at school entrance. Everyone passes through—guard checks ID, redirects visitors, logs entries.", code: `// middleware.ts (root of project, NOT in app/)\nimport { NextResponse } from 'next/server';\nimport type { NextRequest } from 'next/server';\n\nexport function middleware(request: NextRequest) {\n  const token = request.cookies.get('token');\n  const isProtected = request.nextUrl.pathname.startsWith('/dashboard');\n  \n  // Redirect unauthenticated users\n  if (isProtected && !token) {\n    return NextResponse.redirect(new URL('/login', request.url));\n  }\n  \n  // Add custom header\n  const response = NextResponse.next();\n  response.headers.set('x-request-id', crypto.randomUUID());\n  return response;\n}\n\n// Configure which routes run middleware\nexport const config = {\n  matcher: ['/dashboard/:path*', '/api/protected/:path*']\n};\n\n// More examples:\n// Redirect: NextResponse.redirect(new URL('/login', request.url));\n// Rewrite: NextResponse.rewrite(new URL('/api/auth', request.url));\n// Next: NextResponse.next();` , points: ["middleware.ts: at project root", "Runs before every request", "Can redirect, rewrite, modify headers", "matcher: which routes run it", "Use for: auth, logging, redirects"] },
+      { id: 11, title: "Environment Variables — Secret Diary 🔐", difficulty: "Beginner", analogy: "Secret diary with a lock. Some secrets for everyone (NEXT_PUBLIC_), some for only the server.", code: `// .env.local (add to .gitignore!)\nDATABASE_URL=postgresql://user:pass@localhost:5432/mydb\nJWT_SECRET=my-secret-key-never-share-this\nAPI_KEY=sk_test_abc123\nNEXT_PUBLIC_API_URL=https://api.myapp.com\n\n// Server-side only (server components, route handlers)\nconst dbUrl = process.env.DATABASE_URL;\nconst secret = process.env.JWT_SECRET;\n\n// Client-side (safe to expose)\nconst apiUrl = process.env.NEXT_PUBLIC_API_URL;\n\n// In Next.js:\n// export default function Component() {\n//   const api = process.env.NEXT_PUBLIC_API_URL; // ✓ works\n// }\n\n// .env.production (for Railway, Vercel, etc.)\nDATABASE_URL=postgresql://...\nJWT_SECRET=prod-secret\n\n// .env.example (safe to commit—template without values)\nDATABASE_URL=\nJWT_SECRET=\nNEXT_PUBLIC_API_URL=` , points: ["NEXT_PUBLIC_: exposed to browser", "Private vars: server-side only", ".env.local: development", ".env.production: production", ".env.example: template (commit it)", "Never commit real secrets!", "Railway/Vercel dashboard: set vars"] },
+      { id: 12, title: "Deploy on Railway — Opening Your Restaurant 🚀", difficulty: "Intermediate", analogy: "You've cooked in your home kitchen. Now open a real restaurant (Railway). Move in, plug in, open doors!", code: `// 1. Create app\n// npx create-next-app@latest\n// npm run dev  (test locally)\n\n// 2. Push to GitHub\n// git add .\n// git commit -m \"Deploy to Railway\"\n// git push origin main\n\n// 3. Create Railway account\n// Go to railway.com → sign up with GitHub\n\n// 4. Create new project\n// Railway → New Project → Deploy from GitHub Repo\n// Select your repo → confirm\n\n// 5. Railway auto-detects Next.js\n// Builds: npm run build\n// Runs: npm start\n// Sets NODE_ENV=production\n\n// 6. Add environment variables\n// In Railway dashboard:\n// Variables tab → add:\n//   DATABASE_URL=postgresql://...\n//   JWT_SECRET=your-secret\n//   NODE_ENV=production\n\n// 7. Custom domain (optional)\n// Railway → Settings → Custom Domain\n// my-app.railway.app or custom.com\n\n// 8. View logs\n// Railway → Deployments → view output\n// Debug issues here\n\n// next.config.js (if needed)\n// module.exports = {\n//   env: {\n//     NEXT_PUBLIC_API_URL: process.env.RAILWAY_DOMAIN || 'http://localhost:3000'\n//   }\n// };` , points: ["Railway auto-detects Next.js", "Deploy from GitHub (push to main)", "Environment variables in dashboard", "Custom domain: Railway settings", "View logs: Deployments tab", "Automatic rebuilds on git push", "PostgreSQL: add service in Railway"] }
+    ];
+
+    const STORAGE_KEY = "next-done";
+
+    function initSidebar() {
+      const list = document.getElementById("lesson-list");
+      LESSONS.forEach(lesson => {
+        const item = document.createElement("div");
+        item.id = `sidebar-lesson-${lesson.id}`;
+        item.className = "sidebar-item";
+        item.onclick = () => {
+          document.getElementById(`lesson-${lesson.id}`).scrollIntoView({ behavior: "smooth" });
+        };
+        item.textContent = `${lesson.id}. ${lesson.title.split(" ")[0]}`;
+        list.appendChild(item);
+      });
+    }
+
+    function initLessons() {
+      const container = document.getElementById("lessons-container");
+      LESSONS.forEach(lesson => {
+        const section = document.createElement("section");
+        section.id = `lesson-${lesson.id}`;
+        section.className = "lesson";
+        section.innerHTML = `
+          <div style="display: flex; align-items: center; margin-bottom: 16px;">
+            <span style="background: #374151; color: white; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">L${lesson.id}</span>
+            <h2 style="font-size: 1.75rem; font-weight: 900; margin: 0 0 0 16px; color: #0f172a;">${lesson.title}</h2>
+            <span class="difficulty ${lesson.difficulty.toLowerCase()}">${lesson.difficulty}</span>
+          </div>
+
+          <div class="analogy">
+            <strong style="color: #6b7280;">📚 Analogy:</strong> ${lesson.analogy}
+          </div>
+
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><code class="language-typescript">${escapeHtml(lesson.code)}</code></pre>
+          </div>
+
+          <div class="key-points">
+            <strong style="color: #166534;">✓ Key Points:</strong>
+            <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+              ${lesson.points.map(p => `<li>${p}</li>`).join("")}
+            </ul>
+          </div>
+
+          <button class="mark-btn" onclick="toggleLesson(${lesson.id})">Mark Complete ✓</button>
+        `;
+        container.appendChild(section);
+      });
+      hljs.highlightAll();
+    }
+
+    function escapeHtml(text) {
+      const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
+      return text.replace(/[&<>"']/g, c => map[c]);
+    }
+
+    function toggleLesson(id) {
+      let done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      if (done.includes(id)) {
+        done = done.filter(x => x !== id);
+      } else {
+        done.push(id);
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const pct = Math.round((done.length / LESSONS.length) * 100);
+      document.getElementById("progress-bar").style.width = pct + "%";
+      document.getElementById("progress-text").textContent = `${done.length} / ${LESSONS.length} lessons complete`;
+      document.getElementById("progress-counter").textContent = done.length;
+
+      LESSONS.forEach(lesson => {
+        const btn = document.querySelector(`#lesson-${lesson.id} .mark-btn`);
+        const sidebar = document.getElementById(`sidebar-lesson-${lesson.id}`);
+        if (done.includes(lesson.id)) {
+          btn.textContent = "✅ Completed!";
+          btn.classList.add("completed");
+          sidebar.classList.add("completed");
+        } else {
+          btn.textContent = "Mark Complete ✓";
+          btn.classList.remove("completed");
+          sidebar.classList.remove("completed");
+        }
+      });
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            document.querySelectorAll(".sidebar-item").forEach(item => item.classList.remove("active"));
+            const lessonNum = entry.target.id.split("-")[1];
+            document.getElementById(`sidebar-lesson-${lessonNum}`)?.classList.add("active");
+          }
+        });
+      }, { threshold: 0.3 });
+
+      document.querySelectorAll(".lesson").forEach(el => observer.observe(el));
+    }
+
+    function copyCode(btn) {
+      const code = btn.parentElement.querySelector("code").textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = "Copied! ✓";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 2000);
+      });
+    }
+
+    function resetProgress() {
+      if (confirm("Reset all progress?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        updateProgress();
+      }
+    }
+
+    initSidebar();
+    initLessons();
+    updateProgress();
+  </script>
+</body>
+</html>
