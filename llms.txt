@@ -1,0 +1,51 @@
+# Dev Journey — Full Stack Web Development Classes
+
+> Dev Journey is a free, beginner-friendly full stack web development course by
+> Chebon Kelvin Kibet, a freelance full stack engineer. It teaches JavaScript,
+> React, Next.js, Node.js and PostgreSQL step by step using playful, real-world
+> analogies and runnable code examples, aimed at complete beginners.
+
+Website: https://fullstackclassesforchebon.web.app
+Author: Chebon Kelvin Kibet — https://chebonkelvin.com
+Contact: contact@chebonkelvin.com
+
+## Courses
+
+- [JavaScript Tutorial](https://fullstackclassesforchebon.web.app/javascript.html):
+  Variables, data types, operators, string methods, template literals, if/else,
+  switch statements, loops, functions, arrow functions, arrays and array methods.
+
+- [React Tutorial](https://fullstackclassesforchebon.web.app/react.html):
+  What React is, JSX, functional components, props, useState, useEffect,
+  lists & keys, conditional rendering, forms, useContext, useRef,
+  useMemo and useCallback.
+
+- [Next.js Tutorial](https://fullstackclassesforchebon.web.app/nextjs.html):
+  What Next.js is, file-based routing, pages & layouts, server vs client
+  components, data fetching (SSR), static generation (SSG), API routes,
+  dynamic routes & params, image optimization and metadata.
+
+- [Node.js Tutorial](https://fullstackclassesforchebon.web.app/nodejs.html):
+  What Node.js is, modules, file system, HTTP servers, Express.js, routing,
+  middleware, REST APIs, JWT authentication, environment variables, CORS
+  and error handling.
+
+- [PostgreSQL Tutorial](https://fullstackclassesforchebon.web.app/postgres.html):
+  What PostgreSQL is, hosting on Railway, tables & columns, data types,
+  INSERT, SELECT, WHERE, UPDATE, DELETE, primary & foreign keys, JOINs,
+  GROUP BY and aggregates.
+
+## Teaching Style
+
+Every lesson explains one concept with a simple everyday analogy (e.g. variables
+as "magic boxes", middleware as "assembly line workers"), followed by real code
+examples. Lessons are ordered so each builds on the previous one, forming a
+complete beginner-to-full-stack learning path.
+
+## Recommended Learning Order
+
+1. JavaScript (language fundamentals)
+2. React (frontend UI)
+3. Next.js (fullstack React framework)
+4. Node.js (backend & APIs)
+5. PostgreSQL (databases & SQL)
