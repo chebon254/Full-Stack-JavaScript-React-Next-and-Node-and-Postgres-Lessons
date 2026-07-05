@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Tutorial for Beginners — Variables, Functions, Classes & More | Dev Journey</title>
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="Python Tutorial for Beginners — Variables, Functions, Classes & More | Dev Journey" />
+  <meta name="description" content="Learn Python from scratch: variables, data types, lists, dictionaries, loops, functions, classes, error handling, decorators and JSON — explained with fun, beginner-friendly analogies and code you can actually run in your browser." />
+  <meta name="keywords" content="Python tutorial, learn Python, Python for beginners, Python variables, Python functions, Python classes, Python lists, Python dictionaries, Python decorators, Python basics course" />
+  <meta name="author" content="Chebon Kelvin Kibet" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <link rel="canonical" href="https://fullstackclassesforchebon.web.app/python.html" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Dev Journey" />
+  <meta property="og:title" content="Python Tutorial for Beginners — Variables, Functions, Classes & More | Dev Journey" />
+  <meta property="og:description" content="Learn Python from scratch: variables, data types, lists, dictionaries, loops, functions, classes, error handling, decorators and JSON — explained with fun, beginner-friendly analogies and code you can actually run in your browser." />
+  <meta property="og:url" content="https://fullstackclassesforchebon.web.app/python.html" />
+  <meta property="og:image" content="https://fullstackclassesforchebon.web.app/favicon/web-app-manifest-512x512.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:creator" content="@chebon_kibet" />
+  <meta name="twitter:title" content="Python Tutorial for Beginners — Variables, Functions, Classes & More | Dev Journey" />
+  <meta name="twitter:description" content="Learn Python from scratch: variables, data types, lists, dictionaries, loops, functions, classes, error handling, decorators and JSON — explained with fun, beginner-friendly analogies and code you can actually run in your browser." />
+  <meta name="twitter:image" content="https://fullstackclassesforchebon.web.app/favicon/web-app-manifest-512x512.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+  <link rel="shortcut icon" href="favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="favicon/site.webmanifest" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  "name": "Python Tutorial for Beginners — Variables, Functions, Classes & More",
+  "description": "Learn Python from scratch: variables, data types, lists, dictionaries, loops, functions, classes, error handling, decorators and JSON — explained with fun, beginner-friendly analogies and code you can actually run in your browser.",
+  "url": "https://fullstackclassesforchebon.web.app/python.html",
+  "author": {
+    "@type": "Person",
+    "name": "Chebon Kelvin Kibet",
+    "url": "https://chebonkelvin.com"
+  },
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "learningResourceType": "Tutorial",
+  "educationalLevel": "Beginner",
+  "teaches": [
+    "Variables",
+    "Data Types",
+    "Lists, Tuples, Sets, Dictionaries",
+    "Conditionals",
+    "Loops",
+    "Functions",
+    "Lambda & Comprehensions",
+    "Classes & OOP",
+    "Error Handling",
+    "File Handling",
+    "Decorators",
+    "JSON"
+  ],
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Dev Journey",
+    "url": "https://fullstackclassesforchebon.web.app/"
+  }
+}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <!-- Powers the live "Run" button: a real Python interpreter compiled to WebAssembly, loaded lazily on first use -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    body { background: #f8fafc; }
+    .sidebar { position: fixed; left: 0; top: 64px; width: 256px; height: calc(100vh - 64px); overflow-y: auto; background: #0f172a; }
+    .main { margin-left: 256px; padding-top: 64px; }
+    .code-block { background: #1e293b; border-radius: 12px; padding: 16px; margin: 16px 0; position: relative; }
+    .snippet-label { color: #ffd43b; font-weight: 700; font-size: 13px; margin: 0 0 10px 0; padding-right: 170px; }
+    .copy-btn { position: absolute; top: 8px; right: 8px; background: #3776ab; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; }
+    .copy-btn:hover { background: #2b5d84; }
+    .copy-btn.copied { background: #22c55e; }
+    .run-btn { position: absolute; top: 8px; right: 90px; background: #ffd43b; color: #1e293b; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; }
+    .run-btn:hover { background: #ffcc02; }
+    pre { margin: 0; overflow-x: auto; }
+    code { color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 14px; }
+    .output-panel { display: none; margin-top: 12px; padding: 12px; background: #0f172a; border-radius: 8px; color: #86efac; font-family: 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; border-left: 3px solid #3776ab; }
+    .output-panel.error { color: #fca5a5; border-left-color: #ef4444; }
+    .lesson { padding: 32px; max-width: 900px; margin: 0 auto; border-bottom: 1px solid #e2e8f0; }
+    .lesson:target { background: #fef9e7; }
+    .difficulty { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px; }
+    .difficulty.beginner { background: #dbeafe; color: #1e40af; }
+    .difficulty.intermediate { background: #fed7aa; color: #92400e; }
+    .difficulty.advanced { background: #fecaca; color: #7f1d1d; }
+    .analogy { background: #eff6ff; border-left: 4px solid #3776ab; padding: 16px; margin: 16px 0; border-radius: 8px; }
+    .key-points { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px; margin: 16px 0; }
+    .key-points li { margin: 8px 0; }
+    .mark-btn { background: #3776ab; color: #fff; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; border: none; font-size: 14px; }
+    .mark-btn.completed { background: #22c55e; }
+    .mark-btn:hover { opacity: 0.9; }
+    .sidebar-item { padding: 12px 16px; cursor: pointer; border-left: 3px solid transparent; color: #cbd5e1; transition: all 0.2s; }
+    .sidebar-item:hover { background: #1e293b; color: #ffd43b; }
+    .sidebar-item.active { background: #1e293b; border-left-color: #ffd43b; color: #ffd43b; }
+    .sidebar-item.completed { color: #22c55e; }
+    .sidebar-item.completed::before { content: '✓ '; }
+    .progress-bar { height: 8px; background: #1e293b; border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #3776ab; transition: width 0.3s ease; }
+    .nav-bar { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 16px; z-index: 40; }
+    .nav-bar a { color: #3776ab; text-decoration: none; font-weight: bold; }
+    .nav-title { color: #1e293b; font-weight: bold; margin-left: 16px; flex: 1; }
+    .nav-progress { color: #64748b; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <div class="nav-bar">
+    <a href="index.html">← Home</a>
+    <div class="nav-title">🐍 Python</div>
+    <div class="nav-progress"><span id="progress-counter">0</span> / 20 complete</div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div style="padding: 16px;">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+      </div>
+      <div style="color: #cbd5e1; font-size: 12px; margin-bottom: 16px;">
+        <span id="progress-text">0 / 20 lessons complete</span>
+      </div>
+    </div>
+    <div id="lesson-list"></div>
+    <div style="padding: 16px; border-top: 1px solid #334155;">
+      <button onclick="resetProgress()" style="width: 100%; background: #334155; color: #cbd5e1; padding: 8px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px;">Reset Progress</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+    <div style="background: linear-gradient(135deg, #3776ab 0%, #ffd43b 100%); padding: 40px; text-align: center; color: white;">
+      <h1 style="font-size: 2.5rem; font-weight: 900; margin: 0;">Python</h1>
+      <p style="margin: 8px 0 0 0; font-size: 1rem;">From variables to decorators — with code you can actually run</p>
+    </div>
+
+    <div id="lessons-container"></div>
+  </div>
+
+  <script>
+    const LESSONS = [
+      { id: 1, title: "What is Python? — Friendly Robot Language 🐍", difficulty: "Beginner", analogy: "Python reads almost like English instructions to a friendly robot. No curly braces, no semicolons — just clean, readable steps.", snippets: [
+        { label: "print() — your first line of Python", code: "print(\"Hello, Python!\")\nprint(\"Running outside any browser\")" },
+        { label: "Python is dynamically typed — no type declarations", code: "name = \"Alice\"\nage = 25\nprint(name, age)\nprint(type(name), type(age))" },
+        { label: "Comments explain code, they are not executed", code: "# This is a comment\nprint(\"Comments start with #\")  # inline comment too" }
+      ]},
+      { id: 2, title: "Variables & Data Types — Labeled Jars 🏺", difficulty: "Beginner", analogy: "Variables are labeled jars. Put a number, text, or true/false value inside — Python figures out the type for you.", snippets: [
+        { label: "Numbers: int and float", code: "score = 10\nprice = 19.99\nprint(score, price)\nprint(type(score), type(price))" },
+        { label: "Strings", code: "name = \"Alice\"\nprint(name, type(name))" },
+        { label: "Booleans", code: "is_active = True\nprint(is_active, type(is_active))" },
+        { label: "None — Python's version of null", code: "job = None\nprint(job, type(job))" },
+        { label: "Type conversion", code: "age_str = \"25\"\nage_num = int(age_str)\nprint(age_num + 5)" }
+      ]},
+      { id: 3, title: "Operators — Playground Math ➕", difficulty: "Beginner", analogy: "Arithmetic operators are your calculator. Comparison operators ask true-or-false questions. Logical operators combine yes/no answers.", snippets: [
+        { label: "Arithmetic operators", code: "print(10 + 5, 10 - 3, 4 * 3, 20 / 4, 20 // 4, 10 % 3, 2 ** 3)" },
+        { label: "Comparison operators", code: "print(5 == 5, 5 != 3, 10 > 5, 10 <= 5)" },
+        { label: "Logical: and / or / not", code: "print(True and False, True or False, not True)" },
+        { label: "in — membership test", code: "fruits = [\"apple\", \"banana\"]\nprint(\"apple\" in fruits, \"cherry\" in fruits)" }
+      ]},
+      { id: 4, title: "Strings & f-strings — Playing with Words ✂️", difficulty: "Beginner", analogy: "Strings are like a strip of paper. Cut it, glue pieces together, or fill in blanks with f-strings — Python's version of Mad Libs.", snippets: [
+        { label: "String methods", code: "text = \"Hello World\"\nprint(text.upper(), text.lower())\nprint(text.replace(\"World\", \"Python\"))" },
+        { label: "f-strings — insert variables into text", code: "name = \"Bob\"\nage = 30\nprint(f\"Hello, {name}! You are {age}.\")" },
+        { label: "Slicing a string", code: "text = \"Hello World\"\nprint(text[0:5], text[-5:])" },
+        { label: "split / join", code: "words = \"a,b,c\".split(\",\")\nprint(words)\nprint(\"-\".join(words))" }
+      ]},
+      { id: 5, title: "Lists — Shopping List 🛒", difficulty: "Beginner", analogy: "A list is an ordered shopping list. Add items, remove them, sort them, or slice out a section.", snippets: [
+        { label: "Create a list and access items", code: "fruits = [\"apple\", \"banana\", \"cherry\"]\nprint(fruits[0], fruits[-1], len(fruits))" },
+        { label: "append / remove", code: "fruits = [\"apple\", \"banana\"]\nfruits.append(\"cherry\")\nprint(fruits)\nfruits.remove(\"apple\")\nprint(fruits)" },
+        { label: "Slicing lists", code: "nums = [1, 2, 3, 4, 5]\nprint(nums[1:3], nums[:2], nums[::-1])" },
+        { label: "Sorting", code: "nums = [3, 1, 4, 1, 5]\nprint(sorted(nums), sorted(nums, reverse=True))" }
+      ]},
+      { id: 6, title: "Tuples & Sets — Sealed Boxes and Unique Bags 📦", difficulty: "Beginner", analogy: "A tuple is a sealed box — its contents never change. A set is a bag that refuses to hold duplicates.", snippets: [
+        { label: "Tuples — immutable sequences", code: "point = (10, 20)\nx, y = point\nprint(x, y)" },
+        { label: "Sets — unique unordered values", code: "colors = {\"red\", \"green\", \"red\"}\nprint(colors)\ncolors.add(\"blue\")\nprint(colors)" },
+        { label: "Set operations", code: "a = {1, 2, 3}\nb = {2, 3, 4}\nprint(a | b, a & b, a - b)" }
+      ]},
+      { id: 7, title: "Dictionaries — Student ID Card 🪪", difficulty: "Beginner", analogy: "A dictionary is like an ID card: each label (key) has a value next to it — name, age, email.", snippets: [
+        { label: "Create and access a dictionary", code: "user = {\"name\": \"Alice\", \"age\": 25}\nprint(user[\"name\"], user.get(\"email\", \"N/A\"))" },
+        { label: "Add, update, and delete keys", code: "user = {\"name\": \"Alice\"}\nuser[\"age\"] = 25\ndel user[\"name\"]\nprint(user)" },
+        { label: "keys / values / items", code: "user = {\"name\": \"Alice\", \"age\": 25}\nprint(list(user.keys()))\nprint(list(user.values()))\nfor k, v in user.items():\n    print(k, \"=\", v)" }
+      ]},
+      { id: 8, title: "Conditionals — Choosing a Path 🌿", difficulty: "Beginner", analogy: "A fork in the road: if it's raining, take an umbrella. elif it's cold, take a jacket. else, go as you are.", snippets: [
+        { label: "if / elif / else", code: "age = 20\nif age < 13:\n    print(\"Child\")\nelif age < 18:\n    print(\"Teen\")\nelse:\n    print(\"Adult\")" },
+        { label: "A conditional expression (Python's ternary)", code: "age = 20\nstatus = \"Adult\" if age >= 18 else \"Minor\"\nprint(status)" },
+        { label: "Combining conditions", code: "age = 25\nhas_license = True\nif age >= 18 and has_license:\n    print(\"Can drive\")" }
+      ]},
+      { id: 9, title: "Loops — Running Laps 🏃", difficulty: "Beginner", analogy: "The coach says run 5 laps! A for loop repeats for each item; a while loop repeats until a condition is false.", snippets: [
+        { label: "for — loop over a list", code: "for fruit in [\"apple\", \"banana\", \"cherry\"]:\n    print(fruit)" },
+        { label: "range() — loop a set number of times", code: "for i in range(5):\n    print(i)" },
+        { label: "while — loop until a condition is false", code: "count = 0\nwhile count < 3:\n    print(\"Count:\", count)\n    count += 1" },
+        { label: "break and continue", code: "for i in range(10):\n    if i == 5:\n        break\n    if i % 2 == 0:\n        continue\n    print(i)" }
+      ]},
+      { id: 10, title: "Functions — Recipe Cards 📗", difficulty: "Beginner", analogy: "A function is a recipe card: give it ingredients (parameters), it hands back a finished dish (return value).", snippets: [
+        { label: "def + return", code: "def add(a, b):\n    return a + b\n\nprint(add(5, 3))" },
+        { label: "Default parameters", code: "def greet(name=\"Friend\"):\n    print(f\"Hi {name}!\")\n\ngreet()\ngreet(\"Alice\")" },
+        { label: "*args — collect extra positional arguments", code: "def total(*numbers):\n    return sum(numbers)\n\nprint(total(1, 2, 3, 4))" },
+        { label: "**kwargs — collect extra keyword arguments", code: "def show(**info):\n    for k, v in info.items():\n        print(k, v)\n\nshow(name=\"Alice\", age=25)" }
+      ]},
+      { id: 11, title: "Lambda & Higher-Order Functions — Mini Machines ⚙️", difficulty: "Intermediate", analogy: "A lambda is a tiny, disposable machine — built for one job, used once, no name needed.", snippets: [
+        { label: "lambda — a small anonymous function", code: "square = lambda x: x * x\nprint(square(5))" },
+        { label: "map / filter", code: "nums = [1, 2, 3, 4, 5]\ndoubled = list(map(lambda n: n * 2, nums))\nevens = list(filter(lambda n: n % 2 == 0, nums))\nprint(doubled, evens)" },
+        { label: "sorted with a key function", code: "people = [(\"Alice\", 30), (\"Bob\", 25)]\nsorted_people = sorted(people, key=lambda p: p[1])\nprint(sorted_people)" }
+      ]},
+      { id: 12, title: "Comprehensions — Assembly Line 🏭", difficulty: "Intermediate", analogy: "An assembly line: take each item, transform it, optionally reject some, and collect the results in one line of code.", snippets: [
+        { label: "List comprehension", code: "squares = [x * x for x in range(5)]\nprint(squares)" },
+        { label: "Conditional list comprehension", code: "evens = [x for x in range(10) if x % 2 == 0]\nprint(evens)" },
+        { label: "Dict comprehension", code: "squares_dict = {x: x * x for x in range(5)}\nprint(squares_dict)" }
+      ]},
+      { id: 13, title: "Classes & OOP — Blueprints 📐", difficulty: "Intermediate", analogy: "A class is a blueprint. Each object built from it (an instance) has its own data but shares the same behavior.", snippets: [
+        { label: "class + __init__ + a method", code: "class Dog:\n    def __init__(self, name):\n        self.name = name\n\n    def bark(self):\n        print(f\"{self.name} says Woof!\")\n\nrex = Dog(\"Rex\")\nrex.bark()" },
+        { label: "A class with internal state", code: "class Counter:\n    def __init__(self):\n        self.count = 0\n\n    def increment(self):\n        self.count += 1\n\n    def value(self):\n        return self.count\n\nc = Counter()\nc.increment()\nc.increment()\nprint(c.value())" }
+      ]},
+      { id: 14, title: "Inheritance & Special Methods — Family Traits 🧬", difficulty: "Intermediate", analogy: "A subclass inherits traits from its parent class but can override them — like a child who shares the family look but has their own voice.", snippets: [
+        { label: "Inheritance — a subclass overrides a method", code: "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print(f\"{self.name} makes a sound\")\n\nclass Cat(Animal):\n    def speak(self):\n        print(f\"{self.name} says Meow!\")\n\nCat(\"Whiskers\").speak()" },
+        { label: "__str__ — a custom string representation", code: "class Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __str__(self):\n        return f\"Point({self.x}, {self.y})\"\n\nprint(Point(1, 2))" }
+      ]},
+      { id: 15, title: "Error Handling — Safety Nets 🥅", difficulty: "Intermediate", analogy: "A tightrope walker has a net below. try/except is your safety net — if something goes wrong, you catch it instead of crashing.", snippets: [
+        { label: "Basic try/except", code: "try:\n    result = 10 / 0\nexcept ZeroDivisionError as e:\n    print(\"Caught:\", e)" },
+        { label: "except + finally", code: "try:\n    value = int(\"not a number\")\nexcept ValueError as e:\n    print(\"Invalid:\", e)\nfinally:\n    print(\"This always runs\")" },
+        { label: "Custom exceptions", code: "class InsufficientFundsError(Exception):\n    pass\n\ndef withdraw(balance, amount):\n    if amount > balance:\n        raise InsufficientFundsError(\"Not enough money!\")\n    return balance - amount\n\ntry:\n    withdraw(100, 200)\nexcept InsufficientFundsError as e:\n    print(e)" }
+      ]},
+      { id: 16, title: "Modules & the Standard Library — Toolboxes 🧰", difficulty: "Beginner", analogy: "Python ships with toolboxes already in the trunk. import grabs the one you need instead of building tools from scratch.", snippets: [
+        { label: "import a built-in module", code: "import math\nprint(math.sqrt(16), math.pi)" },
+        { label: "The random module", code: "import random\nrandom.seed(42)\nprint(random.randint(1, 10))" },
+        { label: "from ... import — grab just what you need", code: "from datetime import datetime\nprint(datetime.now().year)" }
+      ]},
+      { id: 17, title: "File Handling — Reading & Writing Notebooks 📓", difficulty: "Intermediate", analogy: "open() is like opening a notebook — write in it, read it back, or add new lines without erasing the old ones.", snippets: [
+        { label: "Writing a file", code: "with open(\"notes.txt\", \"w\") as f:\n    f.write(\"Hello from Python!\")\nprint(\"File written\")" },
+        { label: "Reading a file", code: "with open(\"notes.txt\", \"w\") as f:\n    f.write(\"Hello from Python!\")\n\nwith open(\"notes.txt\", \"r\") as f:\n    content = f.read()\nprint(content)" },
+        { label: "Appending to a file", code: "with open(\"log.txt\", \"a\") as f:\n    f.write(\"Event logged\\n\")\n\nwith open(\"log.txt\", \"r\") as f:\n    print(f.read())" }
+      ]},
+      { id: 18, title: "Decorators — Gift Wrapping 🎁", difficulty: "Advanced", analogy: "A decorator wraps a function like gift wrap wraps a present — the function inside is unchanged, but it now does something extra.", snippets: [
+        { label: "A simple decorator", code: "def shout(func):\n    def wrapper():\n        result = func()\n        return result.upper()\n    return wrapper\n\n@shout\ndef greet():\n    return \"hello\"\n\nprint(greet())" },
+        { label: "A decorator that takes arguments", code: "def repeat(times):\n    def decorator(func):\n        def wrapper(*args):\n            for _ in range(times):\n                func(*args)\n        return wrapper\n    return decorator\n\n@repeat(3)\ndef say_hi():\n    print(\"Hi!\")\n\nsay_hi()" }
+      ]},
+      { id: 19, title: "Working with JSON — Universal Envelope ✉️", difficulty: "Intermediate", analogy: "JSON is a universal envelope for data — any language can open it. Python's json module packs and unpacks it.", snippets: [
+        { label: "json.dumps / json.loads", code: "import json\n\ndata = {\"name\": \"Alice\", \"age\": 25}\njson_str = json.dumps(data)\nprint(json_str)\n\nparsed = json.loads(json_str)\nprint(parsed[\"name\"])" },
+        { label: "Pretty-printing JSON", code: "import json\n\ndata = {\"name\": \"Alice\", \"tags\": [\"admin\", \"user\"]}\nprint(json.dumps(data, indent=2))" }
+      ]},
+      { id: 20, title: "Virtual Environments & pip — Separate Toolboxes 🧳", difficulty: "Beginner", analogy: "A virtual environment is your own separate toolbox per project, so packages for one project never clash with another.", snippets: [
+        { label: "Creating and activating a virtual environment", runnable: false, code: "python -m venv venv\nsource venv/bin/activate      # Mac/Linux\nvenv\\Scripts\\activate         # Windows" },
+        { label: "Installing packages with pip", runnable: false, code: "pip install requests\npip freeze > requirements.txt\npip install -r requirements.txt" }
+      ]}
+    ];
+
+    const STORAGE_KEY = "python-done";
+
+    function initSidebar() {
+      const list = document.getElementById("lesson-list");
+      LESSONS.forEach(lesson => {
+        const item = document.createElement("div");
+        item.id = `sidebar-lesson-${lesson.id}`;
+        item.className = "sidebar-item";
+        item.onclick = () => {
+          document.getElementById(`lesson-${lesson.id}`).scrollIntoView({ behavior: "smooth" });
+        };
+        item.textContent = `${lesson.id}. ${lesson.title.split(" ")[0]}`;
+        list.appendChild(item);
+      });
+    }
+
+    function initLessons() {
+      const container = document.getElementById("lessons-container");
+      LESSONS.forEach(lesson => {
+        const section = document.createElement("section");
+        section.id = `lesson-${lesson.id}`;
+        section.className = "lesson";
+        section.innerHTML = `
+          <div style="display: flex; align-items: center; margin-bottom: 16px;">
+            <span style="background: #3776ab; color: white; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">L${lesson.id}</span>
+            <h2 style="font-size: 1.75rem; font-weight: 900; margin: 0 0 0 16px; color: #0f172a;">${lesson.title}</h2>
+            <span class="difficulty ${lesson.difficulty.toLowerCase()}">${lesson.difficulty}</span>
+          </div>
+
+          <div class="analogy">
+            <strong style="color: #1e40af;">📚 Analogy:</strong> ${lesson.analogy}
+          </div>
+
+          <div class="key-points">
+            <strong style="color: #166534;">✓ Key Points — each one is its own runnable example below:</strong>
+            <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+              ${lesson.snippets.map(s => `<li>${s.label}</li>`).join("")}
+            </ul>
+          </div>
+
+          ${lesson.snippets.map((snippet, i) => {
+            const canRun = snippet.runnable !== false;
+            return `
+            <div class="code-block">
+              <div class="snippet-label">${escapeHtml(snippet.label)}</div>
+              ${canRun ? `<button class="run-btn" onclick="runPythonSnippet(${lesson.id}, ${i})">▶ Run</button>` : ""}
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <pre><code class="language-python">${escapeHtml(snippet.code)}</code></pre>
+              ${canRun ? `<pre class="output-panel" id="output-${lesson.id}-${i}"></pre>` : ""}
+            </div>
+          `;
+          }).join("")}
+
+          <button class="mark-btn" onclick="toggleLesson(${lesson.id})">Mark Complete ✓</button>
+        `;
+        container.appendChild(section);
+      });
+      hljs.highlightAll();
+    }
+
+    function escapeHtml(text) {
+      const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
+      return text.replace(/[&<>"']/g, c => map[c]);
+    }
+
+    // --- Pyodide-powered live Run ---
+    let pyodideReadyPromise = null;
+    let currentAppend = null;
+
+    function getPyodide() {
+      if (!pyodideReadyPromise) {
+        pyodideReadyPromise = loadPyodide().then(pyodide => {
+          pyodide.setStdout({ batched: (msg) => { if (currentAppend) currentAppend(msg); } });
+          pyodide.setStderr({ batched: (msg) => { if (currentAppend) currentAppend("⚠ " + msg); } });
+          return pyodide;
+        });
+      }
+      return pyodideReadyPromise;
+    }
+
+    async function runPythonSnippet(lessonId, index) {
+      const lesson = LESSONS.find(l => l.id === lessonId);
+      const snippet = lesson.snippets[index];
+      const outEl = document.getElementById(`output-${lessonId}-${index}`);
+      outEl.style.display = "block";
+      outEl.classList.remove("error");
+      outEl.textContent = "⏳ Loading Python runtime...";
+
+      let started = false;
+      currentAppend = (line) => {
+        if (!started) {
+          outEl.textContent = line;
+          started = true;
+        } else {
+          outEl.textContent += "\n" + line;
+        }
+      };
+
+      try {
+        const pyodide = await getPyodide();
+        outEl.textContent = "";
+        started = false;
+        const namespace = pyodide.toPy({});
+        try {
+          await pyodide.runPythonAsync(snippet.code, { globals: namespace });
+        } finally {
+          namespace.destroy();
+        }
+        if (!outEl.textContent) {
+          outEl.textContent = "✅ Ran with no output";
+        }
+      } catch (error) {
+        outEl.classList.add("error");
+        outEl.textContent = "✗ " + error.message;
+      }
+    }
+
+    function toggleLesson(id) {
+      let done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      if (done.includes(id)) {
+        done = done.filter(x => x !== id);
+      } else {
+        done.push(id);
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const pct = Math.round((done.length / LESSONS.length) * 100);
+      document.getElementById("progress-bar").style.width = pct + "%";
+      document.getElementById("progress-text").textContent = `${done.length} / ${LESSONS.length} lessons complete`;
+      document.getElementById("progress-counter").textContent = done.length;
+
+      LESSONS.forEach(lesson => {
+        const btn = document.querySelector(`#lesson-${lesson.id} .mark-btn`);
+        const sidebar = document.getElementById(`sidebar-lesson-${lesson.id}`);
+        if (done.includes(lesson.id)) {
+          btn.textContent = "✅ Completed!";
+          btn.classList.add("completed");
+          sidebar.classList.add("completed");
+        } else {
+          btn.textContent = "Mark Complete ✓";
+          btn.classList.remove("completed");
+          sidebar.classList.remove("completed");
+        }
+      });
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            document.querySelectorAll(".sidebar-item").forEach(item => item.classList.remove("active"));
+            const lessonNum = entry.target.id.split("-")[1];
+            document.getElementById(`sidebar-lesson-${lessonNum}`)?.classList.add("active");
+          }
+        });
+      }, { threshold: 0.3 });
+
+      document.querySelectorAll(".lesson").forEach(el => observer.observe(el));
+    }
+
+    function copyCode(btn) {
+      const code = btn.parentElement.querySelector("code").textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = "Copied! ✓";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 2000);
+      });
+    }
+
+    function resetProgress() {
+      if (confirm("Reset all progress?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        updateProgress();
+      }
+    }
+
+    initSidebar();
+    initLessons();
+    updateProgress();
+  </script>
+</body>
+</html>

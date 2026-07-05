@@ -82,17 +82,26 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
+  <!-- Powers the live "Run" preview: real React, real JSX transform, right in the browser -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     * { font-family: 'Nunito', sans-serif; }
     body { background: #f8fafc; }
     .sidebar { position: fixed; left: 0; top: 64px; width: 256px; height: calc(100vh - 64px); overflow-y: auto; background: #0f172a; }
     .main { margin-left: 256px; padding-top: 64px; }
     .code-block { background: #1e293b; border-radius: 12px; padding: 16px; margin: 16px 0; position: relative; }
-    .copy-btn { position: absolute; top: 8px; right: 8px; background: #06b6d4; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .snippet-label { color: #67e8f9; font-weight: 700; font-size: 13px; margin: 0 0 10px 0; padding-right: 170px; }
+    .copy-btn { position: absolute; top: 8px; right: 8px; background: #06b6d4; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; }
     .copy-btn:hover { background: #0891b2; }
     .copy-btn.copied { background: #22c55e; }
+    .run-btn { position: absolute; top: 8px; right: 90px; background: #0e7490; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; }
+    .run-btn:hover { background: #155e75; }
     pre { margin: 0; overflow-x: auto; }
     code { color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 14px; }
+    .preview-panel { display: none; margin-top: 12px; padding: 16px; background: white; border: 2px dashed #06b6d4; border-radius: 8px; color: #0f172a; }
+    .preview-error { display: none; margin-top: 12px; padding: 12px; background: #0f172a; border-radius: 8px; color: #fca5a5; font-family: 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; border-left: 3px solid #ef4444; }
     .lesson { padding: 32px; max-width: 900px; margin: 0 auto; border-bottom: 1px solid #e2e8f0; }
     .difficulty { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px; }
     .difficulty.beginner { background: #dbeafe; color: #1e40af; }
@@ -153,23 +162,370 @@
 
   <script>
     const LESSONS = [
-      { id: 1, title: "What is React? — LEGO Blocks 🧩", difficulty: "Beginner", analogy: "LEGO bricks you build once and reuse everywhere. Each brick (component) looks the same each time. React builds websites from reusable UI components.", code: "// App.jsx\\nfunction App() {\\n  return (\\n    <div>\\n      <h1>Hello, React!</h1>\\n      <p>I am a React app built with components.</p>\\n    </div>\\n  );\\n}\\n\\nexport default App;\\n\\n// Create a React project:\\n// npm create vite@latest my-app -- --template react\\n// cd my-app\\n// npm run dev" , points: ["React: library for building UIs", "Components: reusable pieces", "JSX: HTML-like syntax in JavaScript", "Vite: fast project setup"] },
-      { id: 2, title: "JSX — HTML Inside JS 🤝", difficulty: "Beginner", analogy: "JSX is like sending a letter (HTML) inside a box (JavaScript). It looks like HTML but lives in JS files.", code: "// JSX vs HTML differences\\nfunction Profile() {\\n  return (\\n    <div className=\"card\">  {/* className not class */}\\n      <h1>Alice</h1>\\n      <img src=\"photo.jpg\" alt=\"profile\" />\\n      <br /> {/* self-closing tag */}\\n    </div>\\n  );\\n}\\n\\n// Embedding JavaScript with {}\\nfunction Greeting() {\\n  const name = \"Bob\";\\n  const age = 25;\\n  const isActive = true;\\n  \\n  return (\\n    <div>\\n      <p>Hello, {name}!</p>\\n      <p>Age: {age}</p>\\n      {isActive && <p>Currently online</p>}\\n      {age > 18 ? <p>Adult</p> : <p>Minor</p>}\\n    </div>\\n  );\\n}\\n\\n// Fragment: return multiple elements\\nfunction Multiple() {\\n  return (\\n    <>\\n      <h1>Title</h1>\\n      <p>Content</p>\\n    </>\\n  );\\n}" , points: ["className instead of class", "Embed JS expressions with { }", "Conditional rendering with && and ?", "Fragments: <> </>", "Self-closing tags: <img />"] },
-      { id: 3, title: "Functional Components — Molds 🏺", difficulty: "Beginner", analogy: "A mold for making cookies — every cookie looks the same but is separate. Components are functions returning JSX.", code: "// Simple component\\nfunction Button() {\\n  return <button>Click me</button>;\\n}\\n\\n// Component that returns content\\nfunction Card() {\\n  return (\\n    <div className=\"card\">\\n      <h2>Card Title</h2>\\n      <p>Card content goes here</p>\\n    </div>\\n  );\\n}\\n\\n// Using components together\\nfunction App() {\\n  return (\\n    <div>\\n      <Card />\\n      <Card />\\n      <Card />\\n      <Button />\\n    </div>\\n  );\\n}\\n\\n// File structure\\n// src/components/Button.jsx\\n// src/components/Card.jsx\\n// src/App.jsx (uses both)" , points: ["Components: functions returning JSX", "Component names: start with capital letter", "Import/export: reuse across files", "Compose: use components in other components"] },
-      { id: 4, title: "Props — Passing Notes 📝", difficulty: "Beginner", analogy: "Props are like passing a note to a friend. You write info on the note, friend reads it. Props are read-only!", code: "// Component with props\\nfunction UserCard(props) {\\n  return (\\n    <div className=\"card\">\\n      <h2>{props.name}</h2>\\n      <p>Email: {props.email}</p>\\n      <p>Age: {props.age}</p>\\n    </div>\\n  );\\n}\\n\\n// Props destructuring (cleaner)\\nfunction UserCard({ name, email, age }) {\\n  return (\\n    <div className=\"card\">\\n      <h2>{name}</h2>\\n      <p>Email: {email}</p>\\n      <p>Age: {age}</p>\\n    </div>\\n  );\\n}\\n\\n// Using component with props\\nfunction App() {\\n  return (\\n    <div>\\n      <UserCard name=\"Alice\" email=\"alice@email.com\" age={25} />\\n      <UserCard name=\"Bob\" email=\"bob@email.com\" age={30} />\\n    </div>\\n  );\\n}\\n\\n// Default props\\nfunction Greeting({ greeting = \"Hello\" }) {\\n  return <p>{greeting}!</p>;\\n}\\n\\n// Props as objects, arrays, functions\\nfunction DataCard({ user, tags, onDelete }) {\\n  return (\\n    <div>\\n      <h3>{user.name}</h3>\\n      <p>Tags: {tags.join(\", \")}</p>\\n      <button onClick={onDelete}>Delete</button>\\n    </div>\\n  );\\n}" , points: ["Props: pass data to components", "Read-only: can't change props", "Destructuring: cleaner { prop }", "Default props: fallback values", "Props can be any type: objects, functions, arrays"] },
-      { id: 5, title: "useState — Scoreboard 🏆", difficulty: "Beginner", analogy: "A scoreboard that updates instantly. useState is your component's scoreboard — when it changes, component re-renders.", code: "import { useState } from 'react';\\n\\nfunction Counter() {\\n  const [count, setCount] = useState(0);\\n  \\n  return (\\n    <div>\\n      <p>Score: {count}</p>\\n      <button onClick={() => setCount(count + 1)}>+1</button>\\n      <button onClick={() => setCount(count - 1)}>-1</button>\\n      <button onClick={() => setCount(0)}>Reset</button>\\n    </div>\\n  );\\n}\\n\\n// String state\\nfunction TextInput() {\\n  const [text, setText] = useState(\"\");\\n  return (\\n    <div>\\n      <input value={text} onChange={(e) => setText(e.target.value)} />\\n      <p>You typed: {text}</p>\\n    </div>\\n  );\\n}\\n\\n// Boolean state (show/hide)\\nfunction Toggle() {\\n  const [isVisible, setIsVisible] = useState(true);\\n  return (\\n    <div>\\n      {isVisible && <p>You can see me!</p>}\\n      <button onClick={() => setIsVisible(!isVisible)}>Toggle</button>\\n    </div>\\n  );\\n}\\n\\n// Object state\\nfunction Form() {\\n  const [form, setForm] = useState({ name: \"\", email: \"\" });\\n  \\n  const handleChange = (e) => {\\n    setForm({ ...form, [e.target.name]: e.target.value });\\n  };\\n  \\n  return (\\n    <div>\\n      <input name=\"name\" value={form.name} onChange={handleChange} />\\n      <input name=\"email\" value={form.email} onChange={handleChange} />\\n    </div>\\n  );\\n}" , points: ["useState: add state to component", "const [value, setValue]", "setValue: update state and re-render", "setState triggers re-render", "Rules: only at top level, in components"] },
-      { id: 6, title: "useEffect — Side Effects 🌊", difficulty: "Intermediate", analogy: "After building LEGO castle (render), add lights (side effect). useEffect runs AFTER render.", code: "import { useEffect, useState } from 'react';\\n\\nfunction Timer() {\\n  const [seconds, setSeconds] = useState(0);\\n  \\n  // Runs after EVERY render\\n  useEffect(() => {\\n    console.log(\"Component rendered!\");\\n  });\\n  \\n  // Runs only ONCE on mount ([] = empty dependency)\\n  useEffect(() => {\\n    console.log(\"Component mounted!\");\\n    \\n    return () => console.log(\"Component unmounted!\"); // cleanup\\n  }, []);\\n  \\n  // Runs when 'seconds' changes\\n  useEffect(() => {\\n    document.title = \\\\`Seconds: \\\\${seconds}\\\\`;\\n  }, [seconds]);\\n  \\n  // Fetching data\\n  useEffect(() => {\\n    const interval = setInterval(() => {\\n      setSeconds(s => s + 1);\\n    }, 1000);\\n    \\n    return () => clearInterval(interval); // cleanup!\\n  }, []);\\n  \\n  return <p>Time: {seconds}s</p>;\\n}\\n\\n// Fetch data on mount\\nfunction UserList() {\\n  const [users, setUsers] = useState([]);\\n  const [loading, setLoading] = useState(true);\\n  \\n  useEffect(() => {\\n    fetch(\"/api/users\")\\n      .then(r => r.json())\\n      .then(data => {\\n        setUsers(data);\\n        setLoading(false);\\n      });\\n  }, []); // only fetch once\\n  \\n  if (loading) return <p>Loading...</p>;\\n  return <ul>{users.map(u => <li key={u.id}>{u.name}</li>)}</ul>;\\n}" , points: ["useEffect: run code after render", "[] dependency: run once on mount", "[dep]: run when dep changes", "No array: run after every render", "Cleanup function: called on unmount"] },
-      { id: 7, title: "Lists & Keys — Name Tags 🏷️", difficulty: "Beginner", analogy: "Every student gets a name tag. React needs a unique 'name tag' (key) for each list item.", code: "function TodoList() {\\n  const todos = [\\n    { id: 1, text: \"Buy milk\" },\\n    { id: 2, text: \"Do homework\" },\\n    { id: 3, text: \"Sleep\" }\\n  ];\\n  \\n  return (\\n    <ul>\\n      {todos.map(todo => (\\n        <li key={todo.id}>{todo.text}</li>\\n      ))}\\n    </ul>\\n  );\\n}\\n\\n// Keys are important!\\nfunction UserCards({ users }) {\\n  return (\\n    <div>\\n      {users.map(user => (\\n        <div key={user.id} className=\"card\">\\n          <h3>{user.name}</h3>\\n          <p>{user.email}</p>\\n        </div>\\n      ))}\\n    </div>\\n  );\\n}\\n\\n// DON'T use index as key (bad!)\\nfunction BadExample({ items }) {\\n  return (\\n    <ul>\\n      {items.map((item, index) => (\\n        <li key={index}>{item}</li> {/* NOT GOOD! */}\\n      ))}\\n    </ul>\\n  );\\n}\\n\\n// Empty state\\nfunction ProductList({ products }) {\\n  if (products.length === 0) {\\n    return <p>No products found</p>;\\n  }\\n  \\n  return (\\n    <div>\\n      {products.map(p => <div key={p.id}>{p.name}</div>)}\\n    </div>\\n  );\\n}" , points: ["map: render lists", "key: unique identifier (use id!)", "Avoid: don't use index as key", "Keys help React identify changes", "Empty state: handle zero items"] },
-      { id: 8, title: "Conditional Rendering — Right Content 📺", difficulty: "Beginner", analogy: "TV shows different channels. If logged in, show dashboard. Else, show login page.", code: "function Dashboard({ isLoggedIn, user, error }) {\\n  // Early return\\n  if (error) return <p>Error: {error}</p>;\\n  if (!isLoggedIn) return <p>Please log in</p>;\\n  if (!user) return <p>Loading...</p>;\\n  \\n  return <h1>Welcome, {user.name}!</h1>;\\n}\\n\\n// Ternary operator\\nfunction Button({ isActive }) {\\n  return (\\n    <button className={isActive ? \"btn-active\" : \"btn-inactive\"}>\\n      {isActive ? \"Active\" : \"Inactive\"}\\n    </button>\\n  );\\n}\\n\\n// Logical AND (&&)\\nfunction Notification({ hasMessages }) {\\n  return (\\n    <div>\\n      {hasMessages && <div>You have new messages!</div>}\\n    </div>\\n  );\\n}\\n\\n// Logical OR (||)\\nfunction UserGreeting({ name }) {\\n  return <p>Hello, {name || \"Guest\"}</p>;\\n}\\n\\n// Switch-like (object mapping)\\nfunction StatusBadge({ status }) {\\n  const statusMessages = {\\n    pending: \"⏳ Pending...\",\\n    success: \"✅ Success!\",\\n    error: \"❌ Error\",\\n    loading: \"🔄 Loading...\"\\n  };\\n  \\n  return <span>{statusMessages[status] || \"Unknown\"}</span>;\\n}" , points: ["Early return: check conditions first", "Ternary ? :", "Logical && operator", "Avoid: don't render null conditionally with || (use ternary)", "Object mapping: DRY approach"] },
-      { id: 9, title: "Forms — Filling Paperwork 📋", difficulty: "Intermediate", analogy: "School form: fill boxes, click submit, school gets info. React forms need 'controlled components'.", code: "import { useState } from 'react';\\n\\nfunction SignupForm() {\\n  const [form, setForm] = useState({ name: '', email: '', password: '' });\\n  const [submitted, setSubmitted] = useState(false);\\n  \\n  const handleChange = (e) => {\\n    const { name, value } = e.target;\\n    setForm({ ...form, [name]: value });\\n  };\\n  \\n  const handleSubmit = (e) => {\\n    e.preventDefault();\\n    console.log('Submitted:', form);\\n    setSubmitted(true);\\n  };\\n  \\n  if (submitted) {\\n    return <p>Thank you, {form.name}!</p>;\\n  }\\n  \\n  return (\\n    <form onSubmit={handleSubmit}>\\n      <input\\n        name=\\\"name\\\"\\n        value={form.name}\\n        onChange={handleChange}\\n        placeholder=\\\"Full Name\\\"\\n      />\\n      <input\\n        name=\\\"email\\\"\\n        type=\\\"email\\\"\\n        value={form.email}\\n        onChange={handleChange}\\n        placeholder=\\\"Email\\\"\\n      />\\n      <input\\n        name=\\\"password\\\"\\n        type=\\\"password\\\"\\n        value={form.password}\\n        onChange={handleChange}\\n        placeholder=\\\"Password\\\"\\n      />\\n      <button type=\\\"submit\\\">Sign Up</button>\\n    </form>\\n  );\\n}\\n\\n// Select dropdown\\nfunction ChooseCountry() {\\n  const [country, setCountry] = useState('us');\\n  \\n  return (\\n    <select value={country} onChange={(e) => setCountry(e.target.value)}>\\n      <option value=\\\"us\\\">USA</option>\\n      <option value=\\\"uk\\\">UK</option>\\n      <option value=\\\"ca\\\">Canada</option>\\n    </select>\\n  );\\n}\\n\\n// Checkbox\\nfunction Newsletter() {\\n  const [subscribed, setSubscribed] = useState(false);\\n  \\n  return (\\n    <label>\\n      <input\\n        type=\\\"checkbox\\\"\\n        checked={subscribed}\\n        onChange={(e) => setSubscribed(e.target.checked)}\\n      />\\n      Subscribe to newsletter\\n    </label>\\n  );\\n}" , points: ["Controlled components: React state drives input", "onChange: update state on every keystroke", "onSubmit: handle form submission", "e.preventDefault: stop page reload", "textarea, select, checkbox: similar pattern"] },
-      { id: 10, title: "useContext — PA System 📢", difficulty: "Intermediate", analogy: "School PA system announces to EVERYONE. Without it, you'd walk to each classroom. useContext passes data deep without prop drilling.", code: "import { createContext, useContext } from 'react';\\n\\n// Create context\\nconst ThemeContext = createContext();\\n\\n// Provider component (wraps app)\\nfunction ThemeProvider({ children }) {\\n  const [theme, setTheme] = useContext('light');\\n  \\n  const toggleTheme = () => {\\n    setTheme(theme === 'light' ? 'dark' : 'light');\\n  };\\n  \\n  const value = { theme, toggleTheme };\\n  \\n  return (\\n    <ThemeContext.Provider value={value}>\\n      {children}\\n    </ThemeContext.Provider>\\n  );\\n}\\n\\n// Use context in any component (no prop drilling!)\\nfunction Button() {\\n  const { theme, toggleTheme } = useContext(ThemeContext);\\n  \\n  return (\\n    <button onClick={toggleTheme}>\\n      Current theme: {theme}\\n    </button>\\n  );\\n}\\n\\n// Auth context example\\nconst AuthContext = createContext();\\n\\nfunction AuthProvider({ children }) {\\n  const [user, setUser] = useState(null);\\n  \\n  const login = (email) => setUser({ email });\\n  const logout = () => setUser(null);\\n  \\n  return (\\n    <AuthContext.Provider value={{ user, login, logout }}>\\n      {children}\\n    </AuthContext.Provider>\\n  );\\n}\\n\\nfunction Header() {\\n  const { user, logout } = useContext(AuthContext);\\n  \\n  if (!user) return <p>Not logged in</p>;\\n  return <p>Hello, {user.email}! <button onClick={logout}>Logout</button></p>;\\n}" , points: ["createContext: create context object", "Provider: wrap components that need data", "useContext: access context value", "Avoids prop drilling (passing props through many levels)", "Can store: theme, auth, language, etc."] },
-      { id: 11, title: "useRef — Sticky Notes 📌", difficulty: "Intermediate", analogy: "Sticky note on an object. useRef gives direct reference to DOM element or stores value that doesn't re-render.", code: "import { useRef } from 'react';\\n\\n// Focus input on button click\\nfunction TextInput() {\\n  const inputRef = useRef(null);\\n  \\n  const focusInput = () => {\\n    inputRef.current.focus();\\n  };\\n  \\n  return (\\n    <div>\\n      <input ref={inputRef} />\\n      <button onClick={focusInput}>Focus Input</button>\\n    </div>\\n  );\\n}\\n\\n// Store previous value\\nfunction Counter() {\\n  const [count, setCount] = useState(0);\\n  const prevCountRef = useRef();\\n  \\n  useEffect(() => {\\n    prevCountRef.current = count;\\n  }, [count]);\\n  \\n  return (\\n    <p>\\n      Count: {count}, Previous: {prevCountRef.current}\\n    </p>\\n  );\\n}\\n\\n// Store interval ID to clear later\\nfunction Timer() {\\n  const [seconds, setSeconds] = useState(0);\\n  const intervalRef = useRef(null);\\n  \\n  const start = () => {\\n    intervalRef.current = setInterval(() => {\\n      setSeconds(s => s + 1);\\n    }, 1000);\\n  };\\n  \\n  const stop = () => {\\n    clearInterval(intervalRef.current);\\n  };\\n  \\n  return (\\n    <div>\\n      <p>Time: {seconds}s</p>\\n      <button onClick={start}>Start</button>\\n      <button onClick={stop}>Stop</button>\\n    </div>\\n  );\\n}\\n\\n// Don't use ref like state!\\n// WRONG: const ref = useRef(0); ref.current++;\\n// RIGHT: const [count, setCount] = useState(0); setCount(count + 1);" , points: ["useRef: reference to DOM element", "ref.current: access the element", ".focus(): set focus", ".value: get input value", "Doesn't trigger re-render (unlike setState)", "Use for: focus, selections, timers, DOM measurements"] },
-      { id: 12, title: "useMemo & useCallback — Smart Caching 💾", difficulty: "Advanced", analogy: "If someone asks 432×768, calculate once, write on sticky note. Next time, just read. useMemo caches values.", code: "import { useMemo, useCallback } from 'react';\\n\\n// useMemo: cache expensive calculation\\nfunction ExpensiveComponent({ numbers }) {\\n  const expensiveSum = useMemo(() => {\\n    console.log(\"Calculating sum...\");\\n    return numbers.reduce((a, b) => a + b, 0);\\n  }, [numbers]); // only recalculate if numbers changes\\n  \\n  return <p>Sum: {expensiveSum}</p>;\\n}\\n\\n// Without useMemo: recalculates every render (slow!)\\nfunction SlowComponent({ numbers }) {\\n  const sum = numbers.reduce((a, b) => a + b, 0); // runs every render\\n  return <p>Sum: {sum}</p>;\\n}\\n\\n// useCallback: cache function reference\\nfunction Parent() {\\n  const [count, setCount] = useState(0);\\n  \\n  // Without useCallback: new function every render\\n  // const handleClick = () => setCount(count + 1);\\n  \\n  // With useCallback: same function unless deps change\\n  const handleClick = useCallback(() => {\\n    setCount(count + 1);\\n  }, [count]);\\n  \\n  return <Child onClickChild={handleClick} />;\\n}\\n\\nfunction Child({ onClickChild }) {\\n  // If onClickChild changes every render, Child re-renders\\n  // useCallback prevents unnecessary re-renders\\n  return <button onClick={onClickChild}>Click</button>;\\n}\\n\\n// Memo: skip re-render if props unchanged\\nimport { memo } from 'react';\\n\\nconst ExpensiveChild = memo(({ name }) => {\\n  console.log(\"Rendering child\");\\n  return <div>{name}</div>;\\n});\\n\\nfunction App() {\\n  const [count, setCount] = useState(0);\\n  return (\\n    <div>\\n      <button onClick={() => setCount(count + 1)}>Count: {count}</button>\\n      <ExpensiveChild name=\"Alice\\\" /> {/* only re-renders if name changes */}\\n    </div>\\n  );\\n}" , points: ["useMemo: cache expensive calculations", "useCallback: cache function references", "Only use when performance is an issue", "Dependency array: when to recalculate", "React.memo: skip re-render if props same"] },
-      { id: 13, title: "Custom Hooks — Your Own Tools 🔧", difficulty: "Advanced", analogy: "You use a screwdriver so often you build a custom multi-tool with it built-in.", code: "import { useState, useEffect } from 'react';\\n\\n// useLocalStorage: persist state to browser storage\\nfunction useLocalStorage(key, initialValue) {\\n  const [value, setValue] = useState(() => {\\n    const stored = localStorage.getItem(key);\\n    return stored ? JSON.parse(stored) : initialValue;\\n  });\\n  \\n  const setStoredValue = (newValue) => {\\n    setValue(newValue);\\n    localStorage.setItem(key, JSON.stringify(newValue));\\n  };\\n  \\n  return [value, setStoredValue];\\n}\\n\\n// Usage\\nfunction SavedInput() {\\n  const [text, setText] = useLocalStorage('myText', '');\\n  return (\\n    <input value={text} onChange={(e) => setText(e.target.value)} />\\n  );\\n}\\n\\n// useFetch: fetch data with loading/error\\nfunction useFetch(url) {\\n  const [data, setData] = useState(null);\\n  const [loading, setLoading] = useState(true);\\n  const [error, setError] = useState(null);\\n  \\n  useEffect(() => {\\n    fetch(url)\\n      .then(r => r.json())\\n      .then(d => {\\n        setData(d);\\n        setLoading(false);\\n      })\\n      .catch(e => {\\n        setError(e);\\n        setLoading(false);\\n      });\\n  }, [url]);\\n  \\n  return { data, loading, error };\\n}\\n\\n// Usage\\nfunction UserProfile({ userId }) {\\n  const { data: user, loading, error } = useFetch(\\\\`/api/users/\\\\${userId}\\\\`);\\n  \\n  if (loading) return <p>Loading...</p>;\\n  if (error) return <p>Error: {error.message}</p>;\\n  return <h1>{user.name}</h1>;\\n}\\n\\n// useWindowSize: track window dimensions\\nfunction useWindowSize() {\\n  const [size, setSize] = useState({ width: 0, height: 0 });\\n  \\n  useEffect(() => {\\n    const handleResize = () => {\\n      setSize({ width: window.innerWidth, height: window.innerHeight });\\n    };\\n    \\n    window.addEventListener('resize', handleResize);\\n    return () => window.removeEventListener('resize', handleResize);\\n  }, []);\\n  \\n  return size;\\n}" , points: ["Custom hooks: reusable logic", "Start with 'use' prefix", "Combine existing hooks inside", "Returns state/functions", "Share logic across components"] },
-      { id: 14, title: "React Router — GPS for Your App 🗺️", difficulty: "Intermediate", analogy: "GPS for your app. Type destination (URL), GPS shows right screen.", code: "import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate, useParams } from 'react-router-dom';\\n\\nfunction App() {\\n  return (\\n    <BrowserRouter>\\n      <nav>\\n        <Link to=\\\"/\\\">Home</Link>\\n        <NavLink to=\\\"/about\\\" className={({ isActive }) => isActive ? 'active' : ''}>About</NavLink>\\n        <Link to=\\\"/contact\\\">Contact</Link>\\n      </nav>\\n      \\n      <Routes>\\n        <Route path=\\\"/\\\" element={<Home />} />\\n        <Route path=\\\"/about\\\" element={<About />} />\\n        <Route path=\\\"/blog/:slug\\\" element={<BlogPost />} />\\n        <Route path=\\\"/user/:id\\\" element={<UserDetail />} />\\n        <Route path=\\\"*\\\" element={<NotFound />} />\\n      </Routes>\\n    </BrowserRouter>\\n  );\\n}\\n\\nfunction BlogPost() {\\n  const { slug } = useParams(); // get URL param\\n  return <h1>Post: {slug}</h1>;\\n}\\n\\nfunction Dashboard() {\\n  const navigate = useNavigate();\\n  \\n  const goHome = () => {\\n    navigate('/');\\n  };\\n  \\n  return <button onClick={goHome}>Back Home</button>;\\n}\\n\\nfunction NotFound() {\\n  return <h1>404 — Page Not Found</h1>;\\n}\\n\\n// Setup: npm install react-router-dom" , points: ["BrowserRouter: wrap app", "Routes/Route: map paths to components", "Link: navigation without reload", "useParams: read URL params", "useNavigate: programmatic navigation", "NavLink: auto-highlights active link"] },
-      { id: 15, title: "Error Boundaries — Safety Glass 🛡️", difficulty: "Advanced", analogy: "Safety glass in a car. If cracks, doesn't shatter. Error Boundary catches errors and shows fallback UI.", code: "class ErrorBoundary extends React.Component {\\n  constructor(props) {\\n    super(props);\\n    this.state = { hasError: false, error: null };\\n  }\\n  \\n  static getDerivedStateFromError(error) {\\n    return { hasError: true, error };\\n  }\\n  \\n  componentDidCatch(error, errorInfo) {\\n    console.log('Error caught:', error);\\n    console.log('Error info:', errorInfo);\\n  }\\n  \\n  render() {\\n    if (this.state.hasError) {\\n      return (\\n        <div>\\n          <h1>Oops! Something went wrong.</h1>\\n          <p>{this.state.error?.message}</p>\\n          <button onClick={() => this.setState({ hasError: false })}>\\n            Try Again\\n          </button>\\n        </div>\\n      );\\n    }\\n    \\n    return this.props.children;\\n  }\\n}\\n\\n// Usage\\nfunction App() {\\n  return (\\n    <ErrorBoundary>\\n      <Dashboard />\\n      <UserList />\\n    </ErrorBoundary>\\n  );\\n}\\n\\n// Only catches errors in child components\\n// NOT for: event handlers, async code" , points: ["Error Boundary: class component (not hooks)", "Wraps children to catch errors", "Shows fallback UI instead of crash", "Perfect for routes, sections, components"] },
-      { id: 16, title: "Performance Optimization — Blazing Fast 🚀", difficulty: "Advanced", analogy: "Race car: tune every part for speed. React apps need tuning.", code: "import { lazy, Suspense } from 'react';\\nimport { memo } from 'react';\\n\\n// Lazy load components\\nconst HeavyComponent = lazy(() => import('./HeavyComponent'));\\nconst Dashboard = lazy(() => import('./Dashboard'));\\n\\nfunction App() {\\n  return (\\n    <Suspense fallback={<div>Loading...</div>}>\\n      <Dashboard />\\n    </Suspense>\\n  );\\n}\\n\\n// Code splitting by route\\nimport { useTransition } from 'react';\\n\\nfunction Router() {\\n  const [route, setRoute] = useState('home');\\n  const [isPending, startTransition] = useTransition();\\n  \\n  const navigate = (newRoute) => {\\n    startTransition(() => {\\n      setRoute(newRoute); // non-urgent update\\n    });\\n  };\\n  \\n  return (\\n    <div>\\n      {isPending && <p>Loading...</p>}\\n      {route === 'home' && <Home />}\\n      {route === 'about' && <About />}\\n    </div>\\n  );\\n}\\n\\n// Key placement matters\\nfunction GoodList({ items }) {\\n  return items.map(item => (\\n    <Item key={item.id} data={item} /> // key on top-level\\n  ));\\n}\\n\\n// Avoid inline props (creates new object every render)\\nfunction BadExample() {\\n  return <Child style={{ color: 'red' }} />; // new object every render\\n}\\n\\nfunction GoodExample() {\\n  const style = { color: 'red' }; // outside, created once\\n  return <Child style={style} />;\\n}\\n\\n// Using React DevTools Profiler\\n// DevTools → Profiler tab → record interactions → see render times" , points: ["lazy: code split components", "Suspense: loading fallback", "memo: skip re-renders", "useTransition: non-urgent updates", "Avoid inline objects/functions", "Key placement: top-level elements", "Profile with React DevTools"] }
-    ];
+      {
+            "id": 1,
+            "title": "What is React? — LEGO Blocks 🧩",
+            "difficulty": "Beginner",
+            "analogy": "LEGO bricks you build once and reuse everywhere. Each brick (component) looks the same each time. React builds websites from reusable UI components.",
+            "snippets": [
+                  {
+                        "label": "A React component returns JSX",
+                        "code": "function App() {\n  return (\n    <div>\n      <h1>Hello, React!</h1>\n      <p>I am a React app built with components.</p>\n    </div>\n  );\n}\n\nrender(<App />);"
+                  },
+                  {
+                        "label": "Components are reusable pieces",
+                        "code": "function Greeting() {\n  return <p>Hi there!</p>;\n}\n\nfunction App() {\n  return (\n    <div>\n      <Greeting />\n      <Greeting />\n      <Greeting />\n    </div>\n  );\n}\n\nrender(<App />);"
+                  },
+                  {
+                        "label": "Creating a real project with Vite",
+                        "runnable": false,
+                        "code": "npm create vite@latest my-app -- --template react\ncd my-app\nnpm run dev"
+                  }
+            ]
+      },
+      {
+            "id": 2,
+            "title": "JSX — HTML Inside JS 🤝",
+            "difficulty": "Beginner",
+            "analogy": "JSX is like sending a letter (HTML) inside a box (JavaScript). It looks like HTML but lives in JS files.",
+            "snippets": [
+                  {
+                        "label": "className instead of class",
+                        "code": "function Profile() {\n  return (\n    <div className=\"card\">\n      <h1>Alice</h1>\n      <img src=\"https://placekitten.com/80/80\" alt=\"profile\" />\n    </div>\n  );\n}\n\nrender(<Profile />);"
+                  },
+                  {
+                        "label": "Embed JavaScript expressions with { }",
+                        "code": "function Greeting() {\n  const name = \"Bob\";\n  const age = 25;\n  return (\n    <div>\n      <p>Hello, {name}!</p>\n      <p>Age: {age}</p>\n    </div>\n  );\n}\n\nrender(<Greeting />);"
+                  },
+                  {
+                        "label": "Conditional rendering with && and ?",
+                        "code": "function Status() {\n  const isActive = true;\n  const age = 25;\n  return (\n    <div>\n      {isActive && <p>Currently online</p>}\n      {age > 18 ? <p>Adult</p> : <p>Minor</p>}\n    </div>\n  );\n}\n\nrender(<Status />);"
+                  },
+                  {
+                        "label": "Fragments — return multiple elements without a wrapper div",
+                        "code": "function Multiple() {\n  return (\n    <>\n      <h1>Title</h1>\n      <p>Content</p>\n    </>\n  );\n}\n\nrender(<Multiple />);"
+                  }
+            ]
+      },
+      {
+            "id": 3,
+            "title": "Functional Components — Molds 🏺",
+            "difficulty": "Beginner",
+            "analogy": "A mold for making cookies — every cookie looks the same but is separate. Components are functions returning JSX.",
+            "snippets": [
+                  {
+                        "label": "A component is just a function that returns JSX",
+                        "code": "function Button() {\n  return <button>Click me</button>;\n}\n\nrender(<Button />);"
+                  },
+                  {
+                        "label": "A component with more content",
+                        "code": "function Card() {\n  return (\n    <div className=\"card\">\n      <h2>Card Title</h2>\n      <p>Card content goes here</p>\n    </div>\n  );\n}\n\nrender(<Card />);"
+                  },
+                  {
+                        "label": "Composing components together",
+                        "code": "function Card() {\n  return <div className=\"card\">A card</div>;\n}\n\nfunction App() {\n  return (\n    <div>\n      <Card />\n      <Card />\n      <Card />\n    </div>\n  );\n}\n\nrender(<App />);"
+                  }
+            ]
+      },
+      {
+            "id": 4,
+            "title": "Props — Passing Notes 📝",
+            "difficulty": "Beginner",
+            "analogy": "Props are like passing a note to a friend. You write info on the note, the friend reads it. Props are read-only!",
+            "snippets": [
+                  {
+                        "label": "Reading props with props.name",
+                        "code": "function UserCard(props) {\n  return (\n    <div className=\"card\">\n      <h2>{props.name}</h2>\n      <p>Email: {props.email}</p>\n    </div>\n  );\n}\n\nrender(<UserCard name=\"Alice\" email=\"alice@email.com\" />);"
+                  },
+                  {
+                        "label": "Destructuring props (cleaner)",
+                        "code": "function UserCard({ name, email, age }) {\n  return (\n    <div className=\"card\">\n      <h2>{name}</h2>\n      <p>Email: {email}</p>\n      <p>Age: {age}</p>\n    </div>\n  );\n}\n\nrender(<UserCard name=\"Alice\" email=\"alice@email.com\" age={25} />);"
+                  },
+                  {
+                        "label": "Passing different props to the same component",
+                        "code": "function UserCard({ name, email }) {\n  return <p>{name} — {email}</p>;\n}\n\nfunction App() {\n  return (\n    <div>\n      <UserCard name=\"Alice\" email=\"alice@email.com\" />\n      <UserCard name=\"Bob\" email=\"bob@email.com\" />\n    </div>\n  );\n}\n\nrender(<App />);"
+                  },
+                  {
+                        "label": "Default props — fallback values",
+                        "code": "function Greeting({ greeting = \"Hello\" }) {\n  return <p>{greeting}!</p>;\n}\n\nrender(<Greeting />);"
+                  },
+                  {
+                        "label": "Props can be objects, arrays, and functions",
+                        "code": "function DataCard({ user, tags, onDelete }) {\n  return (\n    <div>\n      <h3>{user.name}</h3>\n      <p>Tags: {tags.join(\", \")}</p>\n      <button onClick={onDelete}>Delete</button>\n    </div>\n  );\n}\n\nrender(\n  <DataCard\n    user={{ name: \"Alice\" }}\n    tags={[\"admin\", \"editor\"]}\n    onDelete={() => alert(\"Deleted!\")}\n  />\n);"
+                  }
+            ]
+      },
+      {
+            "id": 5,
+            "title": "useState — Scoreboard 🏆",
+            "difficulty": "Beginner",
+            "analogy": "A scoreboard that updates instantly. useState is your component's scoreboard — when it changes, the component re-renders.",
+            "snippets": [
+                  {
+                        "label": "useState — a number counter",
+                        "code": "function Counter() {\n  const [count, setCount] = useState(0);\n  return (\n    <div>\n      <p>Score: {count}</p>\n      <button onClick={() => setCount(count + 1)}>+1</button>\n      <button onClick={() => setCount(count - 1)}>-1</button>\n      <button onClick={() => setCount(0)}>Reset</button>\n    </div>\n  );\n}\n\nrender(<Counter />);"
+                  },
+                  {
+                        "label": "useState — a string (controlled input)",
+                        "code": "function TextInput() {\n  const [text, setText] = useState(\"\");\n  return (\n    <div>\n      <input value={text} onChange={(e) => setText(e.target.value)} />\n      <p>You typed: {text}</p>\n    </div>\n  );\n}\n\nrender(<TextInput />);"
+                  },
+                  {
+                        "label": "useState — a boolean toggle",
+                        "code": "function Toggle() {\n  const [isVisible, setIsVisible] = useState(true);\n  return (\n    <div>\n      {isVisible && <p>You can see me!</p>}\n      <button onClick={() => setIsVisible(!isVisible)}>Toggle</button>\n    </div>\n  );\n}\n\nrender(<Toggle />);"
+                  },
+                  {
+                        "label": "useState — an object",
+                        "code": "function Form() {\n  const [form, setForm] = useState({ name: \"\", email: \"\" });\n\n  const handleChange = (e) => {\n    setForm({ ...form, [e.target.name]: e.target.value });\n  };\n\n  return (\n    <div>\n      <input name=\"name\" value={form.name} onChange={handleChange} placeholder=\"Name\" />\n      <input name=\"email\" value={form.email} onChange={handleChange} placeholder=\"Email\" />\n      <p>{form.name} / {form.email}</p>\n    </div>\n  );\n}\n\nrender(<Form />);"
+                  }
+            ]
+      },
+      {
+            "id": 6,
+            "title": "useEffect — Side Effects 🌊",
+            "difficulty": "Intermediate",
+            "analogy": "After building a LEGO castle (render), you add lights (side effect). useEffect runs after render.",
+            "snippets": [
+                  {
+                        "label": "useEffect with [] — runs once on mount",
+                        "code": "function Welcome() {\n  const [message, setMessage] = useState(\"Loading...\");\n\n  useEffect(() => {\n    setMessage(\"Mounted!\");\n  }, []);\n\n  return <p>{message}</p>;\n}\n\nrender(<Welcome />);"
+                  },
+                  {
+                        "label": "useEffect with a dependency — runs when it changes",
+                        "code": "function Doubler() {\n  const [count, setCount] = useState(1);\n  const [doubled, setDoubled] = useState(0);\n\n  useEffect(() => {\n    setDoubled(count * 2);\n  }, [count]);\n\n  return (\n    <div>\n      <p>Count: {count}, Doubled: {doubled}</p>\n      <button onClick={() => setCount(count + 1)}>+1</button>\n    </div>\n  );\n}\n\nrender(<Doubler />);"
+                  },
+                  {
+                        "label": "A live timer with cleanup",
+                        "code": "function Timer() {\n  const [seconds, setSeconds] = useState(0);\n\n  useEffect(() => {\n    const interval = setInterval(() => {\n      setSeconds(s => s + 1);\n    }, 1000);\n\n    return () => clearInterval(interval);\n  }, []);\n\n  return <p>Time: {seconds}s</p>;\n}\n\nrender(<Timer />);"
+                  },
+                  {
+                        "label": "Fetching data on mount",
+                        "code": "function UserList() {\n  const [users, setUsers] = useState([]);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    fetch(\"https://jsonplaceholder.typicode.com/users\")\n      .then(r => r.json())\n      .then(data => {\n        setUsers(data);\n        setLoading(false);\n      });\n  }, []);\n\n  if (loading) return <p>Loading...</p>;\n  return <ul>{users.map(u => <li key={u.id}>{u.name}</li>)}</ul>;\n}\n\nrender(<UserList />);"
+                  }
+            ]
+      },
+      {
+            "id": 7,
+            "title": "Lists & Keys — Name Tags 🏷️",
+            "difficulty": "Beginner",
+            "analogy": "Every student gets a name tag. React needs a unique name tag (key) for each list item.",
+            "snippets": [
+                  {
+                        "label": "map + key — rendering a list",
+                        "code": "function TodoList() {\n  const todos = [\n    { id: 1, text: \"Buy milk\" },\n    { id: 2, text: \"Do homework\" },\n    { id: 3, text: \"Sleep\" },\n  ];\n\n  return (\n    <ul>\n      {todos.map(todo => (\n        <li key={todo.id}>{todo.text}</li>\n      ))}\n    </ul>\n  );\n}\n\nrender(<TodoList />);"
+                  },
+                  {
+                        "label": "Rendering a list of cards",
+                        "code": "function UserCards() {\n  const users = [\n    { id: 1, name: \"Alice\", email: \"alice@email.com\" },\n    { id: 2, name: \"Bob\", email: \"bob@email.com\" },\n  ];\n\n  return (\n    <div>\n      {users.map(user => (\n        <div key={user.id} className=\"card\">\n          <h3>{user.name}</h3>\n          <p>{user.email}</p>\n        </div>\n      ))}\n    </div>\n  );\n}\n\nrender(<UserCards />);"
+                  },
+                  {
+                        "label": "Why not to use the array index as a key",
+                        "code": "function BadExample() {\n  const items = [\"Apple\", \"Banana\", \"Cherry\"];\n  return (\n    <ul>\n      {items.map((item, index) => (\n        <li key={index}>{item}</li>\n      ))}\n    </ul>\n  );\n}\n\n// Works here, but breaks when items are reordered/inserted —\n// prefer a stable id from your data instead of the index.\nrender(<BadExample />);"
+                  },
+                  {
+                        "label": "Handling an empty list",
+                        "code": "function ProductList() {\n  const products = [];\n\n  if (products.length === 0) {\n    return <p>No products found</p>;\n  }\n\n  return <div>{products.map(p => <div key={p.id}>{p.name}</div>)}</div>;\n}\n\nrender(<ProductList />);"
+                  }
+            ]
+      },
+      {
+            "id": 8,
+            "title": "Conditional Rendering — Right Content 📺",
+            "difficulty": "Beginner",
+            "analogy": "A TV shows different channels. If logged in, show the dashboard. Else, show the login page.",
+            "snippets": [
+                  {
+                        "label": "Early return based on conditions",
+                        "code": "function Dashboard({ isLoggedIn, user }) {\n  if (!isLoggedIn) return <p>Please log in</p>;\n  if (!user) return <p>Loading...</p>;\n  return <h1>Welcome, {user.name}!</h1>;\n}\n\nrender(<Dashboard isLoggedIn={true} user={{ name: \"Alice\" }} />);"
+                  },
+                  {
+                        "label": "Ternary operator for two outcomes",
+                        "code": "function StatusButton({ isActive }) {\n  return (\n    <button className={isActive ? \"btn-active\" : \"btn-inactive\"}>\n      {isActive ? \"Active\" : \"Inactive\"}\n    </button>\n  );\n}\n\nrender(<StatusButton isActive={true} />);"
+                  },
+                  {
+                        "label": "Logical && — render only when true",
+                        "code": "function Notification({ hasMessages }) {\n  return (\n    <div>\n      {hasMessages && <div>You have new messages!</div>}\n    </div>\n  );\n}\n\nrender(<Notification hasMessages={true} />);"
+                  },
+                  {
+                        "label": "Logical || — a fallback value",
+                        "code": "function UserGreeting({ name }) {\n  return <p>Hello, {name || \"Guest\"}</p>;\n}\n\nrender(<UserGreeting name=\"\" />);"
+                  },
+                  {
+                        "label": "Object mapping instead of many if/else",
+                        "code": "function StatusBadge({ status }) {\n  const statusMessages = {\n    pending: \"⏳ Pending...\",\n    success: \"✅ Success!\",\n    error: \"❌ Error\",\n  };\n\n  return <span>{statusMessages[status] || \"Unknown\"}</span>;\n}\n\nrender(<StatusBadge status=\"success\" />);"
+                  }
+            ]
+      },
+      {
+            "id": 9,
+            "title": "Forms — Filling Paperwork 📋",
+            "difficulty": "Intermediate",
+            "analogy": "A school form: fill in boxes, click submit, the school gets the info. React forms use 'controlled components'.",
+            "snippets": [
+                  {
+                        "label": "A controlled text input",
+                        "code": "function NameInput() {\n  const [name, setName] = useState(\"\");\n  return (\n    <div>\n      <input value={name} onChange={(e) => setName(e.target.value)} placeholder=\"Your name\" />\n      <p>Hello, {name || \"stranger\"}!</p>\n    </div>\n  );\n}\n\nrender(<NameInput />);"
+                  },
+                  {
+                        "label": "onSubmit + preventDefault",
+                        "code": "function SignupForm() {\n  const [name, setName] = useState(\"\");\n  const [submitted, setSubmitted] = useState(false);\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    setSubmitted(true);\n  };\n\n  if (submitted) return <p>Thank you, {name}!</p>;\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input value={name} onChange={(e) => setName(e.target.value)} placeholder=\"Full name\" />\n      <button type=\"submit\">Sign Up</button>\n    </form>\n  );\n}\n\nrender(<SignupForm />);"
+                  },
+                  {
+                        "label": "A select dropdown",
+                        "code": "function ChooseCountry() {\n  const [country, setCountry] = useState(\"us\");\n  return (\n    <select value={country} onChange={(e) => setCountry(e.target.value)}>\n      <option value=\"us\">USA</option>\n      <option value=\"uk\">UK</option>\n      <option value=\"ca\">Canada</option>\n    </select>\n  );\n}\n\nrender(<ChooseCountry />);"
+                  },
+                  {
+                        "label": "A checkbox",
+                        "code": "function Newsletter() {\n  const [subscribed, setSubscribed] = useState(false);\n  return (\n    <label>\n      <input\n        type=\"checkbox\"\n        checked={subscribed}\n        onChange={(e) => setSubscribed(e.target.checked)}\n      />\n      Subscribe to newsletter ({subscribed ? \"yes\" : \"no\"})\n    </label>\n  );\n}\n\nrender(<Newsletter />);"
+                  }
+            ]
+      },
+      {
+            "id": 10,
+            "title": "useContext — PA System 📢",
+            "difficulty": "Intermediate",
+            "analogy": "A school PA system announces to everyone. Without it, you would walk to each classroom. useContext passes data deep without prop drilling.",
+            "snippets": [
+                  {
+                        "label": "createContext + Provider",
+                        "code": "const ThemeContext = createContext();\n\nfunction ThemeProvider({ children }) {\n  const [theme, setTheme] = useState(\"light\");\n  const toggleTheme = () => setTheme(theme === \"light\" ? \"dark\" : \"light\");\n  return (\n    <ThemeContext.Provider value={{ theme, toggleTheme }}>\n      {children}\n    </ThemeContext.Provider>\n  );\n}\n\nfunction ThemedButton() {\n  const { theme, toggleTheme } = useContext(ThemeContext);\n  return <button onClick={toggleTheme}>Current theme: {theme}</button>;\n}\n\nfunction App() {\n  return (\n    <ThemeProvider>\n      <ThemedButton />\n    </ThemeProvider>\n  );\n}\n\nrender(<App />);"
+                  },
+                  {
+                        "label": "Avoiding prop drilling with context",
+                        "code": "const AuthContext = createContext();\n\nfunction AuthProvider({ children }) {\n  const [user, setUser] = useState({ email: \"alice@email.com\" });\n  const logout = () => setUser(null);\n  return (\n    <AuthContext.Provider value={{ user, logout }}>\n      {children}\n    </AuthContext.Provider>\n  );\n}\n\nfunction Header() {\n  const { user, logout } = useContext(AuthContext);\n  if (!user) return <p>Not logged in</p>;\n  return <p>Hello, {user.email}! <button onClick={logout}>Logout</button></p>;\n}\n\nrender(\n  <AuthProvider>\n    <Header />\n  </AuthProvider>\n);"
+                  }
+            ]
+      },
+      {
+            "id": 11,
+            "title": "useRef — Sticky Notes 📌",
+            "difficulty": "Intermediate",
+            "analogy": "A sticky note on an object. useRef gives a direct reference to a DOM element or stores a value that does not trigger a re-render.",
+            "snippets": [
+                  {
+                        "label": "useRef — focus an input on button click",
+                        "code": "function FocusInput() {\n  const inputRef = useRef(null);\n  return (\n    <div>\n      <input ref={inputRef} placeholder=\"Click the button to focus me\" />\n      <button onClick={() => inputRef.current.focus()}>Focus Input</button>\n    </div>\n  );\n}\n\nrender(<FocusInput />);"
+                  },
+                  {
+                        "label": "useRef — remember the previous value",
+                        "code": "function PreviousValue() {\n  const [count, setCount] = useState(0);\n  const prevCountRef = useRef();\n\n  useEffect(() => {\n    prevCountRef.current = count;\n  }, [count]);\n\n  return (\n    <div>\n      <p>Count: {count}, Previous: {String(prevCountRef.current)}</p>\n      <button onClick={() => setCount(count + 1)}>+1</button>\n    </div>\n  );\n}\n\nrender(<PreviousValue />);"
+                  },
+                  {
+                        "label": "useRef — store a timer ID (doesn't trigger re-render)",
+                        "code": "function Timer() {\n  const [seconds, setSeconds] = useState(0);\n  const intervalRef = useRef(null);\n\n  const start = () => {\n    intervalRef.current = setInterval(() => setSeconds(s => s + 1), 1000);\n  };\n  const stop = () => clearInterval(intervalRef.current);\n\n  return (\n    <div>\n      <p>Time: {seconds}s</p>\n      <button onClick={start}>Start</button>\n      <button onClick={stop}>Stop</button>\n    </div>\n  );\n}\n\nrender(<Timer />);"
+                  }
+            ]
+      },
+      {
+            "id": 12,
+            "title": "useMemo & useCallback — Smart Caching 💾",
+            "difficulty": "Advanced",
+            "analogy": "If someone asks what 432 x 768 is, calculate once and write it on a sticky note. Next time, just read it. useMemo caches values.",
+            "snippets": [
+                  {
+                        "label": "useMemo — cache an expensive calculation",
+                        "code": "function SumDisplay() {\n  const [numbers] = useState([1, 2, 3, 4, 5]);\n  const [tick, setTick] = useState(0);\n\n  const expensiveSum = useMemo(() => {\n    return numbers.reduce((a, b) => a + b, 0);\n  }, [numbers]);\n\n  return (\n    <div>\n      <p>Sum: {expensiveSum}</p>\n      <button onClick={() => setTick(tick + 1)}>Re-render ({tick})</button>\n    </div>\n  );\n}\n\nrender(<SumDisplay />);"
+                  },
+                  {
+                        "label": "useCallback — cache a function reference",
+                        "code": "function Parent() {\n  const [count, setCount] = useState(0);\n\n  const handleClick = useCallback(() => {\n    setCount(c => c + 1);\n  }, []);\n\n  return <Child onClickChild={handleClick} count={count} />;\n}\n\nfunction Child({ onClickChild, count }) {\n  return <button onClick={onClickChild}>Count: {count}</button>;\n}\n\nrender(<Parent />);"
+                  },
+                  {
+                        "label": "React.memo — skip re-rendering when props don't change",
+                        "code": "const ExpensiveChild = memo(({ name }) => {\n  return <div>Child: {name}</div>;\n});\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  return (\n    <div>\n      <button onClick={() => setCount(count + 1)}>Count: {count}</button>\n      <ExpensiveChild name=\"Alice\" />\n    </div>\n  );\n}\n\nrender(<App />);"
+                  }
+            ]
+      },
+      {
+            "id": 13,
+            "title": "Custom Hooks — Your Own Tools 🔧",
+            "difficulty": "Advanced",
+            "analogy": "You use a screwdriver so often that you build a custom multi-tool with it built in.",
+            "snippets": [
+                  {
+                        "label": "useLocalStorage — persist state to browser storage",
+                        "code": "function useLocalStorage(key, initialValue) {\n  const [value, setValue] = useState(() => {\n    const stored = localStorage.getItem(key);\n    return stored ? JSON.parse(stored) : initialValue;\n  });\n\n  const setStoredValue = (newValue) => {\n    setValue(newValue);\n    localStorage.setItem(key, JSON.stringify(newValue));\n  };\n\n  return [value, setStoredValue];\n}\n\nfunction SavedInput() {\n  const [text, setText] = useLocalStorage(\"demo-text\", \"\");\n  return <input value={text} onChange={(e) => setText(e.target.value)} />;\n}\n\nrender(<SavedInput />);"
+                  },
+                  {
+                        "label": "useFetch — fetch data with loading state",
+                        "code": "function useFetch(url) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    fetch(url)\n      .then(r => r.json())\n      .then(d => {\n        setData(d);\n        setLoading(false);\n      });\n  }, [url]);\n\n  return { data, loading };\n}\n\nfunction UserProfile() {\n  const { data: user, loading } = useFetch(\"https://jsonplaceholder.typicode.com/users/1\");\n  if (loading) return <p>Loading...</p>;\n  return <h1>{user.name}</h1>;\n}\n\nrender(<UserProfile />);"
+                  },
+                  {
+                        "label": "useWindowSize — track window dimensions",
+                        "code": "function useWindowSize() {\n  const [size, setSize] = useState({ width: window.innerWidth, height: window.innerHeight });\n\n  useEffect(() => {\n    const handleResize = () => {\n      setSize({ width: window.innerWidth, height: window.innerHeight });\n    };\n    window.addEventListener(\"resize\", handleResize);\n    return () => window.removeEventListener(\"resize\", handleResize);\n  }, []);\n\n  return size;\n}\n\nfunction WindowSizeDisplay() {\n  const size = useWindowSize();\n  return <p>Window: {size.width} x {size.height}</p>;\n}\n\nrender(<WindowSizeDisplay />);"
+                  }
+            ]
+      },
+      {
+            "id": 14,
+            "title": "React Router — GPS for Your App 🗺️",
+            "difficulty": "Intermediate",
+            "noRun": true,
+            "analogy": "A GPS for your app. Type a destination (URL), and the GPS shows the right screen. Routing needs a real page and history, so these examples are copy-only.",
+            "snippets": [
+                  {
+                        "label": "BrowserRouter + Routes/Route — mapping paths to components",
+                        "code": "import { BrowserRouter, Routes, Route } from 'react-router-dom';\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n        <Route path=\"/about\" element={<About />} />\n        <Route path=\"*\" element={<NotFound />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}"
+                  },
+                  {
+                        "label": "Link and NavLink — navigation without a page reload",
+                        "code": "import { Link, NavLink } from 'react-router-dom';\n\nfunction Nav() {\n  return (\n    <nav>\n      <Link to=\"/\">Home</Link>\n      <NavLink to=\"/about\" className={({ isActive }) => isActive ? 'active' : ''}>\n        About\n      </NavLink>\n    </nav>\n  );\n}"
+                  },
+                  {
+                        "label": "useParams — read dynamic segments from the URL",
+                        "code": "import { useParams } from 'react-router-dom';\n\nfunction BlogPost() {\n  const { slug } = useParams();\n  return <h1>Post: {slug}</h1>;\n}\n\n// <Route path=\"/blog/:slug\" element={<BlogPost />} />"
+                  },
+                  {
+                        "label": "useNavigate — navigate programmatically",
+                        "code": "import { useNavigate } from 'react-router-dom';\n\nfunction Dashboard() {\n  const navigate = useNavigate();\n  return <button onClick={() => navigate('/')}>Back Home</button>;\n}"
+                  }
+            ]
+      },
+      {
+            "id": 15,
+            "title": "Error Boundaries — Safety Glass 🛡️",
+            "difficulty": "Advanced",
+            "analogy": "Safety glass in a car — if it cracks, it does not shatter. An Error Boundary catches errors and shows a fallback UI.",
+            "snippets": [
+                  {
+                        "label": "An Error Boundary class component",
+                        "code": "class ErrorBoundary extends React.Component {\n  constructor(props) {\n    super(props);\n    this.state = { hasError: false };\n  }\n\n  static getDerivedStateFromError() {\n    return { hasError: true };\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return <h2>Oops! Something went wrong.</h2>;\n    }\n    return this.props.children;\n  }\n}\n\nrender(<ErrorBoundary><p>Nothing wrong here</p></ErrorBoundary>);"
+                  },
+                  {
+                        "label": "Catching a real error thrown by a child",
+                        "code": "class ErrorBoundary extends React.Component {\n  constructor(props) {\n    super(props);\n    this.state = { hasError: false };\n  }\n  static getDerivedStateFromError() {\n    return { hasError: true };\n  }\n  render() {\n    if (this.state.hasError) {\n      return <h2>Oops! Something went wrong.</h2>;\n    }\n    return this.props.children;\n  }\n}\n\nfunction BuggyComponent() {\n  throw new Error(\"I crashed on purpose!\");\n}\n\nrender(\n  <ErrorBoundary>\n    <BuggyComponent />\n  </ErrorBoundary>\n);"
+                  },
+                  {
+                        "label": "Error Boundaries do not catch event handler errors",
+                        "code": "function SafeButton() {\n  const handleClick = () => {\n    try {\n      throw new Error(\"Button click failed\");\n    } catch (error) {\n      alert(\"Caught in the handler: \" + error.message);\n    }\n  };\n  return <button onClick={handleClick}>Click to trigger a handled error</button>;\n}\n\nrender(<SafeButton />);"
+                  }
+            ]
+      },
+      {
+            "id": 16,
+            "title": "Performance Optimization — Blazing Fast 🚀",
+            "difficulty": "Advanced",
+            "analogy": "A race car: tune every part for speed. React apps need tuning too.",
+            "snippets": [
+                  {
+                        "label": "lazy + Suspense — load a component asynchronously",
+                        "code": "const HeavyComponent = lazy(() =>\n  new Promise(resolve => {\n    setTimeout(() => {\n      resolve({ default: () => <p>Heavy component loaded!</p> });\n    }, 1000);\n  })\n);\n\nfunction App() {\n  return (\n    <Suspense fallback={<p>Loading...</p>}>\n      <HeavyComponent />\n    </Suspense>\n  );\n}\n\nrender(<App />);"
+                  },
+                  {
+                        "label": "memo — skip re-rendering when props don't change",
+                        "code": "const Child = memo(({ name }) => {\n  return <p>Child rendered for: {name}</p>;\n});\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  return (\n    <div>\n      <button onClick={() => setCount(count + 1)}>Count: {count}</button>\n      <Child name=\"Alice\" />\n    </div>\n  );\n}\n\nrender(<App />);"
+                  },
+                  {
+                        "label": "useTransition — mark an update as non-urgent",
+                        "code": "function Search() {\n  const [query, setQuery] = useState(\"\");\n  const [isPending, startTransition] = useTransition();\n\n  const handleChange = (e) => {\n    const value = e.target.value;\n    startTransition(() => {\n      setQuery(value);\n    });\n  };\n\n  return (\n    <div>\n      <input onChange={handleChange} placeholder=\"Type to search...\" />\n      {isPending && <p>Updating...</p>}\n      <p>Query: {query}</p>\n    </div>\n  );\n}\n\nrender(<Search />);"
+                  },
+                  {
+                        "label": "Avoid creating new objects/functions inline",
+                        "code": "function Child({ style }) {\n  return <p style={style}>Styled text</p>;\n}\n\nfunction GoodExample() {\n  const style = { color: \"blue\" }; // created once per render, not passed inline\n  return <Child style={style} />;\n}\n\nrender(<GoodExample />);"
+                  }
+            ]
+      }
+];
+
 
     const STORAGE_KEY = "react-done";
 
@@ -204,17 +560,28 @@
             <strong style="color: #0e7490;">📚 Analogy:</strong> ${lesson.analogy}
           </div>
 
-          <div class="code-block">
-            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            <pre><code class="language-javascript">${escapeHtml(lesson.code)}</code></pre>
-          </div>
-
           <div class="key-points">
-            <strong style="color: #166534;">✓ Key Points:</strong>
+            <strong style="color: #166534;">✓ Key Points — each one is its own example below:</strong>
             <ul style="margin: 8px 0 0 0; padding-left: 20px;">
-              ${lesson.points.map(p => `<li>${p}</li>`).join("")}
+              ${lesson.snippets.map(s => `<li>${s.label}</li>`).join("")}
             </ul>
           </div>
+
+          ${lesson.snippets.map((snippet, i) => {
+            const canRun = !lesson.noRun && snippet.runnable !== false;
+            return `
+            <div class="code-block">
+              <div class="snippet-label">${escapeHtml(snippet.label)}</div>
+              ${canRun ? `<button class="run-btn" onclick="runReactSnippet(${lesson.id}, ${i})">▶ Run</button>` : ""}
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <pre><code class="language-javascript">${escapeHtml(snippet.code)}</code></pre>
+              ${canRun ? `
+                <div class="preview-panel" id="preview-${lesson.id}-${i}"></div>
+                <pre class="preview-error" id="preview-error-${lesson.id}-${i}"></pre>
+              ` : ""}
+            </div>
+          `;
+          }).join("")}
 
           <button class="mark-btn" onclick="toggleLesson(${lesson.id})">Mark Complete ✓</button>
         `;
@@ -226,6 +593,55 @@
     function escapeHtml(text) {
       const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
       return text.replace(/[&<>"']/g, c => map[c]);
+    }
+
+    function runReactSnippet(lessonId, index) {
+      const lesson = LESSONS.find(l => l.id === lessonId);
+      const snippet = lesson.snippets[index];
+      const previewEl = document.getElementById(`preview-${lessonId}-${index}`);
+      const errorEl = document.getElementById(`preview-error-${lessonId}-${index}`);
+
+      previewEl.style.display = "block";
+      errorEl.style.display = "none";
+      errorEl.textContent = "";
+
+      try {
+        const cleaned = snippet.code
+          .split("\n")
+          .filter(line => !/^\s*import .* from ['"]/.test(line))
+          .filter(line => !/^\s*export default /.test(line))
+          .join("\n");
+
+        const transformed = Babel.transform(cleaned, { presets: [["react", { runtime: "classic" }]] }).code;
+
+        if (!previewEl._reactRoot) {
+          previewEl._reactRoot = ReactDOM.createRoot(previewEl);
+        }
+
+        const scope = {
+          React,
+          useState: React.useState,
+          useEffect: React.useEffect,
+          useRef: React.useRef,
+          useContext: React.useContext,
+          useMemo: React.useMemo,
+          useCallback: React.useCallback,
+          useTransition: React.useTransition,
+          createContext: React.createContext,
+          memo: React.memo,
+          lazy: React.lazy,
+          Suspense: React.Suspense,
+          render: (element) => previewEl._reactRoot.render(element),
+        };
+
+        const argNames = Object.keys(scope);
+        const argValues = Object.values(scope);
+        const run = new Function(...argNames, transformed);
+        run(...argValues);
+      } catch (error) {
+        errorEl.style.display = "block";
+        errorEl.textContent = "✗ " + error.message;
+      }
     }
 
     function toggleLesson(id) {

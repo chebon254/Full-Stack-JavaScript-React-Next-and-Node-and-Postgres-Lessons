@@ -49,4 +49,28 @@
     <priority>0.9</priority>
   </url>
 
+  <!-- Python Lessons -->
+  <url>
+    <loc>https://fullstackclassesforchebon.web.app/python.html</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Flutter Lessons -->
+  <url>
+    <loc>https://fullstackclassesforchebon.web.app/flutter.html</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- PHP Lessons -->
+  <url>
+    <loc>https://fullstackclassesforchebon.web.app/php.html</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
 </urlset>

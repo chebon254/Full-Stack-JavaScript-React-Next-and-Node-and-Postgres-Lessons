@@ -88,11 +88,16 @@
     .sidebar { position: fixed; left: 0; top: 64px; width: 256px; height: calc(100vh - 64px); overflow-y: auto; background: #0f172a; }
     .main { margin-left: 256px; padding-top: 64px; }
     .code-block { background: #1e293b; border-radius: 12px; padding: 16px; margin: 16px 0; position: relative; }
-    .copy-btn { position: absolute; top: 8px; right: 8px; background: #3b82f6; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .snippet-label { color: #fbbf24; font-weight: 700; font-size: 13px; margin: 0 0 10px 0; padding-right: 170px; }
+    .copy-btn { position: absolute; top: 8px; right: 8px; background: #3b82f6; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; }
     .copy-btn:hover { background: #2563eb; }
     .copy-btn.copied { background: #22c55e; }
+    .run-btn { position: absolute; top: 8px; right: 90px; background: #16a34a; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; }
+    .run-btn:hover { background: #15803d; }
     pre { margin: 0; overflow-x: auto; }
     code { color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 14px; }
+    .output-panel { display: none; margin-top: 12px; padding: 12px; background: #0f172a; border-radius: 8px; color: #86efac; font-family: 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; border-left: 3px solid #22c55e; }
+    .output-panel.error { color: #fca5a5; border-left-color: #ef4444; }
     .lesson { padding: 32px; max-width: 900px; margin: 0 auto; border-bottom: 1px solid #e2e8f0; }
     .lesson:target { background: #fef3c7; }
     .difficulty { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px; }
@@ -155,32 +160,650 @@
 
   <script>
     const LESSONS = [
-      { id: 1, title: "Variables — Magic Boxes 📦", difficulty: "Beginner", analogy: "Imagine you have magic boxes where you can store anything — toys, books, snacks. Each box has a label so you know what's inside. `let` is a box you can swap contents. `const` is a sealed box you never change. `var` is an old leaky box — avoid it!", code: "// let: a box you can refill\\nlet score = 10;\\nscore = 20; // works fine!\\n\\n// const: a sealed box — contents never change\\nconst PI = 3.14159;\\n// PI = 3; // Error! Can't change a const\\n\\n// var: the old way — avoid in modern JS\\nvar oldStyle = \"don't use this\";\\n\\nconsole.log(score);  // 20\\nconsole.log(PI);     // 3.14159", points: ["let: create and change values", "const: create but never change (preferred)", "var: legacy — avoid it", "Naming: use camelCase like myAge"] },
-      { id: 2, title: "Data Types — Types of Toys 🧸", difficulty: "Beginner", analogy: "Different toys go in different boxes — LEGO (numbers), storybooks (strings), yes/no cards (booleans), empty box (null/undefined).", code: "const name = \"Alice\";       // string\\nconst age = 25;             // number\\nconst isActive = true;      // boolean\\nconst job = null;           // intentional empty\\nlet hobby;                  // undefined (no value yet)\\nconst data = { x: 1 };      // object\\nconst list = [1, 2, 3];     // array\\n\\nconsole.log(typeof name);   // \"string\"\\nconsole.log(typeof age);    // \"number\"\\nconsole.log(typeof isActive); // \"boolean\"\\nconsole.log(typeof list);   // \"object\" (arrays are objects!)", points: ["String: text in quotes", "Number: integers and decimals", "Boolean: true or false only", "typeof operator: check data type", "null: intentional nothing; undefined: not set yet"] },
-      { id: 3, title: "Operators — Math on the Playground ➕", difficulty: "Beginner", analogy: "Arithmetic operators like math class. Comparison operators ask 'who is taller?'. Logical operators are AND/OR game rules.", code: "// Arithmetic\\nlet x = 10 + 5;    // 15\\nlet y = 10 - 3;    // 7\\nlet z = 4 * 3;     // 12\\nlet a = 20 / 4;    // 5\\nlet b = 10 % 3;    // 1 (remainder)\\nlet c = 2 ** 3;    // 8 (power)\\n\\n// Comparison (return true/false)\\n5 === 5;   // true (equal value AND type)\\n5 == \"5\";  // true (equal value, ignore type — avoid!)\\n5 !== 5;   // false (not equal)\\n10 > 5;    // true\\n10 <= 5;   // false\\n\\n// Logical\\ntrue && true;   // true (both true)\\ntrue || false;  // true (at least one true)\\n!true;          // false (opposite)\\n\\n// Ternary\\nlet msg = age > 18 ? \"Adult\" : \"Minor\";", points: ["= assigns; == and === compare", "Use === instead of ==", "Logical: && (and), || (or), ! (not)", "Ternary ? : for quick if/else"] },
-      { id: 4, title: "String Methods — Playing with Words ✂️", difficulty: "Beginner", analogy: "Strings are like a string of beads. You can cut them, count them, find a bead, replace one.", code: "const text = \"Hello World\";\\n\\n// Length\\nconsole.log(text.length);  // 11\\n\\n// Case change\\nconsole.log(text.toUpperCase());   // \"HELLO WORLD\"\\nconsole.log(text.toLowerCase());   // \"hello world\"\\n\\n// Find & check\\nconsole.log(text.includes(\"World\"));  // true\\nconsole.log(text.indexOf(\"o\"));       // 4 (first match)\\nconsole.log(text.startsWith(\"Hello\")); // true\\n\\n// Slice & split\\nconsole.log(text.slice(0, 5));   // \"Hello\"\\nconsole.log(text.split(\" \"));    // [\"Hello\", \"World\"]\\n\\n// Replace & trim\\nconsole.log(text.replace(\"World\", \"JS\")); // \"Hello JS\"\\nconsole.log(\"  hi  \".trim());              // \"hi\"", points: [".length: how many characters", ".toUpperCase/toLowerCase(): change case", ".includes/.startsWith: check contents", ".slice: extract part", ".split: break into array", ".replace: change text", ".trim: remove spaces"] },
-      { id: 5, title: "Template Literals — Mad Libs 📝", difficulty: "Beginner", analogy: "Mad Libs game — you have a sentence with blanks and fill in the blanks with words.", code: "const name = \"Alice\";\nconst age = 25;\nconst city = \"NYC\";\n\n// Template literal: backticks and ${expression}\nconst msg = `Hello, I'm ${name}, ${age} years old, from ${city}`;\nconsole.log(msg);\n// Output: Hello, I'm Alice, 25 years old, from NYC\n\n// Multi-line strings\nconst poem = `Roses are red\nViolets are blue\nTemplate literals\nMake strings easy too`;\n\n// You can put any JS expression inside ${}!\nconst x = 5;\nconst y = 3;\nconsole.log(`${x} + ${y} = ${x + y}`); // \"5 + 3 = 8\"", points: ["Use backticks (`) not regular quotes", "Insert variables with ${ }", "Any JavaScript expression works inside", "Multi-line strings work naturally"] },
-      { id: 6, title: "If / Else — Choosing a Path in a Maze 🌿", difficulty: "Beginner", analogy: "A maze has forks. If it's raining, take the umbrella. Else, go without. You can have many forks (else if).", code: "const age = 20;\\n\\nif (age < 13) {\\n  console.log(\"Child\");\\n} else if (age < 18) {\\n  console.log(\"Teen\");\\n} else if (age < 65) {\\n  console.log(\"Adult\");\\n} else {\\n  console.log(\"Senior\");\\n}\\n// Output: Adult\\n\\n// Nested if\\nconst hasLicense = true;\\nif (age >= 18) {\\n  if (hasLicense) {\\n    console.log(\"Can drive\");\\n  } else {\\n    console.log(\"Get a license first\");\\n  }\\n}\\n\\n// Ternary shorthand\\nconst status = age >= 18 ? \"Adult\" : \"Minor\";\\nconsole.log(status); // \"Adult\"", points: ["if: check condition", "else if: check more conditions", "else: default if none match", "Use === not == for comparison", "Ternary: condition ? ifTrue : ifFalse"] },
-      { id: 7, title: "Switch Statement — TV Remote 📺", difficulty: "Beginner", analogy: "A TV remote has numbered buttons. Press 1 → channel 1, press 2 → channel 2. Switch lets you check one value against many options.", code: "const day = 3;\\nlet dayName;\\n\\nswitch(day) {\\n  case 1:\\n    dayName = \"Monday\";\\n    break; // MUST include break!\\n  case 2:\\n    dayName = \"Tuesday\";\\n    break;\\n  case 3:\\n    dayName = \"Wednesday\";\\n    break;\\n  default:\\n    dayName = \"Unknown\";\\n}\\n\\nconsole.log(dayName); // \"Wednesday\"\\n\\n// Without break — falls through!\\nconst grade = \"B\";\\nswitch(grade) {\\n  case \"A\":\\n  case \"B\":\\n    console.log(\"Good!\"); // if A or B\\n    break;\\n  case \"C\":\\n    console.log(\"Pass\");\\n    break;\\n}", points: ["switch: compare against many values", "case: each option", "break: exit after match (important!)", "default: if no match", "Fall-through: intentional behavior"] },
-      { id: 8, title: "Loops — Running Laps at PE 🏃", difficulty: "Beginner", analogy: "PE teacher says run 5 laps! You don't stop until 5. A for loop is the same.", code: "// for loop: count a specific number of times\\nfor (let i = 1; i <= 5; i++) {\\n  console.log(\\`Lap \\\\${i}\\\\`);\\n}\\n// Output: Lap 1, Lap 2, Lap 3, Lap 4, Lap 5\\n\\n// while loop: run until condition is false\\nlet count = 0;\\nwhile (count < 3) {\\n  console.log(\\`Count: \\\\${count}\\\\`);\\n  count++;\\n}\\n\\n// do-while: run at least once, then check\\nlet x = 10;\\ndo {\\n  console.log(\"This runs once even if x > 10\");\\n  x++;\\n} while (x < 10);\\n\\n// break: exit early\\nfor (let i = 0; i < 10; i++) {\\n  if (i === 5) break; // stop at 5\\n  console.log(i);\\n}\\n\\n// continue: skip to next iteration\\nfor (let i = 0; i < 5; i++) {\\n  if (i === 2) continue; // skip 2\\n  console.log(i); // prints 0, 1, 3, 4\\n}", points: ["for: loop exact number of times", "while: loop until false", "do-while: always runs once", "break: exit loop early", "continue: skip to next iteration"] },
-      { id: 9, title: "Functions — Recipe Book 📗", difficulty: "Beginner", analogy: "A recipe is instructions you follow any time. You give it ingredients (parameters), it gives you food (return value).", code: "// Function declaration\\nfunction greet(name, age) {\\n  console.log(\\\\`Hello \\\\${name}, you are \\\\${age}\\\\`);\\n}\\n\\ngreet(\"Alice\", 25);     // \"Hello Alice, you are 25\"\\ngreet(\"Bob\", 30);       // \"Hello Bob, you are 30\"\\n\\n// Return value\\nfunction add(a, b) {\\n  return a + b; // return the result\\n}\\n\\nconst result = add(5, 3);\\nconsole.log(result); // 8\\n\\n// Default parameters\\nfunction sayHi(name = \"Friend\") {\\n  console.log(\\\\`Hi \\\\${name}!\\\\`);\\n}\\n\\nsayHi();      // \"Hi Friend!\"\\nsayHi(\"Alice\"); // \"Hi Alice!\"\\n\\n// Function expression\\nconst multiply = function(x, y) {\\n  return x * y;\\n};\\n\\nconsole.log(multiply(4, 5)); // 20", points: ["function keyword + name + (parameters)", "Call: functionName(args)", "return: send value back to caller", "Default parameters: value if not provided", "Function expression: store in variable"] },
-      { id: 10, title: "Arrow Functions — Shortcut Recipes ⚡", difficulty: "Intermediate", analogy: "A sticky note version of a recipe — same result, less writing.", code: "// Traditional function\\nfunction add(a, b) {\\n  return a + b;\\n}\\n\\n// Arrow function: shorter syntax\\nconst add2 = (a, b) => {\\n  return a + b;\\n};\\n\\n// Implicit return: no {} means return automatically\\nconst add3 = (a, b) => a + b;\\n\\n// One parameter: can skip parentheses\\nconst square = x => x * x;\\n\\n// No parameters: need empty parentheses\\nconst greet = () => \"Hello!\";\\n\\n// Using arrow functions with methods\\nconst numbers = [1, 2, 3, 4, 5];\\nconst doubled = numbers.map(n => n * 2);\\nconsole.log(doubled); // [2, 4, 6, 8, 10]\\n\\n// ⚠️ Arrow functions don't have their own 'this'\\nconst obj = {\\n  name: \"Alice\",\\n  normalFunc: function() {\\n    console.log(this.name); // works: \"Alice\"\\n  },\\n  arrowFunc: () => {\\n    console.log(this.name); // undefined: arrow func ignores 'this'\\n  }\\n};", points: ["() => value: arrow function syntax", "Implicit return for single expressions", "() => { } for multiple statements", "Arrow functions: concise, modern", "Avoid arrow functions as object methods"] },
-      { id: 11, title: "Arrays — Shopping List 🛒", difficulty: "Beginner", analogy: "A shopping list is an ordered list. Each item has a position (index). You can add/remove items.", code: "const list = [\"apples\", \"bananas\", \"milk\", \"bread\"];\\n\\n// Access by index (starts at 0!)\\nconsole.log(list[0]);     // \"apples\"\\nconsole.log(list[2]);     // \"milk\"\\nconsole.log(list.length); // 4\\n\\n// Add to end\\nlist.push(\"eggs\");        // adds \"eggs\"\\n\\n// Remove from end\\nconst lastItem = list.pop(); // removes and returns \"eggs\"\\n\\n// Add to beginning\\nlist.unshift(\"butter\");   // adds \"butter\" at front\\n\\n// Remove from beginning\\nlist.shift();             // removes \"butter\"\\n\\n// Check if contains\\nconsole.log(list.includes(\"milk\"));  // true\\nconsole.log(list.indexOf(\"apples\")); // 0 (position)\\n\\n// Reverse\\nlist.reverse();\\n\\n// Join into string\\nconst text = list.join(\", \");\\nconsole.log(text); // \"bread, milk, bananas, apples\"", points: ["Arrays hold ordered lists", "Index starts at 0", "push: add to end", "pop: remove from end", "shift/unshift: add/remove from start", "length: how many items", "includes/indexOf: search", "join: combine into string"] },
-      { id: 12, title: "Array Methods — Toy Sorting Machine 🏭", difficulty: "Intermediate", analogy: "Imagine a machine: map paints every toy new, filter keeps only red, reduce counts total value.", code: "const numbers = [1, 2, 3, 4, 5];\\n\\n// map: transform each element\\nconst doubled = numbers.map(n => n * 2);\\nconsole.log(doubled); // [2, 4, 6, 8, 10]\\n\\n// filter: keep only matching elements\\nconst evens = numbers.filter(n => n % 2 === 0);\\nconsole.log(evens); // [2, 4]\\n\\n// reduce: combine all into one value\\nconst sum = numbers.reduce((total, n) => total + n, 0);\\nconsole.log(sum); // 15\\n\\n// find: get first matching element\\nconst firstEven = numbers.find(n => n % 2 === 0);\\nconsole.log(firstEven); // 2\\n\\n// some: does any match?\\nconsole.log(numbers.some(n => n > 4)); // true\\n\\n// every: do all match?\\nconsole.log(numbers.every(n => n > 0)); // true\\n\\n// Chaining methods\\nconst result = numbers\\n  .filter(n => n > 2)      // [3, 4, 5]\\n  .map(n => n * 2)         // [6, 8, 10]\\n  .reduce((a, b) => a + b, 0); // 24\\nconsole.log(result);", points: ["map: transform array", "filter: keep matching items", "reduce: combine into single value", "find: get first match", "some/every: check conditions", "Chain methods: powerful!"] },
-      { id: 13, title: "Objects — Student ID Card 🪪", difficulty: "Intermediate", analogy: "A student ID has name, age, school. Objects group related info (properties) and abilities (methods).", code: "// Create an object\\nconst user = {\\n  name: \"Alice\",\\n  age: 25,\\n  email: \"alice@email.com\",\\n  isActive: true\\n};\\n\\n// Access properties\\nconsole.log(user.name);           // \"Alice\" (dot notation)\\nconsole.log(user[\"email\"]);       // \"alice@email.com\" (bracket notation)\\n\\n// Add/modify properties\\nuser.age = 26;\\nuser.city = \"NYC\";               // add new property\\n\\n// Delete property\\ndelete user.isActive;\\n\\n// Object methods\\nconst keys = Object.keys(user);\\nconsole.log(keys); // [\"name\", \"age\", \"email\", \"city\"]\\n\\nconst values = Object.values(user);\\nconsole.log(values); // [\"Alice\", 26, \"alice@email.com\", \"NYC\"]\\n\\nconst entries = Object.entries(user);\\nconsole.log(entries); // [[\"name\", \"Alice\"], [\"age\", 26], ...]\\n\\n// Objects with methods (functions inside)\\nconst car = {\\n  brand: \"Toyota\",\\n  speed: 0,\\n  accelerate() {\\n    this.speed += 10;\\n  }\\n};\\n\\ncar.accelerate();\\nconsole.log(car.speed); // 10", points: ["Objects hold multiple related values", "Dot notation: obj.property", "Bracket notation: obj['property']", "Add/modify properties freely", "Object.keys/values/entries: inspect", "Methods: functions inside objects"] },
-      { id: 14, title: "Destructuring — Unpacking a Lunchbox 🍱", difficulty: "Intermediate", analogy: "You open a lunchbox and grab specific items without taking everything out.", code: "// Array destructuring\\nconst colors = [\"red\", \"green\", \"blue\"];\\nconst [first, second] = colors;\\nconsole.log(first);  // \"red\"\\nconsole.log(second); // \"green\"\\n\\n// Skip elements\\nconst [primary, , tertiary] = colors;\\nconsole.log(tertiary); // \"blue\"\\n\\n// Object destructuring\\nconst user = {\\n  name: \"Alice\",\\n  email: \"alice@email.com\",\\n  age: 25\\n};\\n\\nconst { name, email } = user;\\nconsole.log(name);  // \"Alice\"\\nconsole.log(email); // \"alice@email.com\"\\n\\n// Rename variables\\nconst { name: fullName, age: userAge } = user;\\nconsole.log(fullName); // \"Alice\"\\nconsole.log(userAge);  // 25\\n\\n// Default values\\nconst { name, country = \"USA\" } = user;\\nconsole.log(country); // \"USA\" (not in object, so default)\\n\\n// Destructuring in function parameters\\nfunction displayUser({ name, email }) {\\n  console.log(\\\\`\\\\${name}: \\\\${email}\\\\`);\\n}\\n\\ndisplayUser(user); // \"Alice: alice@email.com\"", points: ["Array: [a, b] = array", "Object: { prop } = object", "Skip array items with commas", "Rename in object destructuring", "Default values work", "Use in function parameters"] },
-      { id: 15, title: "Spread & Rest — Copying Boxes 📦", difficulty: "Intermediate", analogy: "Spread: pour toys from box A into box B. Rest: collect remaining toys into one bag.", code: "// Spread array\\nconst arr1 = [1, 2, 3];\\nconst arr2 = [4, 5, 6];\\nconst combined = [...arr1, ...arr2];\\nconsole.log(combined); // [1, 2, 3, 4, 5, 6]\\n\\n// Copy array (not just reference)\\nconst original = [1, 2, 3];\\nconst copy = [...original];\\ncopy[0] = 999;\\nconsole.log(original[0]); // still 1, not changed\\n\\n// Spread object\\nconst user = { name: \"Alice\", age: 25 };\\nconst updated = { ...user, age: 26 };\\nconsole.log(updated); // { name: \"Alice\", age: 26 }\\n\\n// Rest in function (collect remaining args)\\nfunction sum(...numbers) {\\n  return numbers.reduce((a, b) => a + b, 0);\\n}\\n\\nconsole.log(sum(1, 2, 3, 4, 5)); // 15\\n\\n// Rest in destructuring\\nconst [first, second, ...rest] = [1, 2, 3, 4, 5];\\nconsole.log(rest); // [3, 4, 5]\\n\\nconst { name, ...other } = { name: \"Alice\", age: 25, city: \"NYC\" };\\nconsole.log(other); // { age: 25, city: \"NYC\" }", points: ["Spread (...): expand array/object", "Rest (...): collect remaining items", "Spread to copy arrays/objects", "Rest to capture extra function args", "Immutability: spread creates new object"] },
-      { id: 16, title: "DOM Manipulation — Redecorating Your Room 🏠", difficulty: "Intermediate", analogy: "The DOM is like a room. You can move furniture (elements), repaint walls (styles), add/remove decorations.", code: "// Select elements\\nconst btn = document.querySelector(\"button\");\\nconst title = document.getElementById(\"title\");\\nconst items = document.querySelectorAll(\".item\");\\n\\n// Change text\\ntitle.textContent = \"New Title\";\\n\\n// Change HTML (careful with user input!)\\nconst div = document.querySelector(\"#content\");\\ndiv.innerHTML = \"<p>New content</p>\";\\n\\n// Change styles\\nbtn.style.backgroundColor = \"blue\";\\nbtn.style.padding = \"10px 20px\";\\n\\n// Add/remove CSS classes\\nbtn.classList.add(\"active\");\\nbtn.classList.remove(\"disabled\");\\nbtn.classList.toggle(\"hidden\");\\n\\n// Create elements\\nconst newParagraph = document.createElement(\"p\");\\nnewParagraph.textContent = \"I was created with JS!\";\\ndocument.body.appendChild(newParagraph);\\n\\n// Remove elements\\nconst oldElement = document.querySelector(\"#old\");\\noldElement.remove();\\n\\n// Data attributes\\nconst card = document.querySelector(\".card\");\\nconsole.log(card.dataset.id);        // get data-id\\ncard.dataset.name = \"Alice\";         // set data-name", points: ["querySelector: select elements", "textContent: change text safely", "innerHTML: change HTML (risky)", "style: change inline CSS", "classList: add/remove/toggle classes", "createElement: make new elements", "appendChild: add to page", "dataset: store custom data"] },
-      { id: 17, title: "Events — Doorbells & Buttons 🔔", difficulty: "Intermediate", analogy: "A doorbell is an event. When pressed, something happens. addEventListener listens for events.", code: "// Click event\\nconst button = document.querySelector(\"button\");\\nbutton.addEventListener(\"click\", () => {\\n  alert(\"Button clicked!\");\\n});\\n\\n// Keyboard events\\ndocument.addEventListener(\"keydown\", (event) => {\\n  console.log(event.key); // which key was pressed\\n  if (event.key === \"Enter\") {\\n    console.log(\"Enter pressed!\");\\n  }\\n});\\n\\n// Form submission\\nconst form = document.querySelector(\"form\");\\nform.addEventListener(\"submit\", (event) => {\\n  event.preventDefault(); // stop default behavior\\n  console.log(\"Form submitted!\");\\n});\\n\\n// Mouse events\\nconst box = document.querySelector(\".box\");\\nbox.addEventListener(\"mouseover\", () => {\\n  box.style.backgroundColor = \"red\";\\n});\\n\\nbox.addEventListener(\"mouseout\", () => {\\n  box.style.backgroundColor = \"blue\";\\n});\\n\\n// Input event (typing in text box)\\nconst input = document.querySelector(\"input\");\\ninput.addEventListener(\"input\", (event) => {\\n  console.log(event.target.value); // what the user typed\\n});\\n\\n// Event delegation (click any li in a list)\\nconst list = document.querySelector(\"ul\");\\nlist.addEventListener(\"click\", (event) => {\\n  console.log(event.target.textContent); // which item was clicked\\n});", points: ["addEventListener: watch for events", "Click, keydown, submit, mouseover", "event.preventDefault: stop default", "event.target: what triggered it", "event.key: which key pressed", "Event delegation: listen on parent"] },
-      { id: 18, title: "Promises — Pizza Order Ticket 🍕", difficulty: "Advanced", analogy: "When you order pizza, you get a ticket. You don't wait — you sit. Pizza either arrives (resolve) or runs out (reject).", code: "// Creating a promise\\nconst promise = new Promise((resolve, reject) => {\\n  setTimeout(() => {\\n    resolve(\"Pizza ready!\"); // success\\n  }, 2000);\\n});\\n\\n// Using .then() and .catch()\\npromise\\n  .then((message) => {\\n    console.log(message); // \"Pizza ready!\"\\n  })\\n  .catch((error) => {\\n    console.log(\"Error:\", error);\\n  });\\n\\n// Real example: fetch data\\nfetch(\"https://jsonplaceholder.typicode.com/users/1\")\\n  .then(response => response.json())\\n  .then(user => console.log(user.name))\\n  .catch(error => console.log(\"Failed:\", error));\\n\\n// Promise.all: wait for all\\nPromise.all([\\n  fetch(\"/api/users\"),\\n  fetch(\"/api/posts\"),\\n  fetch(\"/api/comments\")\\n])\\n  .then(([usersRes, postsRes, commentsRes]) => {\\n    console.log(\"All data loaded!\");\\n  });\\n\\n// Promise states\\n// pending: waiting\\n// fulfilled: resolved with value\\n// rejected: rejected with error\\n// settled: either fulfilled or rejected", points: ["Promise: handle async operations", "resolve(): success path", "reject(): error path", ".then(): handle success", ".catch(): handle error", ".finally(): always runs", "Promise.all: wait for multiple"] },
-      { id: 19, title: "Async/Await — Waiting Patiently 🧍", difficulty: "Advanced", analogy: "Async/await makes async code look like regular top-to-bottom code. You pause (await) until your turn, then continue.", code: "// Regular fetch (promise chain)\\nfetch(\"/api/users/1\")\\n  .then(r => r.json())\\n  .then(user => console.log(user));\\n\\n// Same thing with async/await (cleaner!)\\nasync function getUser() {\\n  const response = await fetch(\"/api/users/1\");\\n  const user = await response.json();\\n  console.log(user);\\n}\\n\\ngetUser();\\n\\n// Error handling with try/catch\\nasync function getAndDisplay() {\\n  try {\\n    const response = await fetch(\"/api/users/1\");\\n    if (!response.ok) throw new Error(\"Failed to fetch\");\\n    const user = await response.json();\\n    console.log(user.name);\\n  } catch (error) {\\n    console.log(\"Error:\", error.message);\\n  }\\n}\\n\\n// Parallel with Promise.all\\nasync function loadAllData() {\\n  const [users, posts] = await Promise.all([\\n    fetch(\"/api/users\").then(r => r.json()),\\n    fetch(\"/api/posts\").then(r => r.json())\\n  ]);\\n  console.log(\"Loaded\", users.length, \"users and\", posts.length, \"posts\");\\n}", points: ["async: function returns a promise", "await: pause until promise resolves", "try/catch: error handling", "Looks like synchronous code", "Must be inside async function", "Much cleaner than .then() chains"] },
-      { id: 20, title: "Fetch API — Calling a Friend 📞", difficulty: "Advanced", analogy: "Fetch is like calling a friend: you dial (fetch), wait for answer (await), get a response (json()).", code: "// Simple GET\\nfetch(\"/api/users\")\\n  .then(response => response.json())\\n  .then(data => console.log(data));\\n\\n// GET with async/await\\nasync function getUsers() {\\n  const response = await fetch(\"/api/users\");\\n  const users = await response.json();\\n  console.log(users);\\n}\\n\\n// POST with body\\nasync function createUser() {\\n  const response = await fetch(\"/api/users\", {\\n    method: \"POST\",\\n    headers: { \"Content-Type\": \"application/json\" },\\n    body: JSON.stringify({ name: \"Alice\", email: \"alice@email.com\" })\\n  });\\n  const newUser = await response.json();\\n  return newUser;\\n}\\n\\n// Check if response is ok\\nasync function fetchSafe() {\\n  try {\\n    const response = await fetch(\"/api/data\");\\n    if (!response.ok) {\\n      throw new Error(\\\\`HTTP error! status: \\\\${response.status}\\\\`);\\n    }\\n    return await response.json();\\n  } catch (error) {\\n    console.log(\"Fetch failed:\", error);\\n  }\\n}\\n\\n// Using public API\\nasync function getPosts() {\\n  const res = await fetch(\"https://jsonplaceholder.typicode.com/posts\");\\n  const posts = await res.json();\\n  console.log(posts);\\n}", points: ["fetch(url): start request", "await response.json(): get JSON", "method: GET/POST/PUT/DELETE", "headers: tell server content type", "body: JSON.stringify() for data", "Check response.ok before using", "Throw error if not ok"] },
-      { id: 21, title: "Error Handling — Safety Nets 🥅", difficulty: "Advanced", analogy: "Tightrope walkers have nets below. try/catch is your safety net — if something goes wrong, you catch it.", code: "// Basic try/catch\\ntry {\\n  const result = 10 / 0;\\n  console.log(result); // Infinity (not an error)\\n} catch (error) {\\n  console.log(\"Caught:\", error.message);\\n}\\n\\n// Throwing custom errors\\nfunction validateAge(age) {\\n  if (age < 0) {\\n    throw new Error(\"Age cannot be negative!\");\\n  }\\n  return age;\\n}\\n\\ntry {\\n  validateAge(-5);\\n} catch (error) {\\n  console.log(error.message); // \"Age cannot be negative!\"\\n}\\n\\n// Custom error class\\nclass ValidationError extends Error {\\n  constructor(message) {\\n    super(message);\\n    this.name = \"ValidationError\";\\n  }\\n}\\n\\ntry {\\n  throw new ValidationError(\"Email required\");\\n} catch (error) {\\n  if (error instanceof ValidationError) {\\n    console.log(\"Validation failed:\", error.message);\\n  }\\n}\\n\\n// Finally: runs no matter what\\ntry {\\n  console.log(\"Running code\");\\n} catch (error) {\\n  console.log(\"Caught error\");\\n} finally {\\n  console.log(\"This always runs!\"); // cleanup code\\n}", points: ["try: code that might fail", "catch: handle the error", "error.message: get error text", "throw new Error: create error", "finally: always runs", "Check error.name or use instanceof", "Custom error classes for specificity"] },
-      { id: 22, title: "Classes — Toy Blueprints 📐", difficulty: "Advanced", analogy: "A toy blueprint describes what a toy looks like. You can make many toys from one blueprint.", code: "// Simple class\\nclass Car {\\n  constructor(brand, color) {\\n    this.brand = brand;\\n    this.color = color;\\n    this.speed = 0;\\n  }\\n\\n  accelerate() {\\n    this.speed += 10;\\n  }\\n\\n  brake() {\\n    this.speed = 0;\\n  }\\n\\n  honk() {\\n    console.log(\\\\`\\\\${this.brand} goes HONK!\\\\`);\\n  }\\n}\\n\\nconst myCar = new Car(\"Toyota\", \"red\");\\nmyCar.accelerate();\\nmyCar.honk(); // \"Toyota goes HONK!\"\\n\\n// Inheritance\\nclass ElectricCar extends Car {\\n  constructor(brand, color, batteryLife) {\\n    super(brand, color); // call parent constructor\\n    this.batteryLife = batteryLife;\\n  }\\n\\n  charge() {\\n    this.batteryLife = 100;\\n    console.log(\"Fully charged!\");\\n  }\\n}\\n\\nconst tesla = new ElectricCar(\"Tesla\", \"white\", 75);\\ntesla.accelerate(); // inherited method\\ntesla.charge();     // own method\\n\\n// Static methods (belong to class, not instance)\\nclass Math2 {\\n  static add(a, b) {\\n    return a + b;\\n  }\\n}\\n\\nconsole.log(Math2.add(5, 3)); // 8", points: ["class: blueprint for objects", "constructor: initialize properties", "this: refers to instance", "Methods: functions inside class", "extends: inherit from parent class", "super: call parent constructor", "Static methods: call on class itself", "new: create instance from class"] },
-      { id: 23, title: "Closures — Secret Piggy Bank 🐷", difficulty: "Advanced", analogy: "A piggy bank only you can open. Even after the piggy bank factory closed, it remembers the secret code.", code: "// Simple closure\\nfunction makeCounter() {\\n  let count = 0; // private variable!\\n  \\n  return function() {\\n    count++;\\n    return count;\\n  };\\n}\\n\\nconst counter = makeCounter();\\nconsole.log(counter()); // 1\\nconsole.log(counter()); // 2\\nconsole.log(counter()); // 3\\n// 'count' is private — can't access directly!\\n\\n// Data privacy with closures\\nfunction createUser(name) {\\n  let password = \"secret123\"; // private\\n  \\n  return {\\n    getName: () => name,\\n    checkPassword: (guess) => guess === password\\n  };\\n}\\n\\nconst user = createUser(\"Alice\");\\nconsole.log(user.getName());        // \"Alice\"\\nconsole.log(user.checkPassword(\"secret123\")); // true\\nconsole.log(user.password);         // undefined\\n\\n// Classic problem: loops + var\\nconst funcs = [];\\nfor (var i = 0; i < 3; i++) {\\n  funcs.push(() => console.log(i));\\n}\\nfuncs[0](); // 3, 3, 3 (all the same!)\\n\\n// Fix: use let instead\\nconst funcs2 = [];\\nfor (let i = 0; i < 3; i++) {\\n  funcs2.push(() => console.log(i));\\n}\\nfuncs2[0](); // 0, 1, 2 (correct!)", points: ["Closure: inner function remembers outer variables", "Private variables: not accessible from outside", "Functions return functions (factory pattern)", "Problem: var in loops doesn't work", "Solution: use let instead of var", "Closures = data privacy + remember state"] },
-      { id: 24, title: "Higher Order Functions — Machine Makers 🏗️", difficulty: "Advanced", analogy: "A machine that makes other machines. You give it settings, it produces a customized machine.", code: "// Function as argument\\nfunction applyTwice(func, value) {\\n  return func(func(value));\\n}\\n\\nconst add5 = (n) => n + 5;\\nconsole.log(applyTwice(add5, 10)); // (10+5)+5 = 20\\n\\n// Function returning function (currying)\\nfunction multiply(x) {\\n  return function(y) {\\n    return x * y;\\n  };\\n}\\n\\nconst double = multiply(2);\\nconsole.log(double(5)); // 10\\nconsole.log(double(7)); // 14\\n\\n// Compose functions\\nfunction compose(f, g) {\\n  return (x) => f(g(x));\\n}\\n\\nconst addTwo = (n) => n + 2;\\nconst square = (n) => n * n;\\nconst addThenSquare = compose(square, addTwo);\\nconsole.log(addThenSquare(3)); // (3+2)^2 = 25\\n\\n// Memoization: cache results\\nfunction memoize(func) {\\n  const cache = {};\\n  return function(arg) {\\n    if (!(arg in cache)) {\\n      cache[arg] = func(arg);\\n    }\\n    return cache[arg];\\n  };\\n}\\n\\nconst expensiveFn = (n) => {\\n  console.log(\"Computing...\");\\n  return n * n;\\n};\\n\\nconst memoized = memoize(expensiveFn);\\nmemoized(5); // \"Computing...\" (calculates)\\nmemoized(5); // (no log — returns from cache)", points: ["Higher order: functions that take/return functions", "Callbacks: pass function to another function", "Currying: return function that takes remaining args", "Compose: combine functions", "Memoization: cache expensive results", "Functional programming: elegant patterns"] },
-      { id: 25, title: "Local Storage — Personal Notebook 📓", difficulty: "Intermediate", analogy: "Your browser's personal notebook. It remembers things even after you close the browser.", code: "// Save to localStorage\\nconst user = { name: \"Alice\", age: 25 };\\nlocalStorage.setItem(\"user\", JSON.stringify(user));\\n\\n// Read from localStorage\\nconst savedUser = JSON.parse(localStorage.getItem(\"user\"));\\nconsole.log(savedUser.name); // \"Alice\"\\n\\n// Remove item\\nlocalStorage.removeItem(\"user\");\\n\\n// Clear all\\nlocalStorage.clear();\\n\\n// Check if exists\\nif (localStorage.getItem(\"user\")) {\\n  console.log(\"User data exists\");\\n}\\n\\n// Practical: TODO list\\nclass TodoList {\\n  constructor() {\\n    this.todos = JSON.parse(localStorage.getItem(\"todos\")) || [];\\n  }\\n\\n  add(text) {\\n    const todo = { id: Date.now(), text, done: false };\\n    this.todos.push(todo);\\n    this.save();\\n  }\\n\\n  complete(id) {\\n    this.todos = this.todos.map(t => \\n      t.id === id ? { ...t, done: true } : t\\n    );\\n    this.save();\\n  }\\n\\n  save() {\\n    localStorage.setItem(\"todos\", JSON.stringify(this.todos));\\n  }\\n}\\n\\n// sessionStorage: clears when tab closes\\nsessionStorage.setItem(\"tempData\", \"goes away on close\");\\n\\n// localStorage: persists across sessions\\nlocalStorage.setItem(\"important\", \"stays forever\");", points: ["localStorage.setItem(key, value): save", "localStorage.getItem(key): read", "JSON.stringify: convert to string", "JSON.parse: convert back to object", "localStorage.removeItem: delete", "localStorage.clear: delete all", "sessionStorage: temporary (tab only)", "Perfect for user preferences, todos, settings"] }
-    ];
+      {
+            "id": 1,
+            "title": "Variables — Magic Boxes 📦",
+            "difficulty": "Beginner",
+            "analogy": "Imagine you have magic boxes where you can store anything — toys, books, snacks. Each box has a label so you know what is inside. `let` is a box you can swap contents. `const` is a sealed box you never change. `var` is an old leaky box — avoid it!",
+            "snippets": [
+                  {
+                        "label": "let — create and change a value",
+                        "code": "let score = 10;\nscore = 20;\nconsole.log(score);"
+                  },
+                  {
+                        "label": "const — create but never change",
+                        "code": "const PI = 3.14159;\nconsole.log(PI);\n\ntry {\n  PI = 3;\n} catch (error) {\n  console.log(\"Error:\", error.message);\n}"
+                  },
+                  {
+                        "label": "var — legacy, avoid it",
+                        "code": "var oldStyle = \"avoid var in modern JS\";\nconsole.log(oldStyle);"
+                  },
+                  {
+                        "label": "Naming — use camelCase",
+                        "code": "let myAge = 25;\nlet userFirstName = \"Alice\";\nconsole.log(myAge, userFirstName);"
+                  }
+            ]
+      },
+      {
+            "id": 2,
+            "title": "Data Types — Types of Toys 🧸",
+            "difficulty": "Beginner",
+            "analogy": "Different toys go in different boxes — LEGO (numbers), storybooks (strings), yes/no cards (booleans), empty box (null/undefined).",
+            "snippets": [
+                  {
+                        "label": "String — text in quotes",
+                        "code": "const name = \"Alice\";\nconsole.log(name, typeof name);"
+                  },
+                  {
+                        "label": "Number — integers and decimals",
+                        "code": "const age = 25;\nconst price = 19.99;\nconsole.log(age, price, typeof age);"
+                  },
+                  {
+                        "label": "Boolean — true or false only",
+                        "code": "const isActive = true;\nconsole.log(isActive, typeof isActive);"
+                  },
+                  {
+                        "label": "typeof — check a data type",
+                        "code": "const list = [1, 2, 3];\nconst data = { x: 1 };\nconsole.log(typeof list, typeof data);"
+                  },
+                  {
+                        "label": "null vs undefined",
+                        "code": "const job = null;\nlet hobby;\nconsole.log(job, typeof job);\nconsole.log(hobby, typeof hobby);"
+                  }
+            ]
+      },
+      {
+            "id": 3,
+            "title": "Operators — Math on the Playground ➕",
+            "difficulty": "Beginner",
+            "analogy": "Arithmetic operators are like math class. Comparison operators ask who is taller. Logical operators are AND/OR game rules.",
+            "snippets": [
+                  {
+                        "label": "Arithmetic operators",
+                        "code": "console.log(10 + 5, 10 - 3, 4 * 3, 20 / 4, 10 % 3, 2 ** 3);"
+                  },
+                  {
+                        "label": "=== vs == (use === instead of ==)",
+                        "code": "console.log(5 === 5);\nconsole.log(5 === \"5\");\nconsole.log(5 == \"5\");"
+                  },
+                  {
+                        "label": "Logical: && (and), || (or), ! (not)",
+                        "code": "console.log(true && true);\nconsole.log(true || false);\nconsole.log(!true);"
+                  },
+                  {
+                        "label": "Ternary ? : for quick if/else",
+                        "code": "const age = 20;\nconst msg = age >= 18 ? \"Adult\" : \"Minor\";\nconsole.log(msg);"
+                  }
+            ]
+      },
+      {
+            "id": 4,
+            "title": "String Methods — Playing with Words ✂️",
+            "difficulty": "Beginner",
+            "analogy": "Strings are like a string of beads. You can cut them, count them, find a bead, replace one.",
+            "snippets": [
+                  {
+                        "label": ".length — how many characters",
+                        "code": "const text = \"Hello World\";\nconsole.log(text.length);"
+                  },
+                  {
+                        "label": ".toUpperCase / .toLowerCase",
+                        "code": "const text = \"Hello World\";\nconsole.log(text.toUpperCase());\nconsole.log(text.toLowerCase());"
+                  },
+                  {
+                        "label": ".includes / .startsWith / .indexOf",
+                        "code": "const text = \"Hello World\";\nconsole.log(text.includes(\"World\"));\nconsole.log(text.startsWith(\"Hello\"));\nconsole.log(text.indexOf(\"o\"));"
+                  },
+                  {
+                        "label": ".slice — extract part of a string",
+                        "code": "const text = \"Hello World\";\nconsole.log(text.slice(0, 5));"
+                  },
+                  {
+                        "label": ".split — break into an array",
+                        "code": "const text = \"Hello World\";\nconsole.log(text.split(\" \"));"
+                  },
+                  {
+                        "label": ".replace — change text",
+                        "code": "const text = \"Hello World\";\nconsole.log(text.replace(\"World\", \"JS\"));"
+                  },
+                  {
+                        "label": ".trim — remove surrounding spaces",
+                        "code": "console.log(\"  hi  \".trim());"
+                  }
+            ]
+      },
+      {
+            "id": 5,
+            "title": "Template Literals — Mad Libs 📝",
+            "difficulty": "Beginner",
+            "analogy": "Mad Libs game — you have a sentence with blanks and fill in the blanks with words.",
+            "snippets": [
+                  {
+                        "label": "Backticks and ${ } for variables",
+                        "code": "const name = \"Alice\";\nconst age = 25;\nconsole.log(`Hello, I am ${name}, ${age} years old`);"
+                  },
+                  {
+                        "label": "Any JS expression works inside ${ }",
+                        "code": "const x = 5;\nconst y = 3;\nconsole.log(`${x} + ${y} = ${x + y}`);"
+                  },
+                  {
+                        "label": "Multi-line strings",
+                        "code": "const poem = `Roses are red\nViolets are blue`;\nconsole.log(poem);"
+                  }
+            ]
+      },
+      {
+            "id": 6,
+            "title": "If / Else — Choosing a Path in a Maze 🌿",
+            "difficulty": "Beginner",
+            "analogy": "A maze has forks. If it is raining, take the umbrella. Else, go without. You can have many forks (else if).",
+            "snippets": [
+                  {
+                        "label": "if / else if / else",
+                        "code": "const age = 20;\nif (age < 13) {\n  console.log(\"Child\");\n} else if (age < 18) {\n  console.log(\"Teen\");\n} else {\n  console.log(\"Adult\");\n}"
+                  },
+                  {
+                        "label": "Nested if",
+                        "code": "const age = 20;\nconst hasLicense = true;\nif (age >= 18) {\n  console.log(hasLicense ? \"Can drive\" : \"Get a license first\");\n}"
+                  },
+                  {
+                        "label": "Ternary shorthand",
+                        "code": "const age = 20;\nconsole.log(age >= 18 ? \"Adult\" : \"Minor\");"
+                  }
+            ]
+      },
+      {
+            "id": 7,
+            "title": "Switch Statement — TV Remote 📺",
+            "difficulty": "Beginner",
+            "analogy": "A TV remote has numbered buttons. Press 1, channel 1. Press 2, channel 2. Switch lets you check one value against many options.",
+            "snippets": [
+                  {
+                        "label": "switch / case / break / default",
+                        "code": "const day = 3;\nlet dayName;\nswitch (day) {\n  case 1: dayName = \"Monday\"; break;\n  case 2: dayName = \"Tuesday\"; break;\n  case 3: dayName = \"Wednesday\"; break;\n  default: dayName = \"Unknown\";\n}\nconsole.log(dayName);"
+                  },
+                  {
+                        "label": "Fall-through (no break)",
+                        "code": "const grade = \"B\";\nswitch (grade) {\n  case \"A\":\n  case \"B\":\n    console.log(\"Good!\");\n    break;\n  case \"C\":\n    console.log(\"Pass\");\n    break;\n}"
+                  }
+            ]
+      },
+      {
+            "id": 8,
+            "title": "Loops — Running Laps at PE 🏃",
+            "difficulty": "Beginner",
+            "analogy": "PE teacher says run 5 laps! You do not stop until 5. A for loop is the same.",
+            "snippets": [
+                  {
+                        "label": "for — loop an exact number of times",
+                        "code": "for (let i = 1; i <= 5; i++) {\n  console.log(`Lap ${i}`);\n}"
+                  },
+                  {
+                        "label": "while — loop until a condition is false",
+                        "code": "let count = 0;\nwhile (count < 3) {\n  console.log(`Count: ${count}`);\n  count++;\n}"
+                  },
+                  {
+                        "label": "do-while — always runs at least once",
+                        "code": "let x = 10;\ndo {\n  console.log(\"Runs once even though x is already 10\");\n  x++;\n} while (x < 10);"
+                  },
+                  {
+                        "label": "break — exit a loop early",
+                        "code": "for (let i = 0; i < 10; i++) {\n  if (i === 5) break;\n  console.log(i);\n}"
+                  },
+                  {
+                        "label": "continue — skip to the next iteration",
+                        "code": "for (let i = 0; i < 5; i++) {\n  if (i === 2) continue;\n  console.log(i);\n}"
+                  }
+            ]
+      },
+      {
+            "id": 9,
+            "title": "Functions — Recipe Book 📗",
+            "difficulty": "Beginner",
+            "analogy": "A recipe is instructions you follow any time. You give it ingredients (parameters), it gives you food (return value).",
+            "snippets": [
+                  {
+                        "label": "Function declaration + call",
+                        "code": "function greet(name, age) {\n  console.log(`Hello ${name}, you are ${age}`);\n}\ngreet(\"Alice\", 25);"
+                  },
+                  {
+                        "label": "return — send a value back",
+                        "code": "function add(a, b) {\n  return a + b;\n}\nconsole.log(add(5, 3));"
+                  },
+                  {
+                        "label": "Default parameters",
+                        "code": "function sayHi(name = \"Friend\") {\n  console.log(`Hi ${name}!`);\n}\nsayHi();\nsayHi(\"Alice\");"
+                  },
+                  {
+                        "label": "Function expression",
+                        "code": "const multiply = function (x, y) {\n  return x * y;\n};\nconsole.log(multiply(4, 5));"
+                  }
+            ]
+      },
+      {
+            "id": 10,
+            "title": "Arrow Functions — Shortcut Recipes ⚡",
+            "difficulty": "Intermediate",
+            "analogy": "A sticky note version of a recipe — same result, less writing.",
+            "snippets": [
+                  {
+                        "label": "Arrow function vs traditional function",
+                        "code": "function add(a, b) { return a + b; }\nconst add2 = (a, b) => a + b;\nconsole.log(add(2, 3), add2(2, 3));"
+                  },
+                  {
+                        "label": "Implicit return, one param, no params",
+                        "code": "const square = x => x * x;\nconst greet = () => \"Hello!\";\nconsole.log(square(4), greet());"
+                  },
+                  {
+                        "label": "Arrow functions with array methods",
+                        "code": "const numbers = [1, 2, 3, 4, 5];\nconst doubled = numbers.map(n => n * 2);\nconsole.log(doubled);"
+                  },
+                  {
+                        "label": "Arrow functions do not have their own this",
+                        "code": "const obj = {\n  name: \"Alice\",\n  normalFunc() { console.log(this.name); },\n  arrowFunc: () => console.log(this.name),\n};\nobj.normalFunc();\nobj.arrowFunc();"
+                  }
+            ]
+      },
+      {
+            "id": 11,
+            "title": "Arrays — Shopping List 🛒",
+            "difficulty": "Beginner",
+            "analogy": "A shopping list is an ordered list. Each item has a position (index). You can add or remove items.",
+            "snippets": [
+                  {
+                        "label": "Index (starts at 0) and length",
+                        "code": "const list = [\"apples\", \"bananas\", \"milk\", \"bread\"];\nconsole.log(list[0], list[2], list.length);"
+                  },
+                  {
+                        "label": "push / pop — add/remove from the end",
+                        "code": "const list = [\"apples\", \"bananas\"];\nlist.push(\"eggs\");\nconsole.log(list);\nconst removed = list.pop();\nconsole.log(removed, list);"
+                  },
+                  {
+                        "label": "unshift / shift — add/remove from the start",
+                        "code": "const list = [\"apples\", \"bananas\"];\nlist.unshift(\"butter\");\nconsole.log(list);\nlist.shift();\nconsole.log(list);"
+                  },
+                  {
+                        "label": "includes / indexOf — search",
+                        "code": "const list = [\"apples\", \"bananas\", \"milk\"];\nconsole.log(list.includes(\"milk\"), list.indexOf(\"apples\"));"
+                  },
+                  {
+                        "label": "reverse / join — combine into a string",
+                        "code": "const list = [\"apples\", \"bananas\", \"milk\"];\nconsole.log(list.reverse().join(\", \"));"
+                  }
+            ]
+      },
+      {
+            "id": 12,
+            "title": "Array Methods — Toy Sorting Machine 🏭",
+            "difficulty": "Intermediate",
+            "analogy": "Imagine a machine: map paints every toy new, filter keeps only red ones, reduce counts the total value.",
+            "snippets": [
+                  {
+                        "label": "map — transform every element",
+                        "code": "const numbers = [1, 2, 3, 4, 5];\nconsole.log(numbers.map(n => n * 2));"
+                  },
+                  {
+                        "label": "filter — keep matching items",
+                        "code": "const numbers = [1, 2, 3, 4, 5];\nconsole.log(numbers.filter(n => n % 2 === 0));"
+                  },
+                  {
+                        "label": "reduce — combine into a single value",
+                        "code": "const numbers = [1, 2, 3, 4, 5];\nconsole.log(numbers.reduce((total, n) => total + n, 0));"
+                  },
+                  {
+                        "label": "find — get the first match",
+                        "code": "const numbers = [1, 2, 3, 4, 5];\nconsole.log(numbers.find(n => n % 2 === 0));"
+                  },
+                  {
+                        "label": "some / every — check conditions",
+                        "code": "const numbers = [1, 2, 3, 4, 5];\nconsole.log(numbers.some(n => n > 4));\nconsole.log(numbers.every(n => n > 0));"
+                  },
+                  {
+                        "label": "Chaining methods together",
+                        "code": "const numbers = [1, 2, 3, 4, 5];\nconst result = numbers\n  .filter(n => n > 2)\n  .map(n => n * 2)\n  .reduce((a, b) => a + b, 0);\nconsole.log(result);"
+                  }
+            ]
+      },
+      {
+            "id": 13,
+            "title": "Objects — Student ID Card 🪪",
+            "difficulty": "Intermediate",
+            "analogy": "A student ID has a name, age, school. Objects group related info (properties) and abilities (methods).",
+            "snippets": [
+                  {
+                        "label": "Dot notation vs bracket notation",
+                        "code": "const user = { name: \"Alice\", age: 25, email: \"alice@email.com\" };\nconsole.log(user.name, user[\"email\"]);"
+                  },
+                  {
+                        "label": "Add, modify, and delete properties",
+                        "code": "const user = { name: \"Alice\", age: 25 };\nuser.age = 26;\nuser.city = \"NYC\";\ndelete user.age;\nconsole.log(user);"
+                  },
+                  {
+                        "label": "Object.keys / values / entries",
+                        "code": "const user = { name: \"Alice\", age: 26, city: \"NYC\" };\nconsole.log(Object.keys(user));\nconsole.log(Object.values(user));\nconsole.log(Object.entries(user));"
+                  },
+                  {
+                        "label": "Methods inside objects",
+                        "code": "const car = {\n  brand: \"Toyota\",\n  speed: 0,\n  accelerate() { this.speed += 10; },\n};\ncar.accelerate();\nconsole.log(car.speed);"
+                  }
+            ]
+      },
+      {
+            "id": 14,
+            "title": "Destructuring — Unpacking a Lunchbox 🍱",
+            "difficulty": "Intermediate",
+            "analogy": "You open a lunchbox and grab specific items without taking everything out.",
+            "snippets": [
+                  {
+                        "label": "Array destructuring",
+                        "code": "const colors = [\"red\", \"green\", \"blue\"];\nconst [first, second] = colors;\nconsole.log(first, second);"
+                  },
+                  {
+                        "label": "Skip elements with commas",
+                        "code": "const colors = [\"red\", \"green\", \"blue\"];\nconst [primary, , tertiary] = colors;\nconsole.log(primary, tertiary);"
+                  },
+                  {
+                        "label": "Object destructuring",
+                        "code": "const user = { name: \"Alice\", email: \"alice@email.com\", age: 25 };\nconst { name, email } = user;\nconsole.log(name, email);"
+                  },
+                  {
+                        "label": "Rename variables and set defaults",
+                        "code": "const user = { name: \"Alice\", age: 25 };\nconst { name: fullName, country = \"USA\" } = user;\nconsole.log(fullName, country);"
+                  },
+                  {
+                        "label": "Destructuring in function parameters",
+                        "code": "function displayUser({ name, email }) {\n  console.log(`${name}: ${email}`);\n}\ndisplayUser({ name: \"Alice\", email: \"alice@email.com\" });"
+                  }
+            ]
+      },
+      {
+            "id": 15,
+            "title": "Spread & Rest — Copying Boxes 📦",
+            "difficulty": "Intermediate",
+            "analogy": "Spread pours toys from box A into box B. Rest collects the remaining toys into one bag.",
+            "snippets": [
+                  {
+                        "label": "Spread — combine arrays",
+                        "code": "const arr1 = [1, 2, 3];\nconst arr2 = [4, 5, 6];\nconsole.log([...arr1, ...arr2]);"
+                  },
+                  {
+                        "label": "Spread — copy an array (not just reference)",
+                        "code": "const original = [1, 2, 3];\nconst copy = [...original];\ncopy[0] = 999;\nconsole.log(original, copy);"
+                  },
+                  {
+                        "label": "Spread — copy/update an object",
+                        "code": "const user = { name: \"Alice\", age: 25 };\nconst updated = { ...user, age: 26 };\nconsole.log(updated);"
+                  },
+                  {
+                        "label": "Rest — collect remaining function args",
+                        "code": "function sum(...numbers) {\n  return numbers.reduce((a, b) => a + b, 0);\n}\nconsole.log(sum(1, 2, 3, 4, 5));"
+                  },
+                  {
+                        "label": "Rest — collect remaining items when destructuring",
+                        "code": "const [first, second, ...rest] = [1, 2, 3, 4, 5];\nconsole.log(first, second, rest);"
+                  }
+            ]
+      },
+      {
+            "id": 16,
+            "title": "DOM Manipulation — Redecorating Your Room 🏠",
+            "difficulty": "Intermediate",
+            "analogy": "The DOM is like a room. You can move furniture (elements), repaint walls (styles), add or remove decorations. These snippets run against a hidden practice room, not the real page.",
+            "sandboxHtml": "<h1 id=\"title\">Old Title</h1>\n<button>Click</button>\n<div class=\"item\">Item 1</div>\n<div class=\"item\">Item 2</div>\n<div id=\"content\"></div>\n<div id=\"old\">Will be removed</div>\n<div class=\"card\" data-id=\"42\"></div>",
+            "snippets": [
+                  {
+                        "label": "querySelector / getElementById / querySelectorAll",
+                        "code": "const btn = document.querySelector(\"button\");\nconst title = document.getElementById(\"title\");\nconst items = document.querySelectorAll(\".item\");\nconsole.log(btn.tagName, title.textContent, items.length);"
+                  },
+                  {
+                        "label": "textContent — change text safely",
+                        "code": "const title = document.getElementById(\"title\");\ntitle.textContent = \"New Title\";\nconsole.log(title.textContent);"
+                  },
+                  {
+                        "label": "innerHTML — change HTML (careful with user input)",
+                        "code": "const div = document.querySelector(\"#content\");\ndiv.innerHTML = \"<p>New content</p>\";\nconsole.log(div.innerHTML);"
+                  },
+                  {
+                        "label": "style — change inline CSS",
+                        "code": "const btn = document.querySelector(\"button\");\nbtn.style.backgroundColor = \"blue\";\nconsole.log(btn.style.backgroundColor);"
+                  },
+                  {
+                        "label": "classList — add/remove/toggle classes",
+                        "code": "const btn = document.querySelector(\"button\");\nbtn.classList.add(\"active\");\nbtn.classList.toggle(\"hidden\");\nconsole.log(btn.className);"
+                  },
+                  {
+                        "label": "createElement + appendChild — add new elements",
+                        "code": "const p = document.createElement(\"p\");\np.textContent = \"I was created with JS!\";\ndocument.body.appendChild(p);\nconsole.log(document.body.innerHTML.includes(\"created with JS\"));"
+                  },
+                  {
+                        "label": "remove — take an element off the page",
+                        "code": "const old = document.querySelector(\"#old\");\nold.remove();\nconsole.log(document.querySelector(\"#old\"));"
+                  },
+                  {
+                        "label": "dataset — read/write data-* attributes",
+                        "code": "const card = document.querySelector(\".card\");\nconsole.log(card.dataset.id);\ncard.dataset.name = \"Alice\";\nconsole.log(card.dataset.name);"
+                  }
+            ]
+      },
+      {
+            "id": 17,
+            "title": "Events — Doorbells & Buttons 🔔",
+            "difficulty": "Intermediate",
+            "analogy": "A doorbell is an event. When pressed, something happens. addEventListener listens for events. These snippets fire simulated events against a hidden practice room so you can see the result immediately.",
+            "sandboxHtml": "<button>Click me</button>\n<form><input type=\"text\" /><button type=\"submit\">Send</button></form>\n<div class=\"box\">Hover me</div>\n<input class=\"text-input\" placeholder=\"Type here\" />\n<ul><li>Item A</li><li>Item B</li></ul>",
+            "snippets": [
+                  {
+                        "label": "click — addEventListener basics",
+                        "code": "const button = document.querySelector(\"button\");\nbutton.addEventListener(\"click\", () => {\n  console.log(\"Button clicked!\");\n});\nbutton.click();"
+                  },
+                  {
+                        "label": "keydown — event.key",
+                        "code": "document.addEventListener(\"keydown\", (event) => {\n  console.log(\"Key pressed:\", event.key);\n});\ndocument.dispatchEvent(new KeyboardEvent(\"keydown\", { key: \"Enter\" }));"
+                  },
+                  {
+                        "label": "submit — event.preventDefault",
+                        "code": "const form = document.querySelector(\"form\");\nform.addEventListener(\"submit\", (event) => {\n  event.preventDefault();\n  console.log(\"Form submitted!\");\n});\nform.dispatchEvent(new Event(\"submit\", { cancelable: true }));"
+                  },
+                  {
+                        "label": "mouseover / mouseout",
+                        "code": "const box = document.querySelector(\".box\");\nbox.addEventListener(\"mouseover\", () => console.log(\"Mouse over the box\"));\nbox.addEventListener(\"mouseout\", () => console.log(\"Mouse left the box\"));\nbox.dispatchEvent(new Event(\"mouseover\"));\nbox.dispatchEvent(new Event(\"mouseout\"));"
+                  },
+                  {
+                        "label": "input — event.target.value",
+                        "code": "const input = document.querySelector(\".text-input\");\ninput.addEventListener(\"input\", (event) => {\n  console.log(\"Typed:\", event.target.value);\n});\ninput.value = \"hello\";\ninput.dispatchEvent(new Event(\"input\"));"
+                  },
+                  {
+                        "label": "Event delegation — listen on the parent",
+                        "code": "const list = document.querySelector(\"ul\");\nlist.addEventListener(\"click\", (event) => {\n  console.log(\"Clicked:\", event.target.textContent);\n});\nlist.querySelector(\"li\").dispatchEvent(new Event(\"click\", { bubbles: true }));"
+                  }
+            ]
+      },
+      {
+            "id": 18,
+            "title": "Promises — Pizza Order Ticket 🍕",
+            "difficulty": "Advanced",
+            "analogy": "When you order pizza, you get a ticket. You do not wait, you sit. Pizza either arrives (resolve) or runs out (reject).",
+            "snippets": [
+                  {
+                        "label": "Creating a promise + .then()",
+                        "code": "const promise = new Promise((resolve) => {\n  setTimeout(() => resolve(\"Pizza ready!\"), 500);\n});\npromise.then((message) => console.log(message));"
+                  },
+                  {
+                        "label": "reject() + .catch()",
+                        "code": "const promise = new Promise((resolve, reject) => {\n  reject(\"Out of pizza!\");\n});\npromise.catch((error) => console.log(\"Error:\", error));"
+                  },
+                  {
+                        "label": ".finally() — always runs",
+                        "code": "Promise.resolve(\"done\")\n  .then(v => console.log(v))\n  .finally(() => console.log(\"Cleanup ran\"));"
+                  },
+                  {
+                        "label": "Real fetch with .then()/.catch()",
+                        "code": "fetch(\"https://jsonplaceholder.typicode.com/users/1\")\n  .then(response => response.json())\n  .then(user => console.log(user.name))\n  .catch(error => console.log(\"Failed:\", error));"
+                  },
+                  {
+                        "label": "Promise.all — wait for multiple",
+                        "code": "Promise.all([\n  Promise.resolve(1),\n  Promise.resolve(2),\n  Promise.resolve(3),\n]).then(values => console.log(\"All resolved:\", values));"
+                  }
+            ]
+      },
+      {
+            "id": 19,
+            "title": "Async/Await — Waiting Patiently 🧍",
+            "difficulty": "Advanced",
+            "analogy": "Async/await makes async code look like regular top-to-bottom code. You pause (await) until your turn, then continue.",
+            "snippets": [
+                  {
+                        "label": "async function + await fetch",
+                        "code": "async function getUser() {\n  const response = await fetch(\"https://jsonplaceholder.typicode.com/users/1\");\n  const user = await response.json();\n  console.log(user.name);\n}\ngetUser();"
+                  },
+                  {
+                        "label": "try/catch with async",
+                        "code": "async function getAndDisplay() {\n  try {\n    const response = await fetch(\"https://jsonplaceholder.typicode.com/users/1\");\n    if (!response.ok) throw new Error(\"Failed to fetch\");\n    const user = await response.json();\n    console.log(user.email);\n  } catch (error) {\n    console.log(\"Error:\", error.message);\n  }\n}\ngetAndDisplay();"
+                  },
+                  {
+                        "label": "Promise.all inside an async function",
+                        "code": "async function loadAllData() {\n  const [users, posts] = await Promise.all([\n    fetch(\"https://jsonplaceholder.typicode.com/users\").then(r => r.json()),\n    fetch(\"https://jsonplaceholder.typicode.com/posts\").then(r => r.json()),\n  ]);\n  console.log(\"Loaded\", users.length, \"users and\", posts.length, \"posts\");\n}\nloadAllData();"
+                  }
+            ]
+      },
+      {
+            "id": 20,
+            "title": "Fetch API — Calling a Friend 📞",
+            "difficulty": "Advanced",
+            "analogy": "Fetch is like calling a friend: you dial (fetch), wait for an answer (await), get a response (json()).",
+            "snippets": [
+                  {
+                        "label": "Simple GET request",
+                        "code": "async function getUsers() {\n  const response = await fetch(\"https://jsonplaceholder.typicode.com/users\");\n  const users = await response.json();\n  console.log(users.length, \"users loaded\");\n}\ngetUsers();"
+                  },
+                  {
+                        "label": "POST with headers and body",
+                        "code": "async function createPost() {\n  const response = await fetch(\"https://jsonplaceholder.typicode.com/posts\", {\n    method: \"POST\",\n    headers: { \"Content-Type\": \"application/json\" },\n    body: JSON.stringify({ title: \"Hello\", body: \"World\", userId: 1 }),\n  });\n  const newPost = await response.json();\n  console.log(newPost);\n}\ncreatePost();"
+                  },
+                  {
+                        "label": "Checking response.ok and throwing",
+                        "code": "async function fetchSafe() {\n  try {\n    const response = await fetch(\"https://jsonplaceholder.typicode.com/posts/9999999\");\n    if (!response.ok) {\n      throw new Error(`HTTP error! status: ${response.status}`);\n    }\n    console.log(await response.json());\n  } catch (error) {\n    console.log(\"Fetch failed:\", error.message);\n  }\n}\nfetchSafe();"
+                  }
+            ]
+      },
+      {
+            "id": 21,
+            "title": "Error Handling — Safety Nets 🥅",
+            "difficulty": "Advanced",
+            "analogy": "Tightrope walkers have nets below. try/catch is your safety net, if something goes wrong, you catch it.",
+            "snippets": [
+                  {
+                        "label": "Basic try/catch",
+                        "code": "try {\n  JSON.parse(\"{ invalid json\");\n} catch (error) {\n  console.log(\"Caught:\", error.message);\n}"
+                  },
+                  {
+                        "label": "Throwing a custom error",
+                        "code": "function validateAge(age) {\n  if (age < 0) throw new Error(\"Age cannot be negative!\");\n  return age;\n}\ntry {\n  validateAge(-5);\n} catch (error) {\n  console.log(error.message);\n}"
+                  },
+                  {
+                        "label": "Custom error class + instanceof",
+                        "code": "class ValidationError extends Error {\n  constructor(message) {\n    super(message);\n    this.name = \"ValidationError\";\n  }\n}\ntry {\n  throw new ValidationError(\"Email required\");\n} catch (error) {\n  console.log(error instanceof ValidationError, error.message);\n}"
+                  },
+                  {
+                        "label": "finally — always runs",
+                        "code": "try {\n  console.log(\"Running code\");\n} finally {\n  console.log(\"This always runs!\");\n}"
+                  }
+            ]
+      },
+      {
+            "id": 22,
+            "title": "Classes — Toy Blueprints 📐",
+            "difficulty": "Advanced",
+            "analogy": "A toy blueprint describes what a toy looks like. You can make many toys from one blueprint.",
+            "snippets": [
+                  {
+                        "label": "class, constructor, methods",
+                        "code": "class Car {\n  constructor(brand, color) {\n    this.brand = brand;\n    this.color = color;\n    this.speed = 0;\n  }\n  accelerate() { this.speed += 10; }\n  honk() { console.log(`${this.brand} goes HONK!`); }\n}\nconst myCar = new Car(\"Toyota\", \"red\");\nmyCar.accelerate();\nmyCar.honk();\nconsole.log(myCar.speed);"
+                  },
+                  {
+                        "label": "Inheritance with extends / super",
+                        "code": "class Car {\n  constructor(brand) { this.brand = brand; }\n  drive() { console.log(`${this.brand} is driving`); }\n}\nclass ElectricCar extends Car {\n  constructor(brand, batteryLife) {\n    super(brand);\n    this.batteryLife = batteryLife;\n  }\n  charge() { console.log(\"Fully charged!\"); }\n}\nconst tesla = new ElectricCar(\"Tesla\", 75);\ntesla.drive();\ntesla.charge();"
+                  },
+                  {
+                        "label": "Static methods — called on the class itself",
+                        "code": "class MathUtils {\n  static add(a, b) { return a + b; }\n}\nconsole.log(MathUtils.add(5, 3));"
+                  }
+            ]
+      },
+      {
+            "id": 23,
+            "title": "Closures — Secret Piggy Bank 🐷",
+            "difficulty": "Advanced",
+            "analogy": "A piggy bank only you can open. Even after the piggy bank factory closed, it remembers the secret code.",
+            "snippets": [
+                  {
+                        "label": "A closure remembers outer variables",
+                        "code": "function makeCounter() {\n  let count = 0;\n  return function () {\n    count++;\n    return count;\n  };\n}\nconst counter = makeCounter();\nconsole.log(counter(), counter(), counter());"
+                  },
+                  {
+                        "label": "Closures give data privacy",
+                        "code": "function createUser(name) {\n  let password = \"secret123\";\n  return {\n    getName: () => name,\n    checkPassword: (guess) => guess === password,\n  };\n}\nconst user = createUser(\"Alice\");\nconsole.log(user.getName());\nconsole.log(user.checkPassword(\"secret123\"));\nconsole.log(user.password);"
+                  },
+                  {
+                        "label": "Classic problem: var in loops",
+                        "code": "const funcs = [];\nfor (var i = 0; i < 3; i++) {\n  funcs.push(() => console.log(i));\n}\nfuncs.forEach(f => f());"
+                  },
+                  {
+                        "label": "Fix: use let instead of var",
+                        "code": "const funcs = [];\nfor (let i = 0; i < 3; i++) {\n  funcs.push(() => console.log(i));\n}\nfuncs.forEach(f => f());"
+                  }
+            ]
+      },
+      {
+            "id": 24,
+            "title": "Higher Order Functions — Machine Makers 🏗️",
+            "difficulty": "Advanced",
+            "analogy": "A machine that makes other machines. You give it settings, it produces a customized machine.",
+            "snippets": [
+                  {
+                        "label": "Passing a function as an argument",
+                        "code": "function applyTwice(func, value) {\n  return func(func(value));\n}\nconst add5 = (n) => n + 5;\nconsole.log(applyTwice(add5, 10));"
+                  },
+                  {
+                        "label": "Currying — a function returning a function",
+                        "code": "function multiply(x) {\n  return function (y) {\n    return x * y;\n  };\n}\nconst double = multiply(2);\nconsole.log(double(5), double(7));"
+                  },
+                  {
+                        "label": "Compose — combine two functions",
+                        "code": "function compose(f, g) {\n  return (x) => f(g(x));\n}\nconst addTwo = (n) => n + 2;\nconst square = (n) => n * n;\nconst addThenSquare = compose(square, addTwo);\nconsole.log(addThenSquare(3));"
+                  },
+                  {
+                        "label": "Memoization — cache expensive results",
+                        "code": "function memoize(func) {\n  const cache = {};\n  return function (arg) {\n    if (!(arg in cache)) {\n      console.log(\"Computing for\", arg);\n      cache[arg] = func(arg);\n    }\n    return cache[arg];\n  };\n}\nconst square = (n) => n * n;\nconst memoized = memoize(square);\nconsole.log(memoized(5));\nconsole.log(memoized(5));"
+                  }
+            ]
+      },
+      {
+            "id": 25,
+            "title": "Local Storage — Personal Notebook 📓",
+            "difficulty": "Intermediate",
+            "analogy": "Your browser's personal notebook. It remembers things even after you close the browser.",
+            "snippets": [
+                  {
+                        "label": "setItem / getItem with JSON",
+                        "code": "const user = { name: \"Alice\", age: 25 };\nlocalStorage.setItem(\"demo-user\", JSON.stringify(user));\nconst saved = JSON.parse(localStorage.getItem(\"demo-user\"));\nconsole.log(saved.name);"
+                  },
+                  {
+                        "label": "removeItem — delete one key",
+                        "code": "localStorage.setItem(\"demo-temp\", \"value\");\nconsole.log(localStorage.getItem(\"demo-temp\"));\nlocalStorage.removeItem(\"demo-temp\");\nconsole.log(localStorage.getItem(\"demo-temp\"));"
+                  },
+                  {
+                        "label": "Practical example: a TODO list class",
+                        "code": "class TodoList {\n  constructor() {\n    this.todos = JSON.parse(localStorage.getItem(\"demo-todos\")) || [];\n  }\n  add(text) {\n    this.todos.push({ id: Date.now(), text, done: false });\n    localStorage.setItem(\"demo-todos\", JSON.stringify(this.todos));\n  }\n}\nconst list = new TodoList();\nlist.add(\"Learn JavaScript\");\nconsole.log(list.todos);"
+                  },
+                  {
+                        "label": "sessionStorage vs localStorage",
+                        "code": "sessionStorage.setItem(\"demo-temp\", \"goes away on tab close\");\nlocalStorage.setItem(\"demo-perm\", \"stays forever\");\nconsole.log(sessionStorage.getItem(\"demo-temp\"));\nconsole.log(localStorage.getItem(\"demo-perm\"));"
+                  }
+            ]
+      }
+];
+
 
     const STORAGE_KEY = "js-done";
 
@@ -215,21 +838,22 @@
             <strong style="color: #b45309;">📚 Analogy:</strong> ${lesson.analogy}
           </div>
 
-          <div style="color: #475569; line-height: 1.8; margin: 16px 0;">
-            <p>This lesson covers one of JavaScript's fundamental building blocks. Understanding this concept is essential before moving forward.</p>
-          </div>
-
-          <div class="code-block">
-            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            <pre><code class="language-javascript">${escapeHtml(lesson.code)}</code></pre>
-          </div>
-
           <div class="key-points">
-            <strong style="color: #166534;">✓ Key Points:</strong>
+            <strong style="color: #166534;">✓ Key Points — each one is its own runnable example below:</strong>
             <ul style="margin: 8px 0 0 0; padding-left: 20px;">
-              ${lesson.points.map(p => `<li>${p}</li>`).join("")}
+              ${lesson.snippets.map(s => `<li>${s.label}</li>`).join("")}
             </ul>
           </div>
+
+          ${lesson.snippets.map((snippet, i) => `
+            <div class="code-block">
+              <div class="snippet-label">${escapeHtml(snippet.label)}</div>
+              <button class="run-btn" onclick="runSnippet(${lesson.id}, ${i})">▶ Run</button>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <pre><code class="language-javascript">${escapeHtml(snippet.code)}</code></pre>
+              <pre class="output-panel" id="output-${lesson.id}-${i}"></pre>
+            </div>
+          `).join("")}
 
           <button class="mark-btn" onclick="toggleLesson(${lesson.id})">Mark Complete ✓</button>
         `;
@@ -241,6 +865,68 @@
     function escapeHtml(text) {
       const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
       return text.replace(/[&<>"']/g, c => map[c]);
+    }
+
+    function getSandboxRoot(lesson) {
+      if (!lesson.sandboxHtml) return null;
+      let root = document.getElementById(`sandbox-${lesson.id}`);
+      if (!root) {
+        root = document.createElement("div");
+        root.id = `sandbox-${lesson.id}`;
+        root.style.cssText = "position:absolute; left:-9999px; top:-9999px; width:300px;";
+        document.body.appendChild(root);
+      }
+      root.innerHTML = lesson.sandboxHtml;
+      return root;
+    }
+
+    function formatLogArg(arg) {
+      if (arg === undefined) return "undefined";
+      if (typeof arg === "object" && arg !== null) {
+        try { return JSON.stringify(arg); } catch (e) { return String(arg); }
+      }
+      return String(arg);
+    }
+
+    function runSnippet(lessonId, index) {
+      const lesson = LESSONS.find(l => l.id === lessonId);
+      const snippet = lesson.snippets[index];
+      const outEl = document.getElementById(`output-${lessonId}-${index}`);
+      outEl.style.display = "block";
+      outEl.classList.remove("error");
+      outEl.textContent = "";
+
+      const appendLine = (line) => {
+        outEl.textContent += (outEl.textContent ? "\n" : "") + line;
+      };
+
+      const fakeConsole = {
+        log: (...args) => appendLine(args.map(formatLogArg).join(" ")),
+        warn: (...args) => appendLine("⚠ " + args.map(formatLogArg).join(" ")),
+        error: (...args) => appendLine("✗ " + args.map(formatLogArg).join(" ")),
+      };
+
+      const sandboxRoot = lesson.sandboxHtml ? getSandboxRoot(lesson) : null;
+      const fakeDocument = sandboxRoot ? {
+        querySelector: (sel) => sandboxRoot.querySelector(sel),
+        querySelectorAll: (sel) => sandboxRoot.querySelectorAll(sel),
+        getElementById: (id) => sandboxRoot.querySelector("#" + id),
+        createElement: (tag) => document.createElement(tag),
+        addEventListener: (ev, cb) => sandboxRoot.addEventListener(ev, cb),
+        dispatchEvent: (ev) => sandboxRoot.dispatchEvent(ev),
+        body: sandboxRoot,
+      } : document;
+
+      try {
+        const run = new Function("console", "document", snippet.code);
+        run(fakeConsole, fakeDocument);
+        if (!outEl.textContent) {
+          outEl.textContent = "✅ Ran with no console output";
+        }
+      } catch (error) {
+        outEl.classList.add("error");
+        outEl.textContent = "✗ " + error.message;
+      }
     }
 
     function toggleLesson(id) {

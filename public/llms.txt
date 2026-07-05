@@ -1,8 +1,8 @@
-# Dev Journey — Full Stack Web Development Classes
+# Dev Journey — Full Stack & Multi-Language Development Classes
 
-> Dev Journey is a free, beginner-friendly full stack web development course by
-> Chebon Kelvin Kibet, a freelance full stack engineer. It teaches JavaScript,
-> React, Next.js, Node.js and PostgreSQL step by step using playful, real-world
+> Dev Journey is a free, beginner-friendly coding course by Chebon Kelvin Kibet,
+> a freelance full stack engineer. It teaches JavaScript, Python, React, Next.js,
+> Node.js, PostgreSQL, Flutter and PHP step by step using playful, real-world
 > analogies and runnable code examples, aimed at complete beginners.
 
 Website: https://fullstackclassesforchebon.web.app
@@ -35,17 +35,37 @@ Contact: contact@chebonkelvin.com
   INSERT, SELECT, WHERE, UPDATE, DELETE, primary & foreign keys, JOINs,
   GROUP BY and aggregates.
 
+- [Python Tutorial](https://fullstackclassesforchebon.web.app/python.html):
+  Variables, data types, lists, tuples, sets, dictionaries, conditionals, loops,
+  functions, lambdas, comprehensions, classes & OOP, error handling, file
+  handling, decorators and JSON. Code examples run live in the browser via
+  Pyodide.
+
+- [Flutter Tutorial](https://fullstackclassesforchebon.web.app/flutter.html):
+  What Flutter is, Dart basics, stateless vs stateful widgets, layouts, state
+  management with setState, user input, navigation, lists, forms, async/await,
+  HTTP requests and the Provider package.
+
+- [PHP Tutorial](https://fullstackclassesforchebon.web.app/php.html):
+  Variables, data types, arrays, conditionals, loops, functions, superglobals,
+  forms, sessions & cookies, include/require, OOP, error handling and
+  connecting to a database with PDO.
+
 ## Teaching Style
 
 Every lesson explains one concept with a simple everyday analogy (e.g. variables
-as "magic boxes", middleware as "assembly line workers"), followed by real code
-examples. Lessons are ordered so each builds on the previous one, forming a
-complete beginner-to-full-stack learning path.
+as "magic boxes", middleware as "assembly line workers"), followed by small,
+focused, runnable code examples (one per key point) rather than long blocks.
+Lessons are ordered so each builds on the previous one, forming a complete
+beginner-to-full-stack learning path.
 
 ## Recommended Learning Order
 
 1. JavaScript (language fundamentals)
-2. React (frontend UI)
-3. Next.js (fullstack React framework)
+2. Python (language fundamentals, alternate track)
+3. React (frontend UI)
 4. Node.js (backend & APIs)
-5. PostgreSQL (databases & SQL)
+5. PHP (backend, alternate track)
+6. PostgreSQL (databases & SQL)
+7. Next.js (fullstack React framework)
+8. Flutter (cross-platform mobile apps)

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PHP Tutorial for Beginners — Variables, Functions, OOP & More | Dev Journey</title>
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="PHP Tutorial for Beginners — Variables, Functions, OOP & More | Dev Journey" />
+  <meta name="description" content="Learn PHP from scratch: variables, arrays, functions, superglobals, sessions, OOP, error handling and connecting to a database with PDO — beginner-friendly lessons with practical code examples." />
+  <meta name="keywords" content="PHP tutorial, learn PHP, PHP for beginners, PHP variables, PHP functions, PHP arrays, PHP OOP, PHP sessions, PDO tutorial, PHP basics course" />
+  <meta name="author" content="Chebon Kelvin Kibet" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <link rel="canonical" href="https://fullstackclassesforchebon.web.app/php.html" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Dev Journey" />
+  <meta property="og:title" content="PHP Tutorial for Beginners — Variables, Functions, OOP & More | Dev Journey" />
+  <meta property="og:description" content="Learn PHP from scratch: variables, arrays, functions, superglobals, sessions, OOP, error handling and connecting to a database with PDO — beginner-friendly lessons with practical code examples." />
+  <meta property="og:url" content="https://fullstackclassesforchebon.web.app/php.html" />
+  <meta property="og:image" content="https://fullstackclassesforchebon.web.app/favicon/web-app-manifest-512x512.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:creator" content="@chebon_kibet" />
+  <meta name="twitter:title" content="PHP Tutorial for Beginners — Variables, Functions, OOP & More | Dev Journey" />
+  <meta name="twitter:description" content="Learn PHP from scratch: variables, arrays, functions, superglobals, sessions, OOP, error handling and connecting to a database with PDO — beginner-friendly lessons with practical code examples." />
+  <meta name="twitter:image" content="https://fullstackclassesforchebon.web.app/favicon/web-app-manifest-512x512.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+  <link rel="shortcut icon" href="favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="favicon/site.webmanifest" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  "name": "PHP Tutorial for Beginners — Variables, Functions, OOP & More",
+  "description": "Learn PHP from scratch: variables, arrays, functions, superglobals, sessions, OOP, error handling and connecting to a database with PDO — beginner-friendly lessons with practical code examples.",
+  "url": "https://fullstackclassesforchebon.web.app/php.html",
+  "author": {
+    "@type": "Person",
+    "name": "Chebon Kelvin Kibet",
+    "url": "https://chebonkelvin.com"
+  },
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "learningResourceType": "Tutorial",
+  "educationalLevel": "Beginner",
+  "teaches": [
+    "Variables & Data Types",
+    "Arrays",
+    "Conditionals & Loops",
+    "Functions",
+    "Superglobals",
+    "Forms",
+    "Sessions & Cookies",
+    "OOP in PHP",
+    "Error Handling",
+    "PDO & Databases",
+    "Composer"
+  ],
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Dev Journey",
+    "url": "https://fullstackclassesforchebon.web.app/"
+  }
+}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    body { background: #f8fafc; }
+    .sidebar { position: fixed; left: 0; top: 64px; width: 256px; height: calc(100vh - 64px); overflow-y: auto; background: #0f172a; }
+    .main { margin-left: 256px; padding-top: 64px; }
+    .code-block { background: #1e293b; border-radius: 12px; padding: 16px; margin: 16px 0; position: relative; }
+    .snippet-label { color: #c4b5fd; font-weight: 700; font-size: 13px; margin: 0 0 10px 0; padding-right: 90px; }
+    .copy-btn { position: absolute; top: 8px; right: 8px; background: #777bb4; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; }
+    .copy-btn:hover { background: #5f6392; }
+    .copy-btn.copied { background: #22c55e; }
+    pre { margin: 0; overflow-x: auto; }
+    code { color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 14px; }
+    .lesson { padding: 32px; max-width: 900px; margin: 0 auto; border-bottom: 1px solid #e2e8f0; }
+    .lesson:target { background: #f5f3ff; }
+    .difficulty { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px; }
+    .difficulty.beginner { background: #dbeafe; color: #1e40af; }
+    .difficulty.intermediate { background: #fed7aa; color: #92400e; }
+    .difficulty.advanced { background: #fecaca; color: #7f1d1d; }
+    .analogy { background: #f5f3ff; border-left: 4px solid #777bb4; padding: 16px; margin: 16px 0; border-radius: 8px; }
+    .key-points { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px; margin: 16px 0; }
+    .key-points li { margin: 8px 0; }
+    .mark-btn { background: #777bb4; color: #fff; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; border: none; font-size: 14px; }
+    .mark-btn.completed { background: #22c55e; }
+    .mark-btn:hover { opacity: 0.9; }
+    .sidebar-item { padding: 12px 16px; cursor: pointer; border-left: 3px solid transparent; color: #cbd5e1; transition: all 0.2s; }
+    .sidebar-item:hover { background: #1e293b; color: #c4b5fd; }
+    .sidebar-item.active { background: #1e293b; border-left-color: #777bb4; color: #c4b5fd; }
+    .sidebar-item.completed { color: #22c55e; }
+    .sidebar-item.completed::before { content: '✓ '; }
+    .progress-bar { height: 8px; background: #1e293b; border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #777bb4; transition: width 0.3s ease; }
+    .nav-bar { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 16px; z-index: 40; }
+    .nav-bar a { color: #777bb4; text-decoration: none; font-weight: bold; }
+    .nav-title { color: #1e293b; font-weight: bold; margin-left: 16px; flex: 1; }
+    .nav-progress { color: #64748b; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <div class="nav-bar">
+    <a href="index.html">← Home</a>
+    <div class="nav-title">🟣 PHP</div>
+    <div class="nav-progress"><span id="progress-counter">0</span> / 16 complete</div>
+  </div>
+
+  <div class="sidebar">
+    <div style="padding: 16px;">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+      </div>
+      <div style="color: #cbd5e1; font-size: 12px; margin-bottom: 16px;">
+        <span id="progress-text">0 / 16 lessons complete</span>
+      </div>
+    </div>
+    <div id="lesson-list"></div>
+    <div style="padding: 16px; border-top: 1px solid #334155;">
+      <button onclick="resetProgress()" style="width: 100%; background: #334155; color: #cbd5e1; padding: 8px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px;">Reset Progress</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div style="background: linear-gradient(135deg, #777bb4 0%, #8993be 100%); padding: 40px; text-align: center; color: white;">
+      <h1 style="font-size: 2.5rem; font-weight: 900; margin: 0;">PHP</h1>
+      <p style="margin: 8px 0 0 0; font-size: 1rem;">From variables to OOP and databases with PDO</p>
+    </div>
+
+    <div id="lessons-container"></div>
+  </div>
+
+  <script>
+    const LESSONS = [
+      {
+            "id": 1,
+            "title": "What is PHP? — The Web's Backstage Language 🐘",
+            "difficulty": "Beginner",
+            "analogy": "PHP runs backstage before the page ever reaches the browser — it prepares the show, then hands the finished HTML to the audience.",
+            "snippets": [
+                  {
+                        "label": "<?php tags + echo — your first line of PHP",
+                        "code": "<?php\necho \"Hello, PHP!\";\necho \"\\nRunning on the server, not the browser\";"
+                  },
+                  {
+                        "label": "PHP mixes directly with HTML",
+                        "code": "<!DOCTYPE html>\n<html>\n<body>\n  <h1><?php echo \"Welcome!\"; ?></h1>\n</body>\n</html>"
+                  },
+                  {
+                        "label": "Running a PHP file",
+                        "runnable": false,
+                        "code": "php -S localhost:8000\n# Visit http://localhost:8000"
+                  }
+            ]
+      },
+      {
+            "id": 2,
+            "title": "Variables & Data Types — Labeled Boxes with a Dollar Sign 💲",
+            "difficulty": "Beginner",
+            "analogy": "Every PHP variable wears a dollar-sign name tag. Put a number, text, or true/false value inside — PHP figures out the type.",
+            "snippets": [
+                  {
+                        "label": "Variables start with $",
+                        "code": "<?php\n$name = \"Alice\";\n$age = 25;\necho $name . \" is \" . $age . \" years old\";"
+                  },
+                  {
+                        "label": "Data types",
+                        "code": "<?php\n$name = \"Alice\";   // string\n$age = 25;          // int\n$price = 19.99;     // float\n$isActive = true;   // bool\n$nothing = null;    // null\nvar_dump($name, $age, $price, $isActive, $nothing);"
+                  },
+                  {
+                        "label": "Type juggling — PHP converts automatically",
+                        "code": "<?php\n$str = \"5\";\n$num = 10;\necho $str + $num;\nvar_dump($str + $num);"
+                  }
+            ]
+      },
+      {
+            "id": 3,
+            "title": "Operators — Playground Math ➕",
+            "difficulty": "Beginner",
+            "analogy": "Arithmetic operators are your calculator. == asks 'same value?'. === asks 'same value AND same type?'.",
+            "snippets": [
+                  {
+                        "label": "Arithmetic operators",
+                        "code": "<?php\necho 10 + 5, \" \", 10 - 3, \" \", 4 * 3, \" \", 20 / 4, \" \", 10 % 3, \" \", 2 ** 3;"
+                  },
+                  {
+                        "label": "== vs === (use === to also check type)",
+                        "code": "<?php\nvar_dump(5 == \"5\");\nvar_dump(5 === \"5\");"
+                  },
+                  {
+                        "label": "Logical operators",
+                        "code": "<?php\nvar_dump(true && false, true || false, !true);"
+                  }
+            ]
+      },
+      {
+            "id": 4,
+            "title": "Strings — Playing with Words ✂️",
+            "difficulty": "Beginner",
+            "analogy": "Strings are beads on a string. Concatenate them with a dot, or let double quotes interpolate variables directly.",
+            "snippets": [
+                  {
+                        "label": "Concatenation with the . operator",
+                        "code": "<?php\n$first = \"Hello\";\n$second = \"World\";\necho $first . \" \" . $second;"
+                  },
+                  {
+                        "label": "String interpolation (double quotes only)",
+                        "code": "<?php\n$name = \"Bob\";\necho \"Hello, $name!\\n\";\necho \"Hello, {$name}!\";"
+                  },
+                  {
+                        "label": "String functions",
+                        "code": "<?php\n$text = \"Hello World\";\necho strlen($text), \"\\n\";\necho strtoupper($text), \"\\n\";\necho str_replace(\"World\", \"PHP\", $text), \"\\n\";"
+                  }
+            ]
+      },
+      {
+            "id": 5,
+            "title": "Arrays — Shopping List 🛒",
+            "difficulty": "Beginner",
+            "analogy": "An indexed array is a numbered shopping list. An associative array is a labeled ID card — each key has its own value.",
+            "snippets": [
+                  {
+                        "label": "Indexed arrays",
+                        "code": "<?php\n$fruits = [\"apple\", \"banana\", \"cherry\"];\necho $fruits[0], \" \", count($fruits);"
+                  },
+                  {
+                        "label": "Associative arrays",
+                        "code": "<?php\n$user = [\"name\" => \"Alice\", \"age\" => 25];\necho $user[\"name\"];"
+                  },
+                  {
+                        "label": "Array functions: sort, array_sum",
+                        "code": "<?php\n$nums = [3, 1, 4, 1, 5];\nsort($nums);\nprint_r($nums);\necho array_sum($nums);"
+                  },
+                  {
+                        "label": "foreach — loop over arrays",
+                        "code": "<?php\n$fruits = [\"apple\", \"banana\"];\nforeach ($fruits as $fruit) {\n    echo $fruit . \"\\n\";\n}\n\n$user = [\"name\" => \"Alice\", \"age\" => 25];\nforeach ($user as $key => $value) {\n    echo \"$key: $value\\n\";\n}"
+                  }
+            ]
+      },
+      {
+            "id": 6,
+            "title": "Conditionals — Choosing a Path 🌿",
+            "difficulty": "Beginner",
+            "analogy": "A fork in the road: if it's raining, take an umbrella. elseif it's cold, take a jacket. else, go as you are.",
+            "snippets": [
+                  {
+                        "label": "if / elseif / else",
+                        "code": "<?php\n$age = 20;\nif ($age < 13) {\n    echo \"Child\";\n} elseif ($age < 18) {\n    echo \"Teen\";\n} else {\n    echo \"Adult\";\n}"
+                  },
+                  {
+                        "label": "Ternary and null coalescing operators",
+                        "code": "<?php\n$age = 20;\necho $age >= 18 ? \"Adult\" : \"Minor\";\n\n$name = null;\necho \"\\n\" . ($name ?? \"Guest\");"
+                  }
+            ]
+      },
+      {
+            "id": 7,
+            "title": "Loops — Running Laps 🏃",
+            "difficulty": "Beginner",
+            "analogy": "The coach says run 5 laps! A for loop counts exactly; a while loop keeps going until a condition says stop.",
+            "snippets": [
+                  {
+                        "label": "for",
+                        "code": "<?php\nfor ($i = 0; $i < 5; $i++) {\n    echo $i . \" \";\n}"
+                  },
+                  {
+                        "label": "while",
+                        "code": "<?php\n$count = 0;\nwhile ($count < 3) {\n    echo \"Count: $count\\n\";\n    $count++;\n}"
+                  },
+                  {
+                        "label": "break and continue",
+                        "code": "<?php\nfor ($i = 0; $i < 10; $i++) {\n    if ($i == 5) break;\n    if ($i % 2 == 0) continue;\n    echo $i . \" \";\n}"
+                  }
+            ]
+      },
+      {
+            "id": 8,
+            "title": "Functions — Recipe Cards 📗",
+            "difficulty": "Beginner",
+            "analogy": "A function is a recipe card: give it ingredients (parameters), it hands back a finished dish (return value).",
+            "snippets": [
+                  {
+                        "label": "function + return",
+                        "code": "<?php\nfunction add($a, $b) {\n    return $a + $b;\n}\necho add(5, 3);"
+                  },
+                  {
+                        "label": "Default parameters",
+                        "code": "<?php\nfunction greet($name = \"Friend\") {\n    echo \"Hi $name!\\n\";\n}\ngreet();\ngreet(\"Alice\");"
+                  },
+                  {
+                        "label": "Type declarations for parameters and return values",
+                        "code": "<?php\nfunction multiply(int $a, int $b): int {\n    return $a * $b;\n}\necho multiply(4, 5);"
+                  }
+            ]
+      },
+      {
+            "id": 9,
+            "title": "Superglobals — Reading the Request 📬",
+            "difficulty": "Intermediate",
+            "analogy": "$_GET, $_POST, and $_SERVER are envelopes the browser hands you with every request — already filled out before your code runs.",
+            "snippets": [
+                  {
+                        "label": "$_GET — reading query string values",
+                        "code": "<?php\n// URL: page.php?name=Alice\n$name = $_GET['name'] ?? 'Guest';\necho \"Hello, $name\";"
+                  },
+                  {
+                        "label": "$_SERVER — info about the request",
+                        "code": "<?php\necho $_SERVER['REQUEST_METHOD'] ?? 'CLI';"
+                  },
+                  {
+                        "label": "$_POST — reading submitted form data",
+                        "code": "<?php\n$email = $_POST['email'] ?? '';\nif ($email) {\n    echo \"Received: $email\";\n} else {\n    echo \"No email submitted yet\";\n}"
+                  }
+            ]
+      },
+      {
+            "id": 10,
+            "title": "Working with Forms — Filling Paperwork 📋",
+            "difficulty": "Intermediate",
+            "analogy": "An HTML form is the paperwork; PHP is the clerk who reads it, checks it, and decides what happens next.",
+            "snippets": [
+                  {
+                        "label": "An HTML form posting to a PHP script",
+                        "runnable": false,
+                        "code": "<form method=\"POST\" action=\"submit.php\">\n    <input type=\"text\" name=\"username\">\n    <button type=\"submit\">Submit</button>\n</form>"
+                  },
+                  {
+                        "label": "Validating form input on the server",
+                        "code": "<?php\n$username = trim($_POST['username'] ?? '');\nif (empty($username)) {\n    echo \"Username is required\";\n} else {\n    echo \"Welcome, $username\";\n}"
+                  }
+            ]
+      },
+      {
+            "id": 11,
+            "title": "Sessions & Cookies — Remembering a Visitor 🍪",
+            "difficulty": "Intermediate",
+            "analogy": "A session is a locker at the server with your name on it. A cookie is a stamp on the visitor's hand so they can prove which locker is theirs.",
+            "snippets": [
+                  {
+                        "label": "Starting a session and storing data in it",
+                        "code": "<?php\nsession_start();\n$_SESSION['user'] = 'Alice';\necho $_SESSION['user'];"
+                  },
+                  {
+                        "label": "Setting and reading a cookie",
+                        "code": "<?php\nsetcookie('theme', 'dark', time() + 3600);\necho $_COOKIE['theme'] ?? 'light';"
+                  }
+            ]
+      },
+      {
+            "id": 12,
+            "title": "Include & Require — Sharing Code Across Files 📎",
+            "difficulty": "Beginner",
+            "analogy": "include and require paste one file's contents into another — like photocopying a shared handout into every notebook that needs it.",
+            "snippets": [
+                  {
+                        "label": "include — pull in another file's code",
+                        "code": "<?php\n// header.php\nfunction renderHeader() {\n    echo \"<header>My Site</header>\";\n}"
+                  },
+                  {
+                        "label": "require_once — load a file, but only once",
+                        "code": "<?php\nrequire_once 'config.php';\nrequire_once 'config.php'; // skipped, already loaded"
+                  }
+            ]
+      },
+      {
+            "id": 13,
+            "title": "OOP in PHP — Blueprints 📐",
+            "difficulty": "Intermediate",
+            "analogy": "A class is a blueprint. Each object built from it (an instance) carries its own data but shares the same behavior.",
+            "snippets": [
+                  {
+                        "label": "class + constructor + a method",
+                        "code": "<?php\nclass Dog {\n    public $name;\n\n    public function __construct($name) {\n        $this->name = $name;\n    }\n\n    public function bark() {\n        echo \"$this->name says Woof!\";\n    }\n}\n\n$rex = new Dog(\"Rex\");\n$rex->bark();"
+                  },
+                  {
+                        "label": "Inheritance — a subclass overrides a method",
+                        "code": "<?php\nclass Animal {\n    public $name;\n    public function __construct($name) { $this->name = $name; }\n    public function speak() { echo \"$this->name makes a sound\"; }\n}\n\nclass Cat extends Animal {\n    public function speak() {\n        echo \"$this->name says Meow!\";\n    }\n}\n\n(new Cat(\"Whiskers\"))->speak();"
+                  }
+            ]
+      },
+      {
+            "id": 14,
+            "title": "Error Handling — Safety Nets 🥅",
+            "difficulty": "Intermediate",
+            "analogy": "A tightrope walker has a net below. try/catch is your safety net — if something goes wrong, you catch it instead of crashing.",
+            "snippets": [
+                  {
+                        "label": "Basic try/catch",
+                        "code": "<?php\ntry {\n    $result = intdiv(10, 0);\n} catch (DivisionByZeroError $e) {\n    echo \"Caught: \" . $e->getMessage();\n}"
+                  },
+                  {
+                        "label": "Custom exceptions",
+                        "code": "<?php\nclass InsufficientFundsException extends Exception {}\n\nfunction withdraw($balance, $amount) {\n    if ($amount > $balance) {\n        throw new InsufficientFundsException(\"Not enough money!\");\n    }\n    return $balance - $amount;\n}\n\ntry {\n    withdraw(100, 200);\n} catch (InsufficientFundsException $e) {\n    echo $e->getMessage();\n}"
+                  }
+            ]
+      },
+      {
+            "id": 15,
+            "title": "Connecting to a Database — PDO 💬",
+            "difficulty": "Advanced",
+            "analogy": "PDO is a translator between PHP and the database. Prepared statements are a form with blanks — you fill them in safely, never by pasting raw text.",
+            "snippets": [
+                  {
+                        "label": "Connecting with PDO",
+                        "runnable": false,
+                        "code": "<?php\n$pdo = new PDO(\n    \"pgsql:host=localhost;dbname=mydb\",\n    \"postgres\",\n    \"password\"\n);\n$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);"
+                  },
+                  {
+                        "label": "Querying with a prepared statement (safe from SQL injection)",
+                        "runnable": false,
+                        "code": "<?php\n$stmt = $pdo->prepare(\"SELECT * FROM users WHERE id = ?\");\n$stmt->execute([$id]);\n$user = $stmt->fetch(PDO::FETCH_ASSOC);"
+                  },
+                  {
+                        "label": "Inserting data and reading the new ID",
+                        "runnable": false,
+                        "code": "<?php\n$stmt = $pdo->prepare(\"INSERT INTO users (name, email) VALUES (?, ?)\");\n$stmt->execute([$name, $email]);\necho \"New user ID: \" . $pdo->lastInsertId();"
+                  }
+            ]
+      },
+      {
+            "id": 16,
+            "title": "Composer & Deployment — Opening the Doors 🚀",
+            "difficulty": "Intermediate",
+            "analogy": "Composer is PHP's parts supplier — it fetches and organizes every package your project depends on.",
+            "snippets": [
+                  {
+                        "label": "Installing a package with Composer",
+                        "runnable": false,
+                        "code": "composer require guzzlehttp/guzzle\ncomposer install"
+                  },
+                  {
+                        "label": "Autoloading with Composer",
+                        "runnable": false,
+                        "code": "<?php\nrequire 'vendor/autoload.php';\n\nuse GuzzleHttp\\Client;\n$client = new Client();"
+                  },
+                  {
+                        "label": "Deploying to a server",
+                        "runnable": false,
+                        "code": "# On a server with PHP + Apache/Nginx configured:\ngit clone https://github.com/you/your-app.git\ncd your-app\ncomposer install --no-dev\n# Point your web server's document root to /public"
+                  }
+            ]
+      }
+];
+
+    const STORAGE_KEY = "php-done";
+
+    function initSidebar() {
+      const list = document.getElementById("lesson-list");
+      LESSONS.forEach(lesson => {
+        const item = document.createElement("div");
+        item.id = `sidebar-lesson-${lesson.id}`;
+        item.className = "sidebar-item";
+        item.onclick = () => {
+          document.getElementById(`lesson-${lesson.id}`).scrollIntoView({ behavior: "smooth" });
+        };
+        item.textContent = `${lesson.id}. ${lesson.title.split(" ")[0]}`;
+        list.appendChild(item);
+      });
+    }
+
+    function initLessons() {
+      const container = document.getElementById("lessons-container");
+      LESSONS.forEach(lesson => {
+        const section = document.createElement("section");
+        section.id = `lesson-${lesson.id}`;
+        section.className = "lesson";
+        section.innerHTML = `
+          <div style="display: flex; align-items: center; margin-bottom: 16px;">
+            <span style="background: #777bb4; color: white; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">L${lesson.id}</span>
+            <h2 style="font-size: 1.75rem; font-weight: 900; margin: 0 0 0 16px; color: #0f172a;">${lesson.title}</h2>
+            <span class="difficulty ${lesson.difficulty.toLowerCase()}">${lesson.difficulty}</span>
+          </div>
+
+          <div class="analogy">
+            <strong style="color: #5b21b6;">📚 Analogy:</strong> ${lesson.analogy}
+          </div>
+
+          <div class="key-points">
+            <strong style="color: #166534;">✓ Key Points — each one is its own example below:</strong>
+            <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+              ${lesson.snippets.map(s => `<li>${s.label}</li>`).join("")}
+            </ul>
+          </div>
+
+          ${lesson.snippets.map(snippet => `
+            <div class="code-block">
+              <div class="snippet-label">${escapeHtml(snippet.label)}</div>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <pre><code class="language-php">${escapeHtml(snippet.code)}</code></pre>
+            </div>
+          `).join("")}
+
+          <button class="mark-btn" onclick="toggleLesson(${lesson.id})">Mark Complete ✓</button>
+        `;
+        container.appendChild(section);
+      });
+      hljs.highlightAll();
+    }
+
+    function escapeHtml(text) {
+      const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
+      return text.replace(/[&<>"']/g, c => map[c]);
+    }
+
+    function toggleLesson(id) {
+      let done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      if (done.includes(id)) {
+        done = done.filter(x => x !== id);
+      } else {
+        done.push(id);
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const pct = Math.round((done.length / LESSONS.length) * 100);
+      document.getElementById("progress-bar").style.width = pct + "%";
+      document.getElementById("progress-text").textContent = `${done.length} / ${LESSONS.length} lessons complete`;
+      document.getElementById("progress-counter").textContent = done.length;
+
+      LESSONS.forEach(lesson => {
+        const btn = document.querySelector(`#lesson-${lesson.id} .mark-btn`);
+        const sidebar = document.getElementById(`sidebar-lesson-${lesson.id}`);
+        if (done.includes(lesson.id)) {
+          btn.textContent = "✅ Completed!";
+          btn.classList.add("completed");
+          sidebar.classList.add("completed");
+        } else {
+          btn.textContent = "Mark Complete ✓";
+          btn.classList.remove("completed");
+          sidebar.classList.remove("completed");
+        }
+      });
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            document.querySelectorAll(".sidebar-item").forEach(item => item.classList.remove("active"));
+            const lessonNum = entry.target.id.split("-")[1];
+            document.getElementById(`sidebar-lesson-${lessonNum}`)?.classList.add("active");
+          }
+        });
+      }, { threshold: 0.3 });
+
+      document.querySelectorAll(".lesson").forEach(el => observer.observe(el));
+    }
+
+    function copyCode(btn) {
+      const code = btn.parentElement.querySelector("code").textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = "Copied! ✓";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 2000);
+      });
+    }
+
+    function resetProgress() {
+      if (confirm("Reset all progress?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        updateProgress();
+      }
+    }
+
+    initSidebar();
+    initLessons();
+    updateProgress();
+  </script>
+</body>
+</html>

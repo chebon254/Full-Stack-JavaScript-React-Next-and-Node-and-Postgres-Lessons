@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flutter Tutorial for Beginners — Widgets, State, Navigation & More | Dev Journey</title>
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="Flutter Tutorial for Beginners — Widgets, State, Navigation & More | Dev Journey" />
+  <meta name="description" content="Learn Flutter and Dart from scratch: widgets, layouts, state management, navigation, forms, HTTP requests and Provider — beginner-friendly lessons with practical code examples for building cross-platform apps." />
+  <meta name="keywords" content="Flutter tutorial, learn Flutter, Dart tutorial, Flutter for beginners, Flutter widgets, Flutter state management, Flutter navigation, Provider Flutter, cross-platform app development" />
+  <meta name="author" content="Chebon Kelvin Kibet" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <link rel="canonical" href="https://fullstackclassesforchebon.web.app/flutter.html" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Dev Journey" />
+  <meta property="og:title" content="Flutter Tutorial for Beginners — Widgets, State, Navigation & More | Dev Journey" />
+  <meta property="og:description" content="Learn Flutter and Dart from scratch: widgets, layouts, state management, navigation, forms, HTTP requests and Provider — beginner-friendly lessons with practical code examples for building cross-platform apps." />
+  <meta property="og:url" content="https://fullstackclassesforchebon.web.app/flutter.html" />
+  <meta property="og:image" content="https://fullstackclassesforchebon.web.app/favicon/web-app-manifest-512x512.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:creator" content="@chebon_kibet" />
+  <meta name="twitter:title" content="Flutter Tutorial for Beginners — Widgets, State, Navigation & More | Dev Journey" />
+  <meta name="twitter:description" content="Learn Flutter and Dart from scratch: widgets, layouts, state management, navigation, forms, HTTP requests and Provider — beginner-friendly lessons with practical code examples for building cross-platform apps." />
+  <meta name="twitter:image" content="https://fullstackclassesforchebon.web.app/favicon/web-app-manifest-512x512.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+  <link rel="shortcut icon" href="favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="favicon/site.webmanifest" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  "name": "Flutter Tutorial for Beginners — Widgets, State, Navigation & More",
+  "description": "Learn Flutter and Dart from scratch: widgets, layouts, state management, navigation, forms, HTTP requests and Provider — beginner-friendly lessons with practical code examples for building cross-platform apps.",
+  "url": "https://fullstackclassesforchebon.web.app/flutter.html",
+  "author": {
+    "@type": "Person",
+    "name": "Chebon Kelvin Kibet",
+    "url": "https://chebonkelvin.com"
+  },
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "learningResourceType": "Tutorial",
+  "educationalLevel": "Beginner",
+  "teaches": [
+    "Dart Basics",
+    "Widgets",
+    "Layouts",
+    "State Management",
+    "User Input",
+    "Navigation",
+    "Lists",
+    "Forms",
+    "Async/Await",
+    "HTTP Requests",
+    "Provider",
+    "Building & Deploying"
+  ],
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Dev Journey",
+    "url": "https://fullstackclassesforchebon.web.app/"
+  }
+}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    body { background: #f8fafc; }
+    .sidebar { position: fixed; left: 0; top: 64px; width: 256px; height: calc(100vh - 64px); overflow-y: auto; background: #0f172a; }
+    .main { margin-left: 256px; padding-top: 64px; }
+    .code-block { background: #1e293b; border-radius: 12px; padding: 16px; margin: 16px 0; position: relative; }
+    .snippet-label { color: #7dd3fc; font-weight: 700; font-size: 13px; margin: 0 0 10px 0; padding-right: 90px; }
+    .copy-btn { position: absolute; top: 8px; right: 8px; background: #02569b; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; }
+    .copy-btn:hover { background: #024272; }
+    .copy-btn.copied { background: #22c55e; }
+    pre { margin: 0; overflow-x: auto; }
+    code { color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 14px; }
+    .lesson { padding: 32px; max-width: 900px; margin: 0 auto; border-bottom: 1px solid #e2e8f0; }
+    .lesson:target { background: #eff9ff; }
+    .difficulty { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px; }
+    .difficulty.beginner { background: #dbeafe; color: #1e40af; }
+    .difficulty.intermediate { background: #fed7aa; color: #92400e; }
+    .difficulty.advanced { background: #fecaca; color: #7f1d1d; }
+    .analogy { background: #e0f2fe; border-left: 4px solid #02569b; padding: 16px; margin: 16px 0; border-radius: 8px; }
+    .key-points { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px; margin: 16px 0; }
+    .key-points li { margin: 8px 0; }
+    .mark-btn { background: #02569b; color: #fff; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; border: none; font-size: 14px; }
+    .mark-btn.completed { background: #22c55e; }
+    .mark-btn:hover { opacity: 0.9; }
+    .sidebar-item { padding: 12px 16px; cursor: pointer; border-left: 3px solid transparent; color: #cbd5e1; transition: all 0.2s; }
+    .sidebar-item:hover { background: #1e293b; color: #7dd3fc; }
+    .sidebar-item.active { background: #1e293b; border-left-color: #02569b; color: #7dd3fc; }
+    .sidebar-item.completed { color: #22c55e; }
+    .sidebar-item.completed::before { content: '✓ '; }
+    .progress-bar { height: 8px; background: #1e293b; border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #02569b; transition: width 0.3s ease; }
+    .nav-bar { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 16px; z-index: 40; }
+    .nav-bar a { color: #02569b; text-decoration: none; font-weight: bold; }
+    .nav-title { color: #1e293b; font-weight: bold; margin-left: 16px; flex: 1; }
+    .nav-progress { color: #64748b; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <div class="nav-bar">
+    <a href="index.html">← Home</a>
+    <div class="nav-title">🦋 Flutter</div>
+    <div class="nav-progress"><span id="progress-counter">0</span> / 15 complete</div>
+  </div>
+
+  <div class="sidebar">
+    <div style="padding: 16px;">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+      </div>
+      <div style="color: #cbd5e1; font-size: 12px; margin-bottom: 16px;">
+        <span id="progress-text">0 / 15 lessons complete</span>
+      </div>
+    </div>
+    <div id="lesson-list"></div>
+    <div style="padding: 16px; border-top: 1px solid #334155;">
+      <button onclick="resetProgress()" style="width: 100%; background: #334155; color: #cbd5e1; padding: 8px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px;">Reset Progress</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div style="background: linear-gradient(135deg, #02569b 0%, #13b9fd 100%); padding: 40px; text-align: center; color: white;">
+      <h1 style="font-size: 2.5rem; font-weight: 900; margin: 0;">Flutter</h1>
+      <p style="margin: 8px 0 0 0; font-size: 1rem;">Build cross-platform apps from widgets to deployment</p>
+    </div>
+
+    <div id="lessons-container"></div>
+  </div>
+
+  <script>
+    const LESSONS = [
+      {
+            "id": 1,
+            "title": "What is Flutter? — LEGO for Apps 🧩",
+            "difficulty": "Beginner",
+            "analogy": "Flutter builds one app from one set of LEGO bricks (widgets) that renders identically on Android, iOS, and the web.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "main() + runApp() — the entry point",
+                        "code": "import 'package:flutter/material.dart';\n\nvoid main() {\n  runApp(const MyApp());\n}"
+                  },
+                  {
+                        "label": "A minimal MaterialApp",
+                        "code": "class MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: const Text('My App')),\n        body: const Center(child: Text('Hello, Flutter!')),\n      ),\n    );\n  }\n}"
+                  },
+                  {
+                        "label": "Creating a new Flutter project",
+                        "runnable": false,
+                        "code": "flutter create my_app\ncd my_app\nflutter run"
+                  }
+            ]
+      },
+      {
+            "id": 2,
+            "title": "Dart Basics — The Language Under the Hood ⚙️",
+            "difficulty": "Beginner",
+            "analogy": "Dart is the language; Flutter is the toolkit built on top of it. You write Dart, Flutter turns it into pixels.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "Variables and types",
+                        "code": "String name = 'Alice';\nint age = 25;\ndouble price = 19.99;\nbool isActive = true;\n\nprint('$name is $age years old');"
+                  },
+                  {
+                        "label": "var, final, and const",
+                        "code": "var city = 'Nairobi';    // type inferred, can reassign\nfinal country = 'Kenya'; // set once at runtime\nconst pi = 3.14159;      // fixed at compile time"
+                  },
+                  {
+                        "label": "Null safety — nullable types",
+                        "code": "String? middleName;   // can be null\nmiddleName ??= 'none'; // assign only if null\nprint(middleName);"
+                  }
+            ]
+      },
+      {
+            "id": 3,
+            "title": "Widgets — Stateless vs Stateful 🏗️",
+            "difficulty": "Beginner",
+            "analogy": "A StatelessWidget is a printed photo — it never changes once created. A StatefulWidget is a whiteboard — it can be redrawn.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "StatelessWidget — never changes after building",
+                        "code": "class Greeting extends StatelessWidget {\n  final String name;\n  const Greeting({super.key, required this.name});\n\n  @override\n  Widget build(BuildContext context) {\n    return Text('Hello, $name!');\n  }\n}"
+                  },
+                  {
+                        "label": "StatefulWidget — can change over time",
+                        "code": "class Counter extends StatefulWidget {\n  const Counter({super.key});\n\n  @override\n  State<Counter> createState() => _CounterState();\n}\n\nclass _CounterState extends State<Counter> {\n  int count = 0;\n\n  void increment() {\n    setState(() {\n      count++;\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      children: [\n        Text('Count: $count'),\n        ElevatedButton(onPressed: increment, child: const Text('+1')),\n      ],\n    );\n  }\n}"
+                  }
+            ]
+      },
+      {
+            "id": 4,
+            "title": "Basic Widgets — The Building Blocks 🧱",
+            "difficulty": "Beginner",
+            "analogy": "Text, Container, Row, and Column are the plain bricks every Flutter screen is built from.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "Text and Container",
+                        "code": "Container(\n  padding: const EdgeInsets.all(16),\n  color: Colors.blue,\n  child: const Text('Styled text', style: TextStyle(color: Colors.white)),\n)"
+                  },
+                  {
+                        "label": "Row and Column — laying widgets out",
+                        "code": "Column(\n  children: [\n    const Text('Top'),\n    Row(\n      children: const [\n        Icon(Icons.star),\n        Text('Rating: 5'),\n      ],\n    ),\n  ],\n)"
+                  },
+                  {
+                        "label": "Image widget",
+                        "code": "Image.network('https://picsum.photos/200')"
+                  }
+            ]
+      },
+      {
+            "id": 5,
+            "title": "Layouts — Arranging the Room 🛋️",
+            "difficulty": "Beginner",
+            "analogy": "Padding is the empty space around furniture. Expanded and Stack decide how pieces share or overlap the room.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "Padding and Center",
+                        "code": "Center(\n  child: Padding(\n    padding: const EdgeInsets.all(24),\n    child: const Text('Centered with padding'),\n  ),\n)"
+                  },
+                  {
+                        "label": "Expanded — fill remaining space",
+                        "code": "Row(\n  children: [\n    Expanded(child: Container(color: Colors.red, height: 50)),\n    Expanded(child: Container(color: Colors.blue, height: 50)),\n  ],\n)"
+                  },
+                  {
+                        "label": "Stack — overlap widgets",
+                        "code": "Stack(\n  children: [\n    Image.network('https://picsum.photos/300'),\n    const Positioned(\n      bottom: 8,\n      right: 8,\n      child: Text('Caption', style: TextStyle(color: Colors.white)),\n    ),\n  ],\n)"
+                  }
+            ]
+      },
+      {
+            "id": 6,
+            "title": "State Management with setState — The Redraw Signal 🔄",
+            "difficulty": "Intermediate",
+            "analogy": "Changing a variable is like erasing pencil marks nobody can see. setState() is telling the teacher to hold up the new whiteboard.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "Updating state with setState",
+                        "code": "class LikeButton extends StatefulWidget {\n  const LikeButton({super.key});\n\n  @override\n  State<LikeButton> createState() => _LikeButtonState();\n}\n\nclass _LikeButtonState extends State<LikeButton> {\n  bool liked = false;\n\n  @override\n  Widget build(BuildContext context) {\n    return IconButton(\n      icon: Icon(liked ? Icons.favorite : Icons.favorite_border),\n      onPressed: () {\n        setState(() {\n          liked = !liked;\n        });\n      },\n    );\n  }\n}"
+                  },
+                  {
+                        "label": "Why setState matters — without it, the UI won't update",
+                        "code": "int count = 0;\n\n// Wrong: changes the variable, but the screen never redraws\nvoid wrongIncrement() {\n  count++;\n}\n\n// Right: tells Flutter to rebuild this widget\nvoid rightIncrement() {\n  setState(() {\n    count++;\n  });\n}"
+                  }
+            ]
+      },
+      {
+            "id": 7,
+            "title": "Handling User Input — Taking Orders 📋",
+            "difficulty": "Intermediate",
+            "analogy": "A TextField is a waiter with a notepad, writing down exactly what the customer says as they say it.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "TextField — a controlled text input",
+                        "code": "class NameField extends StatefulWidget {\n  const NameField({super.key});\n\n  @override\n  State<NameField> createState() => _NameFieldState();\n}\n\nclass _NameFieldState extends State<NameField> {\n  String name = '';\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      children: [\n        TextField(\n          onChanged: (value) => setState(() => name = value),\n          decoration: const InputDecoration(labelText: 'Your name'),\n        ),\n        Text('Hello, $name'),\n      ],\n    );\n  }\n}"
+                  },
+                  {
+                        "label": "Buttons and onPressed",
+                        "code": "ElevatedButton(\n  onPressed: () {\n    print('Button tapped!');\n  },\n  child: const Text('Tap me'),\n)"
+                  }
+            ]
+      },
+      {
+            "id": 8,
+            "title": "Navigation — Moving Between Screens 🗺️",
+            "difficulty": "Intermediate",
+            "analogy": "Navigator is a stack of cards. push adds a new screen on top; pop removes it to reveal the one underneath.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "Navigator.push — go to a new screen",
+                        "code": "Navigator.push(\n  context,\n  MaterialPageRoute(builder: (context) => const DetailScreen()),\n);"
+                  },
+                  {
+                        "label": "Navigator.pop — go back",
+                        "code": "ElevatedButton(\n  onPressed: () => Navigator.pop(context),\n  child: const Text('Go Back'),\n)"
+                  },
+                  {
+                        "label": "Named routes",
+                        "code": "MaterialApp(\n  initialRoute: '/',\n  routes: {\n    '/': (context) => const HomeScreen(),\n    '/details': (context) => const DetailScreen(),\n  },\n);\n\n// Navigate with:\nNavigator.pushNamed(context, '/details');"
+                  }
+            ]
+      },
+      {
+            "id": 9,
+            "title": "ListView & Lists of Data — The Scrollable Shelf 📚",
+            "difficulty": "Intermediate",
+            "analogy": "ListView.builder is a shelf that only builds the books currently in view, not the whole library at once.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "ListView.builder — render a list efficiently",
+                        "code": "final items = ['Apple', 'Banana', 'Cherry'];\n\nListView.builder(\n  itemCount: items.length,\n  itemBuilder: (context, index) {\n    return ListTile(title: Text(items[index]));\n  },\n)"
+                  },
+                  {
+                        "label": "A list of custom data",
+                        "code": "class AppUser {\n  final String name;\n  final String email;\n  AppUser(this.name, this.email);\n}\n\nfinal users = [\n  AppUser('Alice', 'alice@email.com'),\n  AppUser('Bob', 'bob@email.com'),\n];\n\nWidget buildUserList() {\n  return ListView.builder(\n    itemCount: users.length,\n    itemBuilder: (context, index) {\n      final user = users[index];\n      return ListTile(\n        title: Text(user.name),\n        subtitle: Text(user.email),\n      );\n    },\n  );\n}"
+                  }
+            ]
+      },
+      {
+            "id": 10,
+            "title": "Forms & Validation — Checking the Paperwork 📝",
+            "difficulty": "Intermediate",
+            "analogy": "A Form is a stack of paperwork with a supervisor (GlobalKey) who checks every field before it's accepted.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "A Form with a GlobalKey",
+                        "code": "final formKey = GlobalKey<FormState>();\n\nForm(\n  key: formKey,\n  child: TextFormField(\n    validator: (value) {\n      if (value == null || value.isEmpty) {\n        return 'Please enter your name';\n      }\n      return null;\n    },\n  ),\n)"
+                  },
+                  {
+                        "label": "Validating and submitting",
+                        "code": "ElevatedButton(\n  onPressed: () {\n    if (formKey.currentState!.validate()) {\n      print('Form is valid!');\n    }\n  },\n  child: const Text('Submit'),\n)"
+                  }
+            ]
+      },
+      {
+            "id": 11,
+            "title": "Async/Await & Futures — Waiting Patiently 🧍",
+            "difficulty": "Intermediate",
+            "analogy": "A Future is a claim ticket for something not ready yet. await means: pause here until it's ready, then continue.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "A Future that resolves after a delay",
+                        "code": "Future<String> fetchGreeting() async {\n  await Future.delayed(const Duration(seconds: 1));\n  return 'Hello after 1 second!';\n}\n\nvoid loadGreeting() async {\n  final greeting = await fetchGreeting();\n  print(greeting);\n}"
+                  },
+                  {
+                        "label": "Error handling with try/catch",
+                        "code": "Future<void> loadData() async {\n  try {\n    final result = await fetchGreeting();\n    print(result);\n  } catch (error) {\n    print('Failed: $error');\n  }\n}"
+                  }
+            ]
+      },
+      {
+            "id": 12,
+            "title": "HTTP Requests — Calling a Friend 📞",
+            "difficulty": "Advanced",
+            "analogy": "The http package dials an API for you. FutureBuilder answers the phone and decides what to show while it waits.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "GET request with the http package",
+                        "code": "// pubspec.yaml: http: ^1.2.0\nimport 'package:http/http.dart' as http;\nimport 'dart:convert';\n\nFuture<void> fetchUsers() async {\n  final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));\n  final users = jsonDecode(response.body);\n  print(users.length);\n}"
+                  },
+                  {
+                        "label": "FutureBuilder — show loading, data, and error states",
+                        "code": "FutureBuilder<String>(\n  future: fetchGreeting(),\n  builder: (context, snapshot) {\n    if (snapshot.connectionState == ConnectionState.waiting) {\n      return const CircularProgressIndicator();\n    }\n    if (snapshot.hasError) {\n      return Text('Error: ${snapshot.error}');\n    }\n    return Text(snapshot.data ?? '');\n  },\n)"
+                  }
+            ]
+      },
+      {
+            "id": 13,
+            "title": "State Management — Provider — The PA System 📢",
+            "difficulty": "Advanced",
+            "analogy": "Provider is a PA system: any widget in the tree can listen for announcements without passing data hand-to-hand.",
+            "lang": "dart",
+            "snippets": [
+                  {
+                        "label": "A simple ChangeNotifier",
+                        "code": "// pubspec.yaml: provider: ^6.1.0\nclass CounterModel extends ChangeNotifier {\n  int count = 0;\n\n  void increment() {\n    count++;\n    notifyListeners();\n  }\n}"
+                  },
+                  {
+                        "label": "Providing and consuming it",
+                        "code": "ChangeNotifierProvider(\n  create: (context) => CounterModel(),\n  child: const MyApp(),\n);\n\n// Anywhere below in the tree:\nConsumer<CounterModel>(\n  builder: (context, counter, child) {\n    return Text('Count: ${counter.count}');\n  },\n)"
+                  }
+            ]
+      },
+      {
+            "id": 14,
+            "title": "Packages & pubspec.yaml — The Parts List 📦",
+            "difficulty": "Beginner",
+            "lang": "yaml",
+            "analogy": "pubspec.yaml is the parts list for your project — every package it depends on is written down here.",
+            "snippets": [
+                  {
+                        "label": "Declaring dependencies",
+                        "code": "name: my_app\ndescription: A new Flutter project.\nversion: 1.0.0+1\n\ndependencies:\n  flutter:\n    sdk: flutter\n  http: ^1.2.0\n  provider: ^6.1.0"
+                  },
+                  {
+                        "label": "Installing and importing",
+                        "runnable": false,
+                        "code": "flutter pub get\n\n# then in your Dart file:\nimport 'package:http/http.dart' as http;"
+                  }
+            ]
+      },
+      {
+            "id": 15,
+            "title": "Building & Deploying — Opening the Doors 🚀",
+            "difficulty": "Intermediate",
+            "lang": "dart",
+            "analogy": "flutter build packages your app for the real world — an Android APK, an iOS build, or a web bundle you can host anywhere.",
+            "snippets": [
+                  {
+                        "label": "Build for Android",
+                        "runnable": false,
+                        "code": "flutter build apk --release"
+                  },
+                  {
+                        "label": "Build for the web",
+                        "runnable": false,
+                        "code": "flutter build web --release"
+                  },
+                  {
+                        "label": "Run on a connected device or emulator",
+                        "runnable": false,
+                        "code": "flutter devices\nflutter run -d chrome"
+                  }
+            ]
+      }
+];
+
+    const STORAGE_KEY = "flutter-done";
+
+    function initSidebar() {
+      const list = document.getElementById("lesson-list");
+      LESSONS.forEach(lesson => {
+        const item = document.createElement("div");
+        item.id = `sidebar-lesson-${lesson.id}`;
+        item.className = "sidebar-item";
+        item.onclick = () => {
+          document.getElementById(`lesson-${lesson.id}`).scrollIntoView({ behavior: "smooth" });
+        };
+        item.textContent = `${lesson.id}. ${lesson.title.split(" ")[0]}`;
+        list.appendChild(item);
+      });
+    }
+
+    function initLessons() {
+      const container = document.getElementById("lessons-container");
+      LESSONS.forEach(lesson => {
+        const section = document.createElement("section");
+        section.id = `lesson-${lesson.id}`;
+        section.className = "lesson";
+        section.innerHTML = `
+          <div style="display: flex; align-items: center; margin-bottom: 16px;">
+            <span style="background: #02569b; color: white; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">L${lesson.id}</span>
+            <h2 style="font-size: 1.75rem; font-weight: 900; margin: 0 0 0 16px; color: #0f172a;">${lesson.title}</h2>
+            <span class="difficulty ${lesson.difficulty.toLowerCase()}">${lesson.difficulty}</span>
+          </div>
+
+          <div class="analogy">
+            <strong style="color: #075985;">📚 Analogy:</strong> ${lesson.analogy}
+          </div>
+
+          <div class="key-points">
+            <strong style="color: #166534;">✓ Key Points — each one is its own example below:</strong>
+            <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+              ${lesson.snippets.map(s => `<li>${s.label}</li>`).join("")}
+            </ul>
+          </div>
+
+          ${lesson.snippets.map(snippet => `
+            <div class="code-block">
+              <div class="snippet-label">${escapeHtml(snippet.label)}</div>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              <pre><code class="language-${lesson.lang || "dart"}">${escapeHtml(snippet.code)}</code></pre>
+            </div>
+          `).join("")}
+
+          <button class="mark-btn" onclick="toggleLesson(${lesson.id})">Mark Complete ✓</button>
+        `;
+        container.appendChild(section);
+      });
+      hljs.highlightAll();
+    }
+
+    function escapeHtml(text) {
+      const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
+      return text.replace(/[&<>"']/g, c => map[c]);
+    }
+
+    function toggleLesson(id) {
+      let done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      if (done.includes(id)) {
+        done = done.filter(x => x !== id);
+      } else {
+        done.push(id);
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const pct = Math.round((done.length / LESSONS.length) * 100);
+      document.getElementById("progress-bar").style.width = pct + "%";
+      document.getElementById("progress-text").textContent = `${done.length} / ${LESSONS.length} lessons complete`;
+      document.getElementById("progress-counter").textContent = done.length;
+
+      LESSONS.forEach(lesson => {
+        const btn = document.querySelector(`#lesson-${lesson.id} .mark-btn`);
+        const sidebar = document.getElementById(`sidebar-lesson-${lesson.id}`);
+        if (done.includes(lesson.id)) {
+          btn.textContent = "✅ Completed!";
+          btn.classList.add("completed");
+          sidebar.classList.add("completed");
+        } else {
+          btn.textContent = "Mark Complete ✓";
+          btn.classList.remove("completed");
+          sidebar.classList.remove("completed");
+        }
+      });
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            document.querySelectorAll(".sidebar-item").forEach(item => item.classList.remove("active"));
+            const lessonNum = entry.target.id.split("-")[1];
+            document.getElementById(`sidebar-lesson-${lessonNum}`)?.classList.add("active");
+          }
+        });
+      }, { threshold: 0.3 });
+
+      document.querySelectorAll(".lesson").forEach(el => observer.observe(el));
+    }
+
+    function copyCode(btn) {
+      const code = btn.parentElement.querySelector("code").textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = "Copied! ✓";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 2000);
+      });
+    }
+
+    function resetProgress() {
+      if (confirm("Reset all progress?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        updateProgress();
+      }
+    }
+
+    initSidebar();
+    initLessons();
+    updateProgress();
+  </script>
+</body>
+</html>
